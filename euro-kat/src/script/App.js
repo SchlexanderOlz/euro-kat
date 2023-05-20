@@ -1,7 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
+import '../style/App.css';
 
-import StartPage from './script/StartPage';
+import StartPage from './StartPage';
 
 
 function App() {

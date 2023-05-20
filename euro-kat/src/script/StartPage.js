@@ -1,7 +1,7 @@
 import React from "react";
 import "../style/StartPage.css";
 
-// Component for the top section
+
 function TopSection() {
   return (
     <table border="0" width="100%" cellspacing="0">
