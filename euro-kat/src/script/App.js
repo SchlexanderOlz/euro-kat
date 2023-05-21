@@ -1,15 +1,33 @@
 import '../style/App.css';
+import React, { useState } from "react";
 
 import StartPage from './StartPage';
+import Navigator from './Navigator';
+import Releases from './Releases';
 
 
 function App() {
-  // Check if frames are supported
+
+  const [currentSection, setCurrentSection] = useState("home");
+
+  const handleSelectSection = (section) => {
+    setCurrentSection(section);
+  };
+
+  const renderComponent = () => {
+    if (currentSection === "home") {
+      return <StartPage />;
+    } else if (currentSection === "releases") {
+      return <Releases />;
+    } else {
+      return null;
+    }
+  };
+
   return (
-    <div className="App">
-      {/* Other components or JSX code */}
-      <StartPage />
-      {/* Other components or JSX code */}
+    <div>
+      <Navigator onSelectSection={handleSelectSection} />
+      {renderComponent()}
     </div>
   );
 }
