@@ -136,6 +136,21 @@ const Picture = sequelize.define("Picture", {
   },
 });
 
+
+const FigurePicture = sequelize.define("FigurePicture", {
+  FigureId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+  },
+  PictureId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+  },
+});
+
+Figure.belongsToMany(Picture, { through: FigurePicture });
+Picture.belongsToMany(Figure, { through: FigurePicture });
+
 PackageInsert.belongsTo(Figure);
 Figure.belongsTo(Series);
 Packaging.belongsTo(Series, { allowNull: true });
@@ -145,7 +160,6 @@ Casing.belongsTo(Series);
 Picture.belongsTo(PackageInsert);
 Picture.belongsTo(Packaging);
 Picture.belongsTo(Casing);
-Picture.belongsTo(Figure);
 
 sequelize
   .sync()
