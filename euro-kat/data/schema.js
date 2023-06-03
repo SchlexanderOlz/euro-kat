@@ -39,6 +39,10 @@ const Figure = sequelize.define("Figure", {
     type: Sequelize.STRING(255),
     allowNull: true,
   },
+  Fake: {
+    type: Sequelize.TINYINT(1),
+    allowNull: false,
+  },
   Sticker: {
     type: Sequelize.TINYINT(1),
   },
@@ -51,7 +55,23 @@ const Figure = sequelize.define("Figure", {
 });
 
 const Series = sequelize.define("Series", {
-  SerialId: {
+  SeriesId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  IdLetters: {
+    type: Sequelize.STRING(5),
+    unique: true,
+  },
+  Year: {
+    type: Sequelize.DATE,
+  },
+});
+
+const SubSeries = sequelize.define("SubSeries", {
+  SubSeriesId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     allowNull: false,
@@ -71,15 +91,11 @@ const Series = sequelize.define("Series", {
 });
 
 const PackageInsert = sequelize.define("PackageInsert", {
-  PackageId: {
+  PackageInsertId: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    primaryKey: true,
     autoIncrement: true,
-  },
-  FigureId: {
-    type: Sequelize.TEXT,
-    allowNull: false,
+    primaryKey: true,
   },
   Description: {
     type: Sequelize.STRING(255),
@@ -87,14 +103,23 @@ const PackageInsert = sequelize.define("PackageInsert", {
 });
 
 const Packaging = sequelize.define("Packaging", {
-  PackageId: {
+  PackagingId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
     allowNull: false,
+    autoIncrement: true,
   },
   Description: {
     type: Sequelize.STRING(255),
+  },
+});
+
+const PackagingPicture = sequelize.define("PackagingPicture", {
+  PackagingPictureId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
   },
 });
 
@@ -112,15 +137,31 @@ const Country = sequelize.define("Country", {
   },
 });
 
-const Casing = sequelize.define("Casging", {
-  CasingId: {
+const CountryVariation = sequelize.define("CountryVariation", {
+  CountryVariationId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
     allowNull: false,
+    autoIncrement: true,
   },
-  ExtraInfo: {
-    type: Sequelize.TEXT("medium"),
+  Year: {
+    type: Sequelize.DATE,
+  },
+  Note: {
+    type: Sequelize.STRING(255),
+  },
+});
+
+const Variation = sequelize.define("Variation", {
+  VariationId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  Variation: {
+    type: Sequelize.STRING(2000),
+    allowNull: false,
   },
 });
 
@@ -129,37 +170,56 @@ const Picture = sequelize.define("Picture", {
     type: Sequelize.INTEGER,
     allowNull: false,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
   Picture: {
     type: Sequelize.BLOB("medium"),
   },
 });
 
+const FigureInOtherCountries = sequelize.define(
+  "FigureInOtherCountries",
+  {
+    FigureInOtherCountriesId: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+    },
+  }
+);
 
-const FigurePicture = sequelize.define("FigurePicture", {
-  FigureId: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-  },
-  PictureId: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-  },
-});
+Series.hasMany(SubSeries);
+SubSeries.belongsTo(Series);
 
-Figure.belongsToMany(Picture, { through: FigurePicture });
-Picture.belongsToMany(Figure, { through: FigurePicture });
+SubSeries.hasMany(Packaging);
+Packaging.belongsTo(SubSeries);
 
-PackageInsert.belongsTo(Figure);
-Figure.belongsTo(Series);
-Packaging.belongsTo(Series, { allowNull: true });
-Country.belongsTo(Series, { allowNull: true });
-Casing.belongsTo(Series);
+SubSeries.belongsToMany(Country, { through: "SubSeriesCountries" });
+Country.belongsToMany(SubSeries, { through: "SubSeriesCountries" });
 
-Picture.belongsTo(PackageInsert);
-Picture.belongsTo(Packaging);
-Picture.belongsTo(Casing);
+Packaging.hasMany(PackagingPicture);
+PackagingPicture.belongsTo(Packaging);
+
+PackagingPicture.belongsTo(Picture);
+Picture.hasMany(PackagingPicture);
+
+SubSeries.hasMany(Figure);
+Figure.belongsTo(SubSeries);
+
+Figure.belongsToMany(Picture, { through: "FigurePictures" });
+Picture.belongsToMany(Figure, { through: "FigurePictures" });
+
+Figure.belongsTo(Variation);
+CountryVariation.hasMany(FigureInOtherCountries);
+FigureInOtherCountries.belongsTo(Figure);
+FigureInOtherCountries.belongsTo(Picture);
+
+CountryVariation.hasMany(PackageInsert);
+PackageInsert.belongsTo(Picture);
+
+CountryVariation.belongsTo(SubSeries);
+CountryVariation.belongsTo(Country);
 
 sequelize
   .sync()
