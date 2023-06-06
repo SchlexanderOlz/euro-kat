@@ -23,6 +23,32 @@ sequelize
     console.error("Unable to connect to the database:", error);
   });
 
+const Country = sequelize.define("Country", {
+  CountryId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  CountryName: {
+    type: Sequelize.STRING(255),
+    allowNull: false,
+    unique: true,
+  },
+});
+
+const Picture = sequelize.define("Picture", {
+  PictureId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  Picture: {
+    type: Sequelize.BLOB("medium"),
+  },
+});
+
 const Figure = sequelize.define("Figure", {
   FigureId: {
     type: Sequelize.INTEGER,
@@ -91,14 +117,22 @@ const SubSeries = sequelize.define("SubSeries", {
 });
 
 const PackageInsert = sequelize.define("PackageInsert", {
-  PackageInsertId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
   Description: {
     type: Sequelize.STRING(255),
+  },
+});
+
+
+const Variation = sequelize.define("Variation", {
+  VariationId: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  Variation: {
+    type: Sequelize.STRING(2000),
+    allowNull: false,
   },
 });
 
@@ -123,20 +157,6 @@ const PackagingPicture = sequelize.define("PackagingPicture", {
   },
 });
 
-const Country = sequelize.define("Country", {
-  CountryId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  CountryName: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-    unique: true,
-  },
-});
-
 const CountryVariation = sequelize.define("CountryVariation", {
   CountryVariationId: {
     type: Sequelize.INTEGER,
@@ -152,77 +172,49 @@ const CountryVariation = sequelize.define("CountryVariation", {
   },
 });
 
-const Variation = sequelize.define("Variation", {
-  VariationId: {
+const FigureInOtherCountries = sequelize.define("FigureInOtherCountries", {
+  FigureInOtherCountriesId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     allowNull: false,
     autoIncrement: true,
   },
-  Variation: {
-    type: Sequelize.STRING(2000),
-    allowNull: false,
-  },
 });
 
-const Picture = sequelize.define("Picture", {
-  PictureId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  Picture: {
-    type: Sequelize.BLOB("medium"),
-  },
-});
 
-const FigureInOtherCountries = sequelize.define(
-  "FigureInOtherCountries",
-  {
-    FigureInOtherCountriesId: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
-    },
-  }
-);
+const FigurePicture = sequelize.define("FigurePicture")
 
-Series.hasMany(SubSeries);
-SubSeries.belongsTo(Series);
+Series.hasMany(SubSeries)
 
-SubSeries.hasMany(Packaging);
+Figure.belongsToMany(Picture, { through: FigurePicture });
+Picture.belongsToMany(Figure, { through: FigurePicture });
+Figure.hasMany(Variation, {foreignKey: 'FigureId', onDelete: 'CASCADE'})
+Figure.hasOne(Country, {allowNull: true}) // NOTE: Maybe remove this
+Figure.hasMany(PackageInsert)
+
+
+Variation.hasOne(Picture, { onDelete: 'CASCADE'})
+
+SubSeries.hasMany(Figure, {onDelete: 'CASCADE'})
+SubSeries.hasOne(Country)
 Packaging.belongsTo(SubSeries);
+SubSeries.hasMany(CountryVariation, {onDelete: 'CASCADE'})
+SubSeries.hasMany(Packaging, {onDelete: 'CASCADE'})
 
-SubSeries.belongsToMany(Country, { through: "SubSeriesCountries" });
-Country.belongsToMany(SubSeries, { through: "SubSeriesCountries" });
+Packaging.hasMany(PackagingPicture, {onDelete: 'CASCADE'});
+PackagingPicture.belongsTo(Picture, { onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Packaging.hasMany(PackagingPicture);
-PackagingPicture.belongsTo(Packaging);
+CountryVariation.hasOne(Country, {onDelete: 'CASCADE'})
+CountryVariation.hasMany(FigureInOtherCountries, {onDelete: 'CASCADE'})
 
-PackagingPicture.belongsTo(Picture);
-Picture.hasMany(PackagingPicture);
+FigureInOtherCountries.hasOne(Figure, {onDelete: 'CASCADE'});
+FigureInOtherCountries.hasOne(Picture, {onDelete: 'SET NULL'})
 
-SubSeries.hasMany(Figure);
-Figure.belongsTo(SubSeries);
+PackageInsert.belongsTo(Picture, {onDelete: 'SET NULL'});
 
-Figure.belongsToMany(Picture, { through: "FigurePictures" });
-Picture.belongsToMany(Figure, { through: "FigurePictures" });
-
-Figure.belongsTo(Variation);
-CountryVariation.hasMany(FigureInOtherCountries);
-FigureInOtherCountries.belongsTo(Figure);
-FigureInOtherCountries.belongsTo(Picture);
-
-CountryVariation.hasMany(PackageInsert);
-PackageInsert.belongsTo(Picture);
-
-CountryVariation.belongsTo(SubSeries);
-CountryVariation.belongsTo(Country);
 
 sequelize
-  .sync()
+  .sync({ force: true, individualHooks: true}) // NOTE: Change this because this overrides all tables !!!!!
   .then(() => {
     console.log("Tables created successfully.");
   })
