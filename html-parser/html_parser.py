@@ -23,31 +23,35 @@ class InformationExtractor:
         replaced_html = InformationExtractor.replace_nbsp_elements(html)
         soup = BeautifulSoup(replaced_html, 'html.parser')
         td_elements = soup.find_all(html_struct, class_=clazz)
-        content = []
-        for td in td_elements:
-            text = td.get_text(strip=True, separator=' ')
-            content.append(text)
-            
-            link = td.find('a')
-            if link:
-                href = link.get('href')
-                joined_href = InformationExtractor.join_paths(href, os.path.dirname(path))
-                content.append(InformationExtractor.get_figure_content(joined_href))  # Append link content instead of link directly
-
-        formatted = []
+        
+        tr_elements = soup.find_all('tr')
+        
         last_serial: str = "Not implemented!"
-        for value in content:
-            if not isinstance(value, str):
-                formatted.append(value)
-                continue
-            
-            value = InformationExtractor.cleanup(value)
-            if value == '"':
-                value = last_serial
-            
-            formatted.append(value)
+        elements = []
+        for element in tr_elements:
+            tmp = []
+            figure_name: str
+            for i, td in enumerate(element.find_all('td')):
+                content = InformationExtractor.cleanup(td.get_text(strip=True))
+                if i == 2:
+                    if content == '"':
+                        content = last_serial
+                    else:
+                        last_serial = content
+                    continue
+                if i == 1:
+                    figure_name = content
 
-        return formatted
+                tmp.append(content)
+            link = element.find('a')
+            
+            # TODO stopped here -> Implement the get_figure_content function fully
+            if link:
+                tmp.append(InformationExtractor.get_figure_content(InformationExtractor.join_paths(link.get('href'), os.path.dirname(path)), figure_name))
+            elements.append(tmp)
+        print(elements)
+        
+        return elements
 
 
     @staticmethod
@@ -82,11 +86,15 @@ class InformationExtractor:
 
 
     @staticmethod
-    def get_figure_content(href: str) -> list[str, bool]:
+    def get_figure_content(href: str, figure_id: str) -> list[str, bool]:
         html: str = ""
         with open(href) as file:
             html = file.read()
         soup = BeautifulSoup(html, 'html.parser')
+        
+        # TODO stopped here -> Try to get the tr element which has the figure_id in it and then get the Kennung, Aufkleber, etc. from the following tr elements (.find_next)
+        figure_tr = soup.find_all('tr', string=lambda text: text.strip() == figure_id)
+        
         
         # TODO Make function instead which checks if the value is valid
         kennung_structs = soup.find_all('td', string=lambda text: text and text.strip() == 'Kennung')
