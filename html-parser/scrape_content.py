@@ -9,7 +9,7 @@ class Scraper:
         with open(SRCFILE) as file:
             html = file.read()
             content = InformationExtractor.get_html_content(SRCFILE, 'td', 'a')
-        return InformationExtractor.structure_content(content, "Sonstiges aus der Saison 2022-2023 Deutschland", 4)
+        return content
 
 
 if __name__ == "__main__":
