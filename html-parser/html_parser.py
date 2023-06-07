@@ -3,9 +3,12 @@ from bs4.element import ResultSet
 import urllib.parse
 from colorama import init, Fore, Style
 from enum import Enum
+import threading
 import os
 
 init(autoreset=True)
+
+LOCK = threading.Lock()
 
 
 class MessageType(Enum):
@@ -14,6 +17,10 @@ class MessageType(Enum):
     INFO = 2
 
 
+# TODO
+# --> Some checks are missing
+#   -> f.e. Values which only consist of ???'s or "empty" values need to be removed
+# --> Packageinserts are not processed currently
 class InformationExtractor:
     """
     A class for extracting information from HTML files using BeautifulSoup.
@@ -30,11 +37,28 @@ class InformationExtractor:
         Returns:
             tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
         """
+
+        def replace_nbsp_elements(html) -> str:
+            """
+            Replaces non-breaking space elements in the HTML with placeholder text.
+
+            Returns:
+                str: The HTML content with non-breaking space elements replaced.
+            """
+            soup = BeautifulSoup(html, 'html.parser')
+
+            # This gets all elements in the HTML which are not a non-breaking space (&nbsp)
+            # They then get replaced by ??? just for simplified output
+            for element in soup.find_all(text=lambda t: t == '\xa0'):
+                element.replace_with('???')
+            return str(soup)
+
+
         html: str = ""
         with open(path) as file:
             html = file.read()
 
-        soup = BeautifulSoup(InformationExtractor.__replace_nbsp_elements(html), 'html.parser')
+        soup = BeautifulSoup(replace_nbsp_elements(html), 'html.parser')
         del html
 
         tr_elements: ResultSet[any] = soup.find_all('tr')
@@ -80,6 +104,7 @@ class InformationExtractor:
         with open(href) as file:
             html = file.read()
         soup = BeautifulSoup(html, 'html.parser')
+        del html
 
         figure_tr: ResultSet[any] = soup.find_all('tr')
 
@@ -129,13 +154,7 @@ class InformationExtractor:
     @staticmethod
     def __cleanup(val: str):
         """
-        Removes unwanted characters from a string.
-
-        Args:
-            val (str): The string to clean up.
-
-        Returns:
-            str: The cleaned-up string.
+        Removes unwanted characters from a string
         """
         return val.replace('\n', '').replace('\t', '')
 
@@ -155,25 +174,6 @@ class InformationExtractor:
         return joined_path
 
     @staticmethod
-    def __replace_nbsp_elements(html) -> str:
-        """
-        Replaces non-breaking space elements in the HTML with placeholder text.
-
-        Args:
-            html: The HTML content.
-
-        Returns:
-            str: The HTML content with non-breaking space elements replaced.
-        """
-        soup = BeautifulSoup(html, 'html.parser')
-
-        # This gets all elements in the HTML which are not a non-breaking space (&nbsp)
-        # They then get replaced by ??? just for simplified output
-        for element in soup.find_all(text=lambda t: t == '\xa0'):
-            element.replace_with('???')
-        return str(soup)
-
-    @staticmethod
     def __display_info(message_type: MessageType, message: str) -> None:
         """
         Displays a formatted message of a specific message type.
@@ -182,13 +182,14 @@ class InformationExtractor:
             message_type (MessageType): The type of the message (ERROR, WARNING, INFO).
             message (str): The message content.
         """
-        begin: str
-        match message_type:
-            case MessageType.ERROR:
-                begin = f"""{Fore.RED}[-] ERROR!{Style.RESET_ALL}:"""
-            case MessageType.WARNING:
-                begin = f"""{Fore.YELLOW}[~] WARNING!{Style.RESET_ALL}:"""
-            case MessageType.INFO:
-                begin = f"""{Fore.BLUE}[*] INFO {Style.RESET_ALL}:"""
+        with LOCK:
+            begin: str
+            match message_type:
+                case MessageType.ERROR:
+                    begin = f"""{Fore.RED}[-] ERROR!{Style.RESET_ALL}:"""
+                case MessageType.WARNING:
+                    begin = f"""{Fore.YELLOW}[~] WARNING!{Style.RESET_ALL}:"""
+                case MessageType.INFO:
+                    begin = f"""{Fore.BLUE}[*] INFO {Style.RESET_ALL}:"""
 
-        print(begin + message)
+            print(begin + message)
