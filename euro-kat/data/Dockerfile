@@ -1,0 +1,6 @@
+FROM mysql:latest
+
+ENV MYSQL_DATABASE=euro-kat-db
+ENV MYSQL_ROOT_PASSWORD=Kennwort1
+
+EXPOSE 3306
