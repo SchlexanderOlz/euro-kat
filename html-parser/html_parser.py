@@ -1,11 +1,9 @@
 from bs4 import BeautifulSoup
+from bs4.element import ResultSet
 import urllib.parse
 from colorama import init, Fore, Style
-
 from enum import Enum
-
 import os
-
 
 init(autoreset=True)
 
@@ -15,39 +13,39 @@ class MessageType(Enum):
     WARNING = 1,
     INFO = 2
 
+
 class InformationExtractor:
+    """
+    A class for extracting information from HTML files using BeautifulSoup.
+    """
 
     @staticmethod
-    def replace_nbsp_elements(html):
-        soup = BeautifulSoup(html, 'html.parser')
-        
-        # This get's all elements in the html which are not a non-breaking-space (&nbsp)
-        # They then get replaced by ??? just for simnplified output
-        for element in soup.find_all(text=lambda t: t == '\xa0'):
-            element.replace_with('???')
-        return str(soup)
+    def get_html_content(path: str) -> tuple[str, bool, str, set[bytes]]:
+        """
+        Retrieves the HTML content from a file and returns a tuple with the extracted information.
 
+        Args:
+            path (str): The path to the HTML file.
 
-    # TODO Rewrite cleanup part so always the last serial-element is referenced (currently printing "Not implemented!")
-    @staticmethod
-    def get_html_content(path: str, html_struct: str, clazz: str = None) -> tuple[str, bool, str, set[bytes]]:
+        Returns:
+            tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
+        """
         html: str = ""
         with open(path) as file:
             html = file.read()
 
-        replaced_html = InformationExtractor.replace_nbsp_elements(html)
-        soup = BeautifulSoup(replaced_html, 'html.parser')
-        td_elements = soup.find_all(html_struct, class_=clazz)
-        
-        tr_elements = soup.find_all('tr')
-        
+        soup = BeautifulSoup(InformationExtractor.__replace_nbsp_elements(html), 'html.parser')
+        del html
+
+        tr_elements: ResultSet[any] = soup.find_all('tr')
+
         last_serial: str = "Error Value!!!!"
-        elements = []
+        elements: list = []
         for element in tr_elements:
             tmp = []
             figure_name: str
             for i, td in enumerate(element.find_all('td')):
-                content = InformationExtractor.cleanup(td.get_text(strip=True))
+                content = InformationExtractor.__cleanup(td.get_text(strip=True))
                 if i == 2:
                     if content == '"':
                         content = last_serial
@@ -58,77 +56,132 @@ class InformationExtractor:
                     figure_name = content.strip()
 
                 tmp.append(content)
-            link = element.find('a')
-            
+            link: str = element.find('a')
 
-            # TODO stopped here -> Implement the get_figure_content function fully
             if link:
-                tmp.append(InformationExtractor.get_figure_content(InformationExtractor.join_paths(link.get('href'), os.path.dirname(path)), figure_name))
+                tmp.append(InformationExtractor.get_figure_content(InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path)), figure_name))
             elements.append(tmp)
-        print(elements)
-        
+
         return elements
-
-
-    @staticmethod
-    def join_paths(relative_path: str, other_path: str) -> str:
-        joined_path = os.path.normpath(os.path.join(other_path, relative_path))
-        return joined_path
-
 
     @staticmethod
     def get_figure_content(href: str, figure_id: str) -> tuple[str, bool, str, set[bytes]]:
+        """
+        Retrieves the content of a specific figure from an HTML file and returns a tuple with the extracted information.
+
+        Args:
+            href (str): The path to the HTML file containing the figure.
+            figure_id (str): The ID of the figure to extract.
+
+        Returns:
+            tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
+        """
         html: str = ""
         with open(href) as file:
             html = file.read()
         soup = BeautifulSoup(html, 'html.parser')
-        
-        # TODO stopped here -> Try to get the tr element which has the figure_id in it and then get the Kennung, Aufkleber, etc. from the following tr elements (.find_next)
-        figure_tr = soup.find_all('tr')
-        
-        
+
+        figure_tr: ResultSet[any] = soup.find_all('tr')
+
         values: tuple = ()
         for tr in figure_tr:
             found_element = tr.find('b', string=lambda text: text and text.strip().lower() == figure_id.lower())
             if found_element:
-                images = None
+                images: list = None
                 images = [element.get('src') for element in tr.find_all('img') if element]
-                
+
                 if len(images) == 0:
                     InformationExtractor.__display_info(MessageType.WARNING, f"""No Image found for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
                 b_images: set[bytes] = set()
                 for image in images:
-                    b_image = InformationExtractor.get_image(href, "../" + image)
+                    b_image: bytes = InformationExtractor.get_image(href, "../" + image)
                     b_images.add(b_image)
 
+                del images
 
-                kennung = InformationExtractor.cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                aufkleber = InformationExtractor.cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
-                note = InformationExtractor.cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values = (kennung, aufkleber, note) # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarely removed
+                kennung = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                aufkleber = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
+                note = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                values = (kennung, aufkleber, note)  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
                 break
-        
+
         if not values:
             InformationExtractor.__display_info(MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
         return values
-    
-    
-    @staticmethod
-    def cleanup(val: str):
-        return val.replace('\n', '').replace('\t', '')
-    
-    
+
     @staticmethod
     def get_image(wd_path: str, rel_path: str) -> bytes:
-        path = urllib.parse.unquote(InformationExtractor.join_paths(rel_path, wd_path))
+        """
+        Retrieves the binary content of an image file.
+
+        Args:
+            wd_path (str): The working directory path.
+            rel_path (str): The relative path to the image file.
+
+        Returns:
+            bytes: The binary content of the image file.
+        """
+        path: str = urllib.parse.unquote(InformationExtractor.__join_paths(rel_path, wd_path))
         with open(path, 'rb') as file:
             return file.read()
-    
-    
+
     @staticmethod
-    def __display_info(message_type: MessageType, message: str):
-        
+    def __cleanup(val: str):
+        """
+        Removes unwanted characters from a string.
+
+        Args:
+            val (str): The string to clean up.
+
+        Returns:
+            str: The cleaned-up string.
+        """
+        return val.replace('\n', '').replace('\t', '')
+
+    @staticmethod
+    def __join_paths(relative_path: str, other_path: str) -> str:
+        """
+        Joins two paths together.
+
+        Args:
+            relative_path (str): The relative path.
+            other_path (str): The other path.
+
+        Returns:
+            str: The joined path.
+        """
+        joined_path: str = os.path.normpath(os.path.join(other_path, relative_path))
+        return joined_path
+
+    @staticmethod
+    def __replace_nbsp_elements(html) -> str:
+        """
+        Replaces non-breaking space elements in the HTML with placeholder text.
+
+        Args:
+            html: The HTML content.
+
+        Returns:
+            str: The HTML content with non-breaking space elements replaced.
+        """
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # This gets all elements in the HTML which are not a non-breaking space (&nbsp)
+        # They then get replaced by ??? just for simplified output
+        for element in soup.find_all(text=lambda t: t == '\xa0'):
+            element.replace_with('???')
+        return str(soup)
+
+    @staticmethod
+    def __display_info(message_type: MessageType, message: str) -> None:
+        """
+        Displays a formatted message of a specific message type.
+
+        Args:
+            message_type (MessageType): The type of the message (ERROR, WARNING, INFO).
+            message (str): The message content.
+        """
         begin: str
         match message_type:
             case MessageType.ERROR:
@@ -137,5 +190,5 @@ class InformationExtractor:
                 begin = f"""{Fore.YELLOW}[~] WARNING!{Style.RESET_ALL}:"""
             case MessageType.INFO:
                 begin = f"""{Fore.BLUE}[*] INFO {Style.RESET_ALL}:"""
-        
+
         print(begin + message)
