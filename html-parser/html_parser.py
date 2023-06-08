@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-import urllib.parse
 from colorama import init, Fore, Style
 from enum import Enum
 import threading
@@ -26,8 +25,12 @@ class InformationExtractor:
     A class for extracting information from HTML files using BeautifulSoup.
     """
 
+    # TODO -> Method is execting get_series_info to often
+    # Should only be called for each series and not each figure
+    # Can be made more efficient by calling the get_figure_content only for each
+    # series (function also needs to be rewritten then)
     @staticmethod
-    def get_html_content(path: str) -> tuple[str, bool, str, set[bytes]]:
+    def get_html_content(path: str) -> tuple[tuple[str, bool, str, set[bytes]], tuple[str, list[tuple[str, str, str, set[bytes]]]]]:
         """
         Retrieves the HTML content from a file and returns a tuple with the extracted information.
 
@@ -46,9 +49,6 @@ class InformationExtractor:
                 str: The HTML content with non-breaking space elements replaced.
             """
             soup = BeautifulSoup(html, 'html.parser')
-
-            # This gets all elements in the HTML which are not a non-breaking space (&nbsp)
-            # They then get replaced by ??? just for simplified output
             for element in soup.find_all(text=lambda t: t == '\xa0'):
                 element.replace_with('???')
             return str(soup)
@@ -70,20 +70,23 @@ class InformationExtractor:
             figure_name: str
             for i, td in enumerate(element.find_all('td')):
                 content = InformationExtractor.__cleanup(td.get_text(strip=True))
-                if i == 2:
-                    if content == '"':
-                        content = last_serial
-                    else:
-                        last_serial = content
-                    continue
-                if i == 0:
-                    figure_name = content.strip()
+
+                match i:
+                    case 0:
+                        figure_name = content.strip()
+                    case 2:
+                        if content == '"':
+                            content = last_serial
+                        else:
+                            last_serial = content
 
                 tmp.append(content)
             link: str = element.find('a')
 
             if link:
-                tmp.append(InformationExtractor.get_figure_content(InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path)), figure_name))
+                absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
+                tmp.append(InformationExtractor.get_series_info(absolut_path))
+                tmp.append(InformationExtractor.get_figure_content(absolut_path, figure_name))
             elements.append(tmp)
 
         return elements
@@ -120,15 +123,15 @@ class InformationExtractor:
 
                 b_images: set[bytes] = set()
                 for image in images:
-                    b_image: bytes = InformationExtractor.get_image(href, "../" + image)
+                    absolut_path: str = InformationExtractor.__join_paths("../" + image, href)
+                    b_image: bytes = InformationExtractor.get_image(absolut_path)
                     b_images.add(b_image)
-
                 del images
 
-                kennung = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                aufkleber = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
-                note = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values = (kennung, aufkleber, note)  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                kennung: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
+                note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                values: tuple[str, bool, str, bytes] = (kennung, aufkleber, note, "!!!Here should be an image!!!")  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
                 break
 
         if not values:
@@ -136,7 +139,7 @@ class InformationExtractor:
         return values
 
     @staticmethod
-    def get_image(wd_path: str, rel_path: str) -> bytes:
+    def get_image(path: str) -> bytes:
         """
         Retrieves the binary content of an image file.
 
@@ -147,9 +150,91 @@ class InformationExtractor:
         Returns:
             bytes: The binary content of the image file.
         """
-        path: str = urllib.parse.unquote(InformationExtractor.__join_paths(rel_path, wd_path))
-        with open(path, 'rb') as file:
-            return file.read()
+        try:
+            with open(path, 'rb') as file:
+                return file.read()
+        except FileNotFoundError:
+            InformationExtractor.__display_info(MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
+
+    @staticmethod
+    def get_series_info(href: str) -> tuple[str, list[tuple[str, str, str, set[bytes]]]]:
+        html: str
+        with open(href) as file:
+            html = file.read()
+        
+        soup = BeautifulSoup(html, 'html.parser')
+        b_text = soup.find_all('b')
+
+        cv_info: list[tuple[str, str, str, set[bytes]]] = None
+        for text in b_text:
+            if "Beipackzettel" in text.get_text(strip=True):
+                found = text.find_next('a')
+
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+        
+        if not cv_info:
+            # NOTE Look at error message 2
+            InformationExtractor.__display_info(MessageType.WARNING, f"""No packageinsert information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}""")
+            InformationExtractor.__display_info(MessageType.INFO, f"""Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message""")
+
+        def get_thanks_msg() -> str:
+            font_element = soup.find('div', align='center')
+            names: str = font_element.get_text(strip=True)
+
+            thanks_begin: int = names.find('Dank')
+            thanks_end: int = names.find('!') # This could be a potential error source
+            thankings: str = names[thanks_begin:thanks_end] + "!"
+            thankings = InformationExtractor.__cleanup(thankings)
+            
+            if not thankings:
+                InformationExtractor.__display_info(MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
+            return thankings
+
+        return (get_thanks_msg(), cv_info)
+
+
+    @staticmethod
+    def get_country_variation_info(href: str) -> list[tuple[str, str, str, set[bytes]]]:
+        html: str = ""
+        with open(href) as file:
+            html = file.read()
+        
+        soup = BeautifulSoup(html, 'html.parser')
+        tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
+
+        bpz_index: int = 1
+        informations: list = []
+        for tr in tr_elements:
+            td: BeautifulSoup = tr.find('td')
+            try:
+                if int(td.get_text(strip=True)) == bpz_index:
+                    bpz_index += 1
+                    
+                    pictures = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
+
+                    images: set[bytes] = set()
+                    for img in pictures:
+                        source: str = img.get('src')
+                        absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
+                        image: bytes = InformationExtractor.get_image(absolut_path)
+                        images.add(image)
+
+                    country, year = tr.find_next('tr').get_text(strip=True).split('-')
+                    note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
+                    
+                    note = InformationExtractor.__cleanup(note)
+                    country = InformationExtractor.__cleanup(country)
+                    year = InformationExtractor.__cleanup(year)
+
+                    if country is None and year is None and note is None:
+                        InformationExtractor.__display_info(MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
+                    informations.append((country, year, note, "!!!Here should be an image!!!")) # NOTE -> Add the images variable as a return-type here
+            except ValueError:
+                pass
+        return informations
 
     @staticmethod
     def __cleanup(val: str):

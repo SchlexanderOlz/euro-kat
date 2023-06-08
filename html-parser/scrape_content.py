@@ -1,11 +1,12 @@
 from html_parser import InformationExtractor
 from typing import Callable
 import threading
+import sys
+import json
 
-SRCES: list[str] = {"I:/Code/(Deprecated)EuroKatFiles/JGListen/WSE.htm", "I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"}
+SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
 
 class Scraper:
-
     @staticmethod
     def get_html_content() -> list[list[str]]:
         threads: list[threading.Thread] = []
@@ -26,7 +27,25 @@ class Scraper:
             thread.join()
 
         return results
+    
+    @staticmethod
+    def save_to_json(data: any):
+        filename = "data.json"
+        with open(filename, "w") as file:
+            json.dump(data, file, cls=SetEncoder)
 
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)  # Convert set to list
+        return super().default(obj)
 
 if __name__ == "__main__":
-    print(Scraper.get_html_content())
+    try:
+        data = Scraper.get_html_content()
+        Scraper.save_to_json(data)
+
+    except KeyboardInterrupt:
+        print("Ctrl+C received. Exiting...")
+        sys.exit(0)
