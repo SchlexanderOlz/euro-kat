@@ -19,7 +19,8 @@ class MessageType(Enum):
 # TODO
 # --> Some checks are missing
 #   -> f.e. Values which only consist of ???'s or "empty" values need to be removed
-# --> Packageinserts are not processed currently
+# --> It would be beneficial to use dictionaries instead of lists/tuples/sets in most cases :- rewrite
+# --> Packageinserts need to be differentiated from Country-variations :- write function
 class InformationExtractor:
     """
     A class for extracting information from HTML files using BeautifulSoup.
@@ -61,7 +62,7 @@ class InformationExtractor:
         soup = BeautifulSoup(replace_nbsp_elements(html), 'html.parser')
         del html
 
-        tr_elements: ResultSet[any] = soup.find_all('tr')
+        tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
         last_serial: str = "Error Value!!!!"
         elements: list = []
@@ -81,7 +82,7 @@ class InformationExtractor:
                             last_serial = content
 
                 tmp.append(content)
-            link: str = element.find('a')
+            link: BeautifulSoup = element.find('a')
 
             if link:
                 absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
@@ -109,7 +110,7 @@ class InformationExtractor:
         soup = BeautifulSoup(html, 'html.parser')
         del html
 
-        figure_tr: ResultSet[any] = soup.find_all('tr')
+        figure_tr: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
         values: tuple = ()
         for tr in figure_tr:
@@ -136,6 +137,7 @@ class InformationExtractor:
 
         if not values:
             InformationExtractor.__display_info(MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
+
         return values
 
     @staticmethod
@@ -158,12 +160,23 @@ class InformationExtractor:
 
     @staticmethod
     def get_series_info(href: str) -> tuple[str, list[tuple[str, str, str, set[bytes]]]]:
+        """
+        Retrieves information about a series from an HTML file.
+
+        Parameters:
+            href (str): The path to the HTML file containing the series information.
+
+        Returns:
+            tuple[str, list[tuple[str, str, str, set[bytes]]]]: A tuple containing the "thank you" message and country variation information.
+
+        """
         html: str
         with open(href) as file:
             html = file.read()
-        
         soup = BeautifulSoup(html, 'html.parser')
-        b_text = soup.find_all('b')
+        del html
+
+        b_text: ResultSet[BeautifulSoup] = soup.find_all('b')
 
         cv_info: list[tuple[str, str, str, set[bytes]]] = None
         for text in b_text:
@@ -184,10 +197,15 @@ class InformationExtractor:
             font_element = soup.find('div', align='center')
             names: str = font_element.get_text(strip=True)
 
+            del font_element
+
             thanks_begin: int = names.find('Dank')
-            thanks_end: int = names.find('!') # This could be a potential error source
+            thanks_end: int = names.find('!') # NOTE This could be a potential error source
+
             thankings: str = names[thanks_begin:thanks_end] + "!"
             thankings = InformationExtractor.__cleanup(thankings)
+
+            del thanks_begin, thanks_end, names
             
             if not thankings:
                 InformationExtractor.__display_info(MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
@@ -198,12 +216,28 @@ class InformationExtractor:
 
     @staticmethod
     def get_country_variation_info(href: str) -> list[tuple[str, str, str, set[bytes]]]:
+        """
+        Extracts country variation information from an HTML file.
+
+        Parameters:
+            href (str): The path to the HTML file.
+
+        Returns:
+            list[tuple[str, str, str, set[bytes]]]: A list of tuples containing the extracted information.
+                Each tuple represents a country variation and contains the following elements:
+                - country (str): The country associated with the variation.
+                - year (str): The year of the variation.
+                - note (str): Additional notes or details about the variation.
+                - images (set[bytes]): A set of images associated with the variation.
+
+        """
         html: str = ""
         with open(href) as file:
             html = file.read()
         
         soup = BeautifulSoup(html, 'html.parser')
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
+        del html, soup
 
         bpz_index: int = 1
         informations: list = []
@@ -213,7 +247,7 @@ class InformationExtractor:
                 if int(td.get_text(strip=True)) == bpz_index:
                     bpz_index += 1
                     
-                    pictures = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
+                    pictures: ResultSet[BeautifulSoup] = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
 
                     images: set[bytes] = set()
                     for img in pictures:
@@ -221,6 +255,7 @@ class InformationExtractor:
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
                         image: bytes = InformationExtractor.get_image(absolut_path)
                         images.add(image)
+                    del pictures
 
                     country, year = tr.find_next('tr').get_text(strip=True).split('-')
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
@@ -231,6 +266,7 @@ class InformationExtractor:
 
                     if country is None and year is None and note is None:
                         InformationExtractor.__display_info(MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
+
                     informations.append((country, year, note, "!!!Here should be an image!!!")) # NOTE -> Add the images variable as a return-type here
             except ValueError:
                 pass
