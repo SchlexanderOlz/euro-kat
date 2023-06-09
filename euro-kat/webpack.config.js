@@ -10,7 +10,7 @@ module.exports = {
   module: {
     rules: [
     {
-      test: /\.js$/,
+      test: /\.jsx$/,
       exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
@@ -29,6 +29,14 @@ module.exports = {
       test: /\.html$/,
       loader: 'html-loader',
     },
+    // Svelte loader just as an example
+    {
+      test: /\.svelte$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'svelte-loader',
+      }
+    }
     // Add more rules for other file types as needed
   ],
  },
