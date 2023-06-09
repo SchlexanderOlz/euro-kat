@@ -4,16 +4,12 @@ from colorama import init, Fore, Style
 from enum import Enum
 import threading
 import os
+from typing import List, Dict, Union, Set
 
 init(autoreset=True)
 
 LOCK = threading.Lock()
 
-
-class MessageType(Enum):
-    ERROR = 0,
-    WARNING = 1,
-    INFO = 2
 
 
 # TODO
@@ -26,12 +22,23 @@ class InformationExtractor:
     A class for extracting information from HTML files using BeautifulSoup.
     """
 
+    class MessageType(Enum):
+        ERROR = 0
+        WARNING = 1
+        INFO = 2
+
+    class TablePosition(Enum):
+        MPG_NR = 0
+        FIGURE_NAME = 1
+        SERIES_NAME = 2
+        YEAR = 3
+
     # TODO -> Method is execting get_series_info to often
     # Should only be called for each series and not each figure
     # Can be made more efficient by calling the get_figure_content only for each
     # series (function also needs to be rewritten then)
     @staticmethod
-    def get_html_content(path: str) -> tuple[tuple[str, bool, str, set[bytes]], tuple[str, list[tuple[str, str, str, set[bytes]]]]]:
+    def get_html_content(path: str) -> List[Dict[str, Union[str, bool, Set[bytes]]]]:
         """
         Retrieves the HTML content from a file and returns a tuple with the extracted information.
 
@@ -39,7 +46,7 @@ class InformationExtractor:
             path (str): The path to the HTML file.
 
         Returns:
-            tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
+            tuple[str, bool, str, set[bytes]]: A list containing the extracted information.
         """
 
         def replace_nbsp_elements(html) -> str:
@@ -67,33 +74,42 @@ class InformationExtractor:
         last_serial: str = "Error Value!!!!"
         elements: list = []
         for element in tr_elements:
-            tmp = []
+            tmp: dict[str, str] = {}
             figure_name: str
             for i, td in enumerate(element.find_all('td')):
-                content = InformationExtractor.__cleanup(td.get_text(strip=True))
-
+                content: str = InformationExtractor.__cleanup(td.get_text(strip=True))
+                mapped_contend: dict[str, str]
                 match i:
-                    case 0:
+                    case InformationExtractor.TablePosition.MPG_NR.value:
                         figure_name = content.strip()
-                    case 2:
+                        mapped_contend = { "mpg_nr" : content }
+                    case InformationExtractor.TablePosition.SERIES_NAME.value:
                         if content == '"':
                             content = last_serial
                         else:
                             last_serial = content
+                        mapped_contend = { "series" : content }
+                    case InformationExtractor.TablePosition.FIGURE_NAME.value:
+                        mapped_contend = { "figure" : content }
+                    case InformationExtractor.TablePosition.YEAR.value:
+                        mapped_contend = { "year" : content }
+                    case _:
+                        raise RuntimeError("Invalid table-form")
 
-                tmp.append(content)
+                tmp.update(mapped_contend)
+                
             link: BeautifulSoup = element.find('a')
 
             if link:
                 absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-                tmp.append(InformationExtractor.get_series_info(absolut_path))
-                tmp.append(InformationExtractor.get_figure_content(absolut_path, figure_name))
+                tmp.update({ "series_info" : InformationExtractor.get_series_info(absolut_path) })
+                tmp.update({ "figure_info" : InformationExtractor.get_figure_content(absolut_path, figure_name) })
             elements.append(tmp)
 
         return elements
 
     @staticmethod
-    def get_figure_content(href: str, figure_id: str) -> tuple[str, bool, str, set[bytes]]:
+    def get_figure_content(href: str, figure_id: str) ->  Dict[str, Union[str, bool, Set[bytes]]]:
         """
         Retrieves the content of a specific figure from an HTML file and returns a tuple with the extracted information.
 
@@ -120,7 +136,7 @@ class InformationExtractor:
                 images = [element.get('src') for element in tr.find_all('img') if element]
 
                 if len(images) == 0:
-                    InformationExtractor.__display_info(MessageType.WARNING, f"""No Image found for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
+                    InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No Image found for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
                 b_images: set[bytes] = set()
                 for image in images:
@@ -132,11 +148,11 @@ class InformationExtractor:
                 kennung: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
                 aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
                 note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: tuple[str, bool, str, bytes] = (kennung, aufkleber, note, "!!!Here should be an image!!!")  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                values: tuple[str, bool, str, bytes] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : "!!!Here should be an image!!!" }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
                 break
 
         if not values:
-            InformationExtractor.__display_info(MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
+            InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
         return values
 
@@ -156,10 +172,10 @@ class InformationExtractor:
             with open(path, 'rb') as file:
                 return file.read()
         except FileNotFoundError:
-            InformationExtractor.__display_info(MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
 
     @staticmethod
-    def get_series_info(href: str) -> tuple[str, list[tuple[str, str, str, set[bytes]]]]:
+    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]:
         """
         Retrieves information about a series from an HTML file.
 
@@ -190,8 +206,8 @@ class InformationExtractor:
         
         if not cv_info:
             # NOTE Look at error message 2
-            InformationExtractor.__display_info(MessageType.WARNING, f"""No packageinsert information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}""")
-            InformationExtractor.__display_info(MessageType.INFO, f"""Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message""")
+            InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No packageinsert information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}""")
+            InformationExtractor.__display_info(InformationExtractor.MessageType.INFO, f"""Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message""")
 
         def get_thanks_msg() -> str:
             font_element = soup.find('div', align='center')
@@ -208,14 +224,14 @@ class InformationExtractor:
             del thanks_begin, thanks_end, names
             
             if not thankings:
-                InformationExtractor.__display_info(MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
+                InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
             return thankings
 
-        return (get_thanks_msg(), cv_info)
+        return ({ "thanks_msg" : get_thanks_msg(),  "variation_infos" : cv_info })
 
 
     @staticmethod
-    def get_country_variation_info(href: str) -> list[tuple[str, str, str, set[bytes]]]:
+    def get_country_variation_info(href: str) -> List[Dict[str, Union[str, bool, Set[bytes]]]]:
         """
         Extracts country variation information from an HTML file.
 
@@ -265,9 +281,9 @@ class InformationExtractor:
                     year = InformationExtractor.__cleanup(year)
 
                     if country is None and year is None and note is None:
-                        InformationExtractor.__display_info(MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
+                        InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
 
-                    informations.append((country, year, note, "!!!Here should be an image!!!")) # NOTE -> Add the images variable as a return-type here
+                    informations.append({ "country" : country, "year" : year, "note" : note, "image" : "!!!Here should be an image!!!" }) # NOTE -> Add the images variable as a return-type here
             except ValueError:
                 pass
         return informations
@@ -306,11 +322,11 @@ class InformationExtractor:
         with LOCK:
             begin: str
             match message_type:
-                case MessageType.ERROR:
+                case InformationExtractor.MessageType.ERROR:
                     begin = f"""{Fore.RED}[-] ERROR!{Style.RESET_ALL}:"""
-                case MessageType.WARNING:
+                case InformationExtractor.MessageType.WARNING:
                     begin = f"""{Fore.YELLOW}[~] WARNING!{Style.RESET_ALL}:"""
-                case MessageType.INFO:
+                case InformationExtractor.MessageType.INFO:
                     begin = f"""{Fore.BLUE}[*] INFO {Style.RESET_ALL}:"""
 
             print(begin + message)

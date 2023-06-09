@@ -14,7 +14,7 @@ class Scraper:
 
         def execute_and_print(callback: Callable, param: str) -> None:
             result = callback(param)
-            results.append(result)
+            results.extend(result)
 
         for src in SRCES:
             thread = threading.Thread(target=execute_and_print, args=(InformationExtractor.get_html_content, src))
