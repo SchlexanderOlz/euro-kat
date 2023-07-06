@@ -19,7 +19,7 @@
 	};
 </script>
 
-<button class="btn variant-ringed select-none" use:popup={popupCombobox}>
+<button class="btn variant-ringed mx-1 select-none" use:popup={popupCombobox}>
 	{title}
 	<DownIcon/>
 </button>
