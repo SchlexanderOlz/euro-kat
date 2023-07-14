@@ -231,7 +231,7 @@ class InformationExtractor:
 
 
     @staticmethod
-    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, List[bytes]]]]]]:
+    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]:
         """
         Retrieves information about a series from an HTML file.
 

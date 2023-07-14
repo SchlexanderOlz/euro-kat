@@ -4,7 +4,7 @@ import threading
 import sys
 import json
 
-SRCES: list[str] = ["C:/Users/Andreas Deutsch/Desktop/business/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
+SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
 
 class Scraper:
     @staticmethod
