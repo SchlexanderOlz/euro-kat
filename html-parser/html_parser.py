@@ -95,16 +95,16 @@ class InformationExtractor:
                         mapped_contend = { "year" : content }
                     case _:
                         raise RuntimeError("Invalid table-form")
-
-                tmp.update(mapped_contend)
+                if figure_name != "???":
+                    tmp.update(mapped_contend)
                 
             link: BeautifulSoup = element.find('a')
 
             if link:
                 absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-                tmp.update({ "series_info" : InformationExtractor.get_series_info(absolut_path) })
                 tmp.update({ "figure_info" : InformationExtractor.get_figure_content(absolut_path, figure_name) })
-            elements.append(tmp)
+            if tmp:    
+                elements.append(tmp)
 
         return elements
 
@@ -148,7 +148,9 @@ class InformationExtractor:
                 kennung: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
                 aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
                 note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: tuple[str, bool, str, bytes] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : "!!!Here should be an image!!!" }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : "!!!Here should be an image!!!" }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                
+                
                 break
 
         if not values:
@@ -174,8 +176,62 @@ class InformationExtractor:
         except FileNotFoundError:
             InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
 
+
+
+
     @staticmethod
-    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]:
+    def get_series_content(path: str) -> List[Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]]:
+
+        def replace_nbsp_elements(html) -> str:
+            soup = BeautifulSoup(html, 'html.parser')
+            for element in soup.find_all(text=lambda t: t == '\xa0'):
+                element.replace_with('???')
+            return str(soup)
+
+
+        html: str = ""
+        with open(path) as file:
+            html = file.read()
+
+        soup = BeautifulSoup(replace_nbsp_elements(html), 'html.parser')
+        del html
+
+        tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
+
+        elements: list = []
+        for element in tr_elements:
+            element_is_valid = False
+            tmp: dict[str, str] = {}
+            for i, td in enumerate(element.find_all('td')):
+                content: str = InformationExtractor.__cleanup(td.get_text(strip=True))
+                mapped_contend: dict[str, str] = []
+                match i:
+                    case InformationExtractor.TablePosition.SERIES_NAME.value:
+                        if content != '"':
+                            element_is_valid = True
+                            mapped_contend = { "series" : content }
+                if len(mapped_contend) and content != "???" and element_is_valid:
+                    tmp.update(mapped_contend)
+            if element_is_valid:    
+                link: BeautifulSoup = element.find('a')
+
+            if link and element_is_valid:
+                absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
+                tmp.update({ "series_info" : InformationExtractor.get_series_info(absolut_path) })
+            is_not_part = True
+            for item in elements:
+                if item == tmp:
+                    is_not_part = False
+            if is_not_part and tmp:
+                elements.append(tmp)
+
+        return elements
+
+
+
+
+    @staticmethod
+    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, List[bytes]]]]]]:
         """
         Retrieves information about a series from an HTML file.
 
