@@ -149,8 +149,6 @@ class InformationExtractor:
                 aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
                 note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
                 values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : "!!!Here should be an image!!!" }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
-                
-                
                 break
 
         if not values:
@@ -252,18 +250,22 @@ class InformationExtractor:
 
         cv_info: list[tuple[str, str, str, set[bytes]]] = None
         for text in b_text:
-            if "Beipackzettel" in text.get_text(strip=True):
+            if "beipackzettel" in text.get_text(strip=True).lower() or "bpz" in text.get_text(strip=True).lower():
                 found = text.find_next('a')
 
                 if found:
                     link = found.get('href')
                     absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
                     cv_info = InformationExtractor.get_country_variation_info(absolut_path)
-        
+
+
+        pckgi_info: list = None
         if not cv_info:
-            # NOTE Look at error message 2
-            InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No packageinsert information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}""")
-            InformationExtractor.__display_info(InformationExtractor.MessageType.INFO, f"""Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message""")
+            # InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"No country-variation information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}")
+            pckgi_info = InformationExtractor.get_pi_backside(href)
+            if not pckgi_info:
+                InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"None of the package-insert patterns matched for {Fore.BLUE}{href}{Style.RESET_ALL}")
+            # InformationExtractor.__display_info(InformationExtractor.MessageType.INFO, f"Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message")
 
         def get_thanks_msg() -> str:
             font_element = soup.find('div', align='center')
@@ -283,11 +285,52 @@ class InformationExtractor:
                 InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
             return thankings
 
-        return ({ "thanks_msg" : get_thanks_msg(),  "variation_infos" : cv_info })
+        data_dict: dict = { "thanks_msg" : get_thanks_msg()}
+        if cv_info:
+            data_dict.update({"variation_infos" : cv_info})
+
+        if pckgi_info:
+            data_dict.update({"pckgi" : pckgi_info})
+
+        return data_dict
 
 
     @staticmethod
-    def get_country_variation_info(href: str) -> List[Dict[str, Union[str, bool, Set[bytes]]]]:
+    def get_pi_backside(href: str):
+        html: str = ""
+        try:
+            with open(href) as content:
+                html = content.read()
+        except Exception as e:
+            return None
+
+        soup: BeautifulSoup = BeautifulSoup(html, 'html.parser')
+        
+        tds: ResultSet[BeautifulSoup] = soup.find_all("td")
+        imgs: ResultSet[BeautifulSoup] = soup.find_all("img")
+        
+        img_srces: list[dict[str, bytes]] = []
+        for img in imgs:
+            img_srces.append(img.get("src"))
+
+        resolved_images: list[dict[str, bytes]] = []
+        for td in tds:
+            mpg_nr: str = None
+            try: 
+                mpg_nr = td.find("b").get_text(strip=True)
+            except AttributeError as e:
+                continue
+
+            for src in img_srces:
+                if src.find(mpg_nr) == -1:
+                    continue
+                # resolved_images.append({ mpg_nr: InformationExtractor.get_image(InformationExtractor.__join_paths("../" + src, href))})
+                resolved_images.append({ mpg_nr : "Here should be an image" })
+        return resolved_images
+
+
+    @staticmethod
+    def get_country_variation_info(href: str) -> List[Dict[str, Union[str, bool, Set[bytes], List[Dict[str, bytes]]]]]:
         """
         Extracts country variation information from an HTML file.
 
@@ -318,7 +361,6 @@ class InformationExtractor:
             try:
                 if int(td.get_text(strip=True)) == bpz_index:
                     bpz_index += 1
-                    
                     pictures: ResultSet[BeautifulSoup] = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
 
                     images: set[bytes] = set()
@@ -331,7 +373,9 @@ class InformationExtractor:
 
                     country, year = tr.find_next('tr').get_text(strip=True).split('-')
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
-                    
+                    bpz_link: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find('a').get('href')
+                    bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + bpz_link, href))
+
                     note = InformationExtractor.__cleanup(note)
                     country = InformationExtractor.__cleanup(country)
                     year = InformationExtractor.__cleanup(year)
@@ -339,7 +383,7 @@ class InformationExtractor:
                     if country is None and year is None and note is None:
                         InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
 
-                    informations.append({ "country" : country, "year" : year, "note" : note, "image" : "!!!Here should be an image!!!" }) # NOTE -> Add the images variable as a return-type here
+                    informations.append({ "country" : country, "year" : year, "note" : note, "image" : "!!!Here should be an image!!!", "pckgi" : bpz_info }) # NOTE -> Add the images variable as a return-type here
             except ValueError:
                 pass
         return informations

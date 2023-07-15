@@ -1,0 +1,16 @@
+    @staticmethod
+    def get_pure_package_info(href: str):
+        html: str
+        with open(href) as file:
+            html = file.read()
+        soup: BeautifulSoup = BeautifulSoup(html)
+        trs: ResultSet[BeautifulSoup] = soup.find_all('tr')
+        del html, soup
+        
+        last1, last2 = ""
+        for tr in trs:
+            text: ResultSet[BeautifulSoup] = tr.find_all('b')
+            if not text:
+                if not last1: last1 = tr.find('td').find('img').get('src')
+                
+        

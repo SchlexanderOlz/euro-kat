@@ -8,16 +8,15 @@ SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
 
 class Scraper:
     @staticmethod
-    def get_html_content() -> list[list[str]]:
+    def get_html_content(buff: list) -> list[list[str]]:
         threads: list[threading.Thread] = []
-        results: list[list[str]] = []
 
         def execute_and_print(callback: Callable, param: str) -> None:
             result = callback(param)
             """for el in result:
                 print(el)
                 print("\n\n")"""
-            results.extend(result)
+            buff.extend(result)
 
         for src in SRCES:
             thread = threading.Thread(target=execute_and_print, args=(InformationExtractor.get_html_content, src))
@@ -28,21 +27,18 @@ class Scraper:
 
         for thread in threads:
             thread.join()
-
-        return results
     
 
     @staticmethod
-    def get_series_content() -> list[list[str]]:
+    def get_series_content(buff: list) -> list[list[str]]:
         threads: list[threading.Thread] = []
-        results: list[list[str]] = []
 
         def execute_and_print(callback: Callable, param: str) -> None:
             result = callback(param)
             """for el in result:
                 print(el)
                 print("\n\n")"""
-            results.extend(result)
+            buff.extend(result)
 
         for src in SRCES:
             thread = threading.Thread(target=execute_and_print, args=(InformationExtractor.get_series_content, src))
@@ -54,7 +50,6 @@ class Scraper:
         for thread in threads:
             thread.join()
 
-        return results
 
     
     @staticmethod
@@ -78,10 +73,18 @@ class SetEncoder(json.JSONEncoder):
 
 if __name__ == "__main__":
     try:
-        data = Scraper.get_html_content()
-        Scraper.save_to_json(data)
-        series = Scraper.get_series_content()
-        Scraper.save_series_to_json(series)
+        html_buff: list = []
+        html_content_thread = threading.Thread(target=Scraper.get_html_content, args=(html_buff, ))
+        html_content_thread.start()
+
+        series_buff: list = []
+        series_content_thread = threading.Thread(target=Scraper.get_series_content, args=(series_buff, ))
+        series_content_thread.start()
+
+        html_content_thread.join()
+        series_content_thread.join()
+        Scraper.save_to_json(html_buff)
+        Scraper.save_series_to_json(series_buff)
     except KeyboardInterrupt:
         print("Ctrl+C received. Exiting...")
         sys.exit(0)
