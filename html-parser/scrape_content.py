@@ -3,6 +3,7 @@ from typing import Callable
 import threading
 import sys
 import json
+import base64
 
 SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
 
@@ -70,41 +71,45 @@ class Scraper:
 
     @staticmethod
     def join_files(data_file: list, series_file: list):
-        # EXAMPLE CODE
-        # Code should not be used like this in production. This is just a temporary change with bad performance.
-
-        # What is missing (TODO):
-        # The data is not beeing saved to another variable currently.
-        # Not sure if the key-errors will actually catch all the right things -> Could be insecure
-
-        # Maybe look for different/original sollution where the series was directly merged with the rest of the data -> This current function will be inefficient no matter how optimized
         for series in series_file:
             try:
-                for variation_info in series["variation_infos"]:
-                    for pckgi in variation_info["pckgi"]:
-                        for key in pckgi.keys():
-                            pic = pckgi[key]
-                            for data in data_file:
-                                if data["mpg_nr"] == key:
-                                    pckgi = data # Put the newly formed data into a variable
-                                    pckgi.update({"picture": pic})
+                for variation_infos in series["series_info"]["variation_infos"]:
+                    if "pckgi" in variation_infos:
+                        for keys_list in variation_infos["pckgi"]:
+                            for key in keys_list.keys():
+                                pic = keys_list[key]
+                                for data in data_file:
+                                    if data["mpg_nr"] == key:
+                                        value = data 
+                                        value.update({"picture": pic})
+                                        keys_list[key] = value
+
             except KeyError:
                 try:
-                    for pckgi in series["pckgi"]:
-                        for key in pckgi.keys():
-                            pic = pckgi[key]
+                    for pckgi_list in series["series_info"]["pckgi"]:
+                        for key in pckgi_list.keys():
+                            pic = pckgi_list[key]
                             for data in data_file:
                                 if data["mpg_nr"] == key:
-                                    pckgi = data
-                                    pckgi.update({"picture": pic})
+                                    value = data
+                                    value.update({"picture": pic})
+                                    pckgi_list[key] = value
                 except Exception:
-                    pass
+                    #print(series)
+                    pass # series for which no figure has a valid link get skipped
+        return series_file
+                            
+                        
+
+
 
 
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
-            return list(obj)  # Convert set to list
+            return list(obj)
+        if isinstance(obj, bytes):
+            return base64.b64encode(obj).decode('utf-8')
         return super().default(obj)
 
 
@@ -125,8 +130,11 @@ if __name__ == "__main__":
         html_content_thread.join()
         series_content_thread.join()
 
-        Scraper.join_files(html_buff, series_buff)
+        
+
+        series_data = Scraper.join_files(html_buff[1:], series_buff[1:])
         Scraper.save_to_json(html_buff)
+        Scraper.save_series_to_json(series_data)
     except KeyboardInterrupt:
         print("Ctrl+C received. Exiting...")
         sys.exit(0)

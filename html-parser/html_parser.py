@@ -148,7 +148,7 @@ class InformationExtractor:
                 kennung: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
                 aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
                 note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : "!!!Here should be an image!!!" }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : b_images }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
                 break
 
         if not values:
@@ -324,8 +324,8 @@ class InformationExtractor:
             for src in img_srces:
                 if src.find(mpg_nr) == -1:
                     continue
-                # resolved_images.append({ mpg_nr: InformationExtractor.get_image(InformationExtractor.__join_paths("../" + src, href))})
-                resolved_images.append({ mpg_nr : "Here should be an image" })
+                resolved_images.append({ mpg_nr: InformationExtractor.get_image(InformationExtractor.__join_paths("../" + src, href))})
+                #resolved_images.append({ mpg_nr : "Here should be an image" })
         return resolved_images
 
 
@@ -382,8 +382,8 @@ class InformationExtractor:
 
                     if country is None and year is None and note is None:
                         InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
-
-                    informations.append({ "country" : country, "year" : year, "note" : note, "image" : "!!!Here should be an image!!!", "pckgi" : bpz_info }) # NOTE -> Add the images variable as a return-type here
+    	            
+                    informations.append({ "country" : country, "year" : year, "note" : note, "images" : images, "pckgi" : bpz_info }) # NOTE -> Add the images variable as a return-type here
             except ValueError:
                 pass
         return informations
