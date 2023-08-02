@@ -43,7 +43,7 @@ import Nav from './Nav.svelte';
 
 <AppBar>
   <svelte:fragment slot="lead">
-    Svelte-Kat
+    <img class="h-14" src="src/logo_klein.png" alt="">
   </svelte:fragment>
   <div class="w-max content-center">
   {#each navitems as navitem}
