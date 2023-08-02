@@ -181,6 +181,7 @@ const FigureInOtherCountries = sequelize.define("FigureInOtherCountries", {
   },
 });
 
+
 const FigurePicture = sequelize.define("FigurePicture")
 
 Series.hasMany(SubSeries)
