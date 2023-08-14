@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getPartners } from "$lib/PocketBase";
 </script>
 
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
