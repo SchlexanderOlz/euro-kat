@@ -1,6 +1,6 @@
 export interface Figure {
-	figureId: Number;
-	mpgNr: Number;
+	figureId: number;
+	mpgNr: number;
 	figureName: string;
 	fake: boolean;
 	sticker: boolean;
@@ -13,9 +13,9 @@ export interface Figure {
 }
 
 export interface CountryVariation {
-	countryVariationId: Number;
+	countryVariationId: number;
 	country: Country;
-	year: Number;
+	year: number;
 	note: string;
 }
 
@@ -25,11 +25,11 @@ export interface PackageInsert {
 }
 
 export interface SubSeries {
-	subSeriesId: Number;
+	subSeriesId: number;
 	serialName: string;
 	country: Country;
 	thanks: string;
-	releaseYear: Number;
+	releaseYear: number;
 	packaging: Packaging;
 	figures: Figure[];
 }
@@ -40,25 +40,25 @@ export interface Packaging {
 }
 
 export interface Series {
-	seriesId: Number;
+	seriesId: number;
 	idLetters: string;
-	year: Number;
+	year: number;
 	subSeries: SubSeries[];
 }
 
 export interface Variation {
-	variationId: Number;
+	variationId: number;
 	variation: string;
 	picture: string; // Base64 string
 }
 
 export interface Series {
-	seriesId: Number;
+	seriesId: number;
 	idLetters: string;
-	year: Number;
+	year: number;
 }
 
 export interface Country {
-	id: Number;
+	id: number;
 	countryName: string;
 }
