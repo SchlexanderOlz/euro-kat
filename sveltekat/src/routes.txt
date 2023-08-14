@@ -1,0 +1,10 @@
+Hauptseite:         /         = Startseite
+Info:               /info     = Info
+Figuren:            /figures  = D + Welt aktuell, D + Welt ab 2004 (dies und das?), Kinder Joy *, HP+BPZ, 
+News:               /news     = Berichte
+Spezial:            /special  = Warnhinweiszettel, Zusatzwarnzettel, Maxi-Inhalte
+Legacy ( < 2004 ):  /legacy   = D + Welt, Rubriken
+
+offen = 
+
+Footer = Quellen, Links, Das Team, E-Mail, Impressum/Datenschutz
