@@ -40,7 +40,7 @@ const packageInserts: PackageInsert = {
 	picture: ['This is a picture']
 };
 
-const figures: Figure[] = [
+export const figures: Figure[] = [
 	{
 		figureId: 10,
 		mpgNr: 2349,
@@ -49,6 +49,19 @@ const figures: Figure[] = [
 		sticker: false,
 		identifier: true,
 		note: 'Nice cook',
+		variation: variation,
+		pictures: ['a picture 1', 'a picture 2'],
+		countryVariations: [countryVariation],
+		packageInserts: [packageInserts, packageInserts]
+	},
+	{
+		figureId: 11,
+		mpgNr: 2350,
+		figureName: 'Dein dad',
+		fake: true,
+		sticker: false,
+		identifier: true,
+		note: 'Nice cock',
 		variation: variation,
 		pictures: ['a picture 1', 'a picture 2'],
 		countryVariations: [countryVariation],
