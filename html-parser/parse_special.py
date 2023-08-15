@@ -7,7 +7,8 @@ import threading
 import os
 import re
 
-class SpecialParser:
+
+class WarningParser:
 
     @staticmethod
     def parse_deez(href: str):
@@ -19,7 +20,7 @@ class SpecialParser:
         for ref in soup.find_all("a"):
             nuts: dict
             try:
-                nuts = SpecialParser.nuts(os.path.normpath(os.path.join(href, "../" + ref.get("href"))))
+                nuts = WarningParser.nuts(os.path.normpath(os.path.join(href, "../" + ref.get("href"))))
             except Exception as e:
                 continue
             name: str = ref.get_text(strip=True)
@@ -43,7 +44,7 @@ class SpecialParser:
             result.update({ "numbered" : bool(re.search(r'\d', href))})
             match b.get_text(strip=True).strip():
                 case "Allgemeines:":
-                    joined_ps: str = SpecialParser.join_tags(soup, "p")
+                    joined_ps: str = WarningParser.join_tags(soup, "p")
                     result.update({ "general" : joined_ps })
                     continue
                 case "Adresskopf:":
@@ -64,12 +65,77 @@ class SpecialParser:
                     result.update({ "format" : element.get_text(strip=True)})
                     continue
                 case "Bekannte Varianten:":
-                    result.update({ "variations" : SpecialParser.join_tags(b, "p")})
+                    result.update({ "variations" : WarningParser.join_tags(b, "p")})
                     continue
                 case x:
                     print("Failed to process " + x)
 
         return result
 
+class ExtraParser:
+
+    @staticmethod
+    def sugg_on(href: str):
+        soup: BeautifulSoup
+        with open(href) as file:
+            soup = BeautifulSoup(file.read(), "html.parser")
+        result: dict = {}
+        for a in soup.find_all("a"):
+            try:
+                result.update({ "data" : ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href")))) })
+            except Exception as e:
+                pass
+        print(result)
+
+
+    @staticmethod
+    def deez(href: str):
+        soup: BeautifulSoup
+        with open(href) as file:
+            soup = BeautifulSoup(file.read(), "html.parser")
+
+        result: dict = {}
+        for td in soup.find_all("td"):
+            b: BeautifulSoup = td.find("b") 
+            if not b: continue
+            match b.get_text(strip=True).strip():
+                case "Warntext:":
+                    result.update({ "text" : td.find_next("td").get_text(strip=True).replace("\t", "") })
+                    continue
+                case "Kennzeichnung:":
+                    result.update({ "id" : td.find_next("td").get_text(strip=True) }) 
+                    continue
+                case "Adresskopf:":
+                    result.update({ "address" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                    continue
+                case "Format:":
+                    result.update({ "format" : td.find_next("td").get_text(strip=True) })
+                    continue
+                case "Jahrgang:":
+                    result.update({ "year" : int(td.find_next("td").get_text(strip=True)) })
+                    continue
+                case "Hinweis:":
+                    result.update({ "note" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                    continue
+                case x:
+                    if "serie" in x.lower(): 
+                        result.update({ "series" : td.find_next("td").get_text(strip=True) })
+                        continue
+                    if "dank" in x.lower():
+                        result.update({ "thanks" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                        continue
+                    if "typ" in x.lower():
+                        text: str = td.find_next("td").get_text(strip=True).replace("\t", "")
+                        match result.get("types"):
+                            case None:
+                                result.update({ "types" : [text] })
+                                continue
+                            case y:
+                                y.append(text)
+                                continue
+                    print("failed to parse" + x)
+        return result
+        
 if __name__ == "__main__":
-    SpecialParser().parse_deez("tmp-files/warnhinweise.html")
+    WarningParser.parse_deez("tmp-files/warnhinweise.html")
+    ExtraParser.sugg_on("tmp-files/zusatz.html")
