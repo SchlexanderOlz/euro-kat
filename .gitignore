@@ -132,3 +132,4 @@ dist
 __pycache__
 data.json
 series.json
+tmp-files/

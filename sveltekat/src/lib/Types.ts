@@ -10,6 +10,7 @@ export interface Figure {
 	pictures: string[]; // Pictues are Base64 encoded
 	countryVariations: CountryVariation[];
 	packageInserts: PackageInsert[];
+  releaseYear: string;
 }
 
 export interface CountryVariation {

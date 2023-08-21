@@ -52,7 +52,8 @@ export const figures: Figure[] = [
 		variation: variation,
 		pictures: ['a picture 1', 'a picture 2'],
 		countryVariations: [countryVariation],
-		packageInserts: [packageInserts, packageInserts]
+		packageInserts: [packageInserts, packageInserts],
+    releaseYear: "2020"
 	},
 	{
 		figureId: 11,
@@ -65,7 +66,8 @@ export const figures: Figure[] = [
 		variation: variation,
 		pictures: ['a picture 1', 'a picture 2'],
 		countryVariations: [countryVariation],
-		packageInserts: [packageInserts, packageInserts]
+		packageInserts: [packageInserts, packageInserts],
+    releaseYear: "2022"
 	}
 ];
 
@@ -85,7 +87,7 @@ const series: Series = {
 	subSeries: [subSeries, subSeries]
 };
 
-const pb: PocketBase = new PocketBase('http://127.0.0.1:8090');
+export const connection: PocketBase = new PocketBase('http://127.0.0.1:8090');
 
 export async function getSubSeriesByLetter(seriesLetter: string): Promise<SubSeries> {
 	if (seriesLetter === 'soos') {
@@ -101,3 +103,4 @@ export async function getSeries(): Promise<Series> {
 export async function getFigureOfSeries(series: string) {
 	return figures;
 }
+
