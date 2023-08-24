@@ -10,7 +10,6 @@ import type {
 	CountryVariation,
 	PackageInsert
 } from './Types';
-import type { List } from "postcss/lib/list";
 
 
 class FigurFilterBuilder {
@@ -25,8 +24,24 @@ class FigurFilterBuilder {
     this.filter.add("fake=true") 
   }
 
+  sticker() {
+    this.filter.add("sticker=true")
+  }
+
+  countryVariation(country : Country) {
+    this.filter.add(`countryVariations.country=${country}`)
+  }
+
+  year(year : number){
+    this.filter.add(`year=${year}`)
+  }
+
+  mpgnumber(mpgNum: number){
+    this.filter.add(`mpgNr=${mpgNum}`)
+  }
+
   async run() : Promise<Figure[]> {
     // Remove this implicit copy -> f.e. manull iteration
-    return await this.figureCollection.getFullList({ "filter" : Array.from(this.filter).join("&&") });
+    return await this.figureCollection.getFullList({ "filter" : Array.from(this.filter).join(" && ") });
   }
 }
