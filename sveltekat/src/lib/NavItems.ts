@@ -19,11 +19,11 @@ export const NavItems: Item[] = [
 		references: { Warnhinweiszettel: '/wzh', Zusatzwarnzettel: '/zwz', 'Maxi-Inhalte': '/maxi' }
 	},
 	{
-		title: 'Legacy',
-		references: { '': '/legacy' }
-	},
-	{
 		title: 'Info',
 		references: { '': '/info' }
+	},
+	{
+		title: 'Legacy',
+		references: { '': '/legacy' }
 	}
 ];
