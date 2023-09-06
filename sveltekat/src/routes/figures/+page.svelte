@@ -9,7 +9,7 @@
 
 <div class="h-full w-full px-16 pt-12">
 	<FigureList>
-		{#each figures as figure (figure.figureId)}
+		{#each figures as figure (figure.id)}
 			<FigureListItem {figure} />
 		{/each}
 	</FigureList>
