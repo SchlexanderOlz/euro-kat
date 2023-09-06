@@ -9,5 +9,5 @@
     <p class="w-32">{figure.figureName}</p>
     <p class="opacity-50">Note: {figure.note}</p>
   </div>
-  <p class="w-32 text-right"><span class="opacity-50">Nr: </span>#{figure.figureId}</p>
+  <p class="w-32 text-right"><span class="opacity-50">Nr: </span>#{figure.mpgNr}</p>
 </div>
