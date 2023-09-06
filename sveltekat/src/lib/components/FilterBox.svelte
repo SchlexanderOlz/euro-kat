@@ -40,7 +40,9 @@
 				name="medium"
 				aria-label="{filter}"
 				value={filter}
-				on:click={() => updateSearchParams('filter', filter)}
+				on:click={() => {
+					updateSearchParams('filter', filter);
+			}}
 				>{filter}</ListBoxItem
 			>
 		{/each}
