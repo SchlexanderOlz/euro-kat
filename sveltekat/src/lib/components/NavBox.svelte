@@ -19,7 +19,7 @@
 	};
 </script>
 
-<button class="btn variant-ringed ml-1 select-none" use:popup={popupCombobox}>
+<button class="btn variant-ringed mx-1 select-none" use:popup={popupCombobox}>
 	{item.title}<DownIcon />
 </button>
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
