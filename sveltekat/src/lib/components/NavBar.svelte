@@ -17,7 +17,7 @@
 			/>
 		</a>
 	</svelte:fragment>
-	<div class="w-max content-center">
+	<div class="w-max content-center select-none">
 		{#each NavItems as item}
 			{#if Object.keys(item.references).length > 1}
 				<NavBox {item} />
