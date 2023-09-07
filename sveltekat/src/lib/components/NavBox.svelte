@@ -25,7 +25,7 @@
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
 	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
-		<a href={item.references[reference]}>
+		<a href={item.references[reference]} data-sveltekit-preload-data>
 			<ListBoxItem
 			class=""
 			active="variant-ringed-surface"
