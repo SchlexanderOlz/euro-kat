@@ -27,6 +27,8 @@
 		{/each}
 	</div>
 	<svelte:fragment slot="trail">
-		<LightSwitch />
+		<div class="mr-4">
+			<LightSwitch />
+		</div>
 	</svelte:fragment>
 </AppBar>
