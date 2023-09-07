@@ -9,7 +9,7 @@
 	import type { Item } from '$lib/NavItems';
 
 	export let item: Item;
-	let testvalue = '';
+	let testvalue = $page.url.pathname || '';
 
 	const popupCombobox: PopupSettings = {
 		event: 'click',
@@ -23,20 +23,23 @@
 	{item.title}<DownIcon />
 </button>
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
-	<ListBox rounded="rounded-none">
+	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
+		<a href={item.references[reference]}>
 			<ListBoxItem
-				class=""
-				active="variant-ringed-surface rounded-md"
-				bind:group={testvalue}
-				name="medium"
-				value={item.references[reference]}
-				on:click={() => {
-					console.log(item.references[reference]);
-				}}
-			>
-				{reference}</ListBoxItem
-			>
+			class=""
+			active="variant-ringed-surface"
+			bind:group={testvalue}
+			name="medium"
+			value={item.references[reference]}
+			on:click={() => {
+				console.log(item.references[reference]);
+			}}
+		>
+			{reference}</ListBoxItem
+		>
+		</a>
+			
 		{/each}
 	</ListBox>
 </div>

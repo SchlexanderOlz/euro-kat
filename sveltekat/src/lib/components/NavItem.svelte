@@ -4,4 +4,4 @@
   export let item: Item;
 </script>
 
-<a class="btn variant-ringed mx-1 select-none" href={item.references['']}>{item.title}</a>
+<a data-sveltekit-preload-data class="btn variant-ringed mx-1 select-none" href={item.references['']}>{item.title}</a>
