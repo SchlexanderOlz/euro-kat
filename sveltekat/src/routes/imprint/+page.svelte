@@ -4,6 +4,7 @@
 
 <div class="w-full flex flex-col items-center text-left mt-6 px-[10%] cursor-default text-surface-900-50-token">
 	<h1 class="h1 mb-5 select-none">Impressum</h1>
+    <p class="text-red-600 text-3xl w-full flex justify-center font-bold">Bitte drüber lesen</p>
     <div class="w-max text-left">
         <p>Betreiber und verantwortlicher im datenschutzrechtlichen Sinne:<br/>
             Helmut J.F.Henze<br/>
