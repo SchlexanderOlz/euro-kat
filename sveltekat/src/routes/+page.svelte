@@ -3,9 +3,9 @@
 
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
-<h1 class="h1 text-8xl w-full justify-center flex mt-6 mb-8">Euro-Katalog</h1>
+<h1 class="h1 text-8xl w-full justify-center flex mt-6 mb-8 cursor-default">Euro-Katalog</h1>
 
-<div class="w-full flex items-center flex-col">
+<div class="w-full flex items-center flex-col cursor-default">
 	<div class="flex card p-2 mx-4 mt-4 w-[60%]">
 		<img class="h-36" alt="helmut" src="images/helmut.jpg" />
 		<div class="ml-4 text-xl">
@@ -32,5 +32,5 @@
 			so teilen Sie mir dieses in der Mail mit.
 		</span>
 	</p>
-	<p class="absolute bottom-32">Weitere Informationen und die DSGVO konforme Datenschutzerklärung finden Sie unter <a class="underline" href="/impressum">Impressum/Datenschutz.</a></p>
+	<p class="mt-8">Weitere Informationen und die DSGVO konforme Datenschutzerklärung finden Sie unter <a class="underline" href="/data-protection">Datenschutz.</a></p>
 </div>
