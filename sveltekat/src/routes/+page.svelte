@@ -3,7 +3,7 @@
 
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
-<h1 class="h1 text-8xl w-full justify-center flex mt-4 mb-8">Euro-Katalog</h1>
+<h1 class="h1 text-8xl w-full justify-center flex mt-6 mb-8">Euro-Katalog</h1>
 
 <div class="w-full flex items-center flex-col">
 	<div class="flex card p-2 mx-4 mt-4 w-[60%]">
