@@ -7,13 +7,15 @@
 
 <AppBar padding="p-0">
 	<svelte:fragment slot="lead">
-		<img
-			class="h-14 w-auto m-2 -mr-1 hover:scale-110 duration-150 cursor-pointer"
-			src="images/logo_klein.png"
-			alt="Elefant"
-			width="124px"
-			height="120px"
-		/>
+		<a href="/">
+			<img
+				class="h-14 w-auto m-2 -mr-1 hover:scale-110 duration-150 cursor-pointer"
+				src="images/logo_klein.png"
+				alt="Elefant"
+				width="124px"
+				height="120px"
+			/>
+		</a>
 	</svelte:fragment>
 	<div class="w-max content-center">
 		{#each NavItems as item}
