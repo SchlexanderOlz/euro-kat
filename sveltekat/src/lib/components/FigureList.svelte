@@ -31,7 +31,7 @@
 
 <div>
 
-  <div class="flex mb-3">
+  <div class="flex flex-col sm:flex-row mb-3">
     <div class="w-full mr-2 relative">
       <input bind:value={inputValue} on:input={updateResults} class="input w-full " placeholder="Suche">
       <button class="btn absolute right-0 variant-ringed  ring-opacity-30" on:click={updateResults}>Los</button>

@@ -5,6 +5,7 @@
 
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import FilterIcon from '$lib/icons/FilterIcon.svelte';
 
 	const updateSearchParams = (key: string, value: string) => {
 		const searchParams = new URLSearchParams($page.url.searchParams);
@@ -28,8 +29,8 @@
   let filterSelect = '';
 </script>
 
-<button class="btn variant-filled select-none" use:popup={popupCombobox}>
-	Filter
+<button class="btn variant-filled select-none sm:mt-0 mt-1" use:popup={popupCombobox}>
+	Filter <span class="ml-2 -mr-2"><FilterIcon/></span>
 </button>
 <div class="card text-xl shadow-xl select-none" data-popup="genbox">
 	<ListBox rounded="rounded-lg">
