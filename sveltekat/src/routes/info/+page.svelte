@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div class="w-full flex flex-col items-center mt-6 px-[10%]">
+<div class="w-full flex flex-col items-center mt-6 px-[10%] mb-16">
 	<h1 class="h1">Etwas über diese Seite</h1>
 	<p class="mt-8">
 		Seit über 10 Jahren gibt es "<span class="font-bold">Helmut's Sammlerseiten</span>" als
