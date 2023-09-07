@@ -2,7 +2,7 @@
 </script>
 
 <div class="mx-[10%] cursor-default">
-    <h1 class="justify-center w-full flex h1 mt-6 mb-8">Datenschutzerklärung</h1>
+    <h1 class="justify-center w-full flex h1 mt-6 mb-8 break-all text-center">Datenschutzerklärung</h1>
     <p class="text-red-600 text-3xl w-full flex justify-center font-bold">Bitte drüber lesen</p>
     <p>
         Personenbezogene Daten (nachfolgend zumeist nur „Daten“ genannt) werden von mir (Anbieter) durch
