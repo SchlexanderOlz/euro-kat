@@ -16,7 +16,7 @@
 		},
 		{
 			title: 'Email',
-			link: '/email'
+			link: 'mailto:test@gmail.com'
 		},
 		{
 			title: 'Impressum',
