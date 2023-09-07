@@ -2,7 +2,7 @@
 </script>
 
 
-<div class="w-full flex flex-col items-center text-left mt-6 px-[10%] cursor-default">
+<div class="w-full flex flex-col items-center text-left mt-6 px-[10%] cursor-default text-surface-900-50-token">
 	<h1 class="h1 mb-5 select-none">Impressum</h1>
     <div class="w-max text-left">
         <p>Betreiber und verantwortlicher im datenschutzrechtlichen Sinne:<br/>
