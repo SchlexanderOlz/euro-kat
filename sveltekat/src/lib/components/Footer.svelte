@@ -30,9 +30,9 @@
 </script>
 
 <AppBar>
-  <div class="flex flex-row w-screen">
+  <div class="flex flex-row flex-wrap w-screen justify-evenly pr-8">
 		{#each options as option}
-			<a href={option.link} class="m-auto underline">{option.title}</a>
+			<a href={option.link} class="mx-2 underline">{option.title}</a>
 		{/each}
 	</div>
 </AppBar>

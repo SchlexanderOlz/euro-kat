@@ -3,12 +3,12 @@
 
 <div class="w-full flex flex-col px-[10%] cursor-default items-center">
 	<h1 class="h1 mb-4 mt-8 w-full flex justify-center">Links</h1>
-    <p>
+    <p class="text-center">
         Hier findet Ihr Links zu anderen Seiten die ich des Öfteren aufsuche und aus dem einen oder
         anderem Grund für interessant halte. Ich möchte die Seiten nicht kommentieren, sondern gebe
         höchstens mir wichtige Inhaltsangaben zur Orientierung.
     </p>
-	<div class="flex mt-4">
+	<div class="flex sm:flex-row flex-col mt-4">
         
 		<div class="">
 			<p class="text-lg font-bold mb-2">Meine TOP-Info Seiten</p>
@@ -85,7 +85,7 @@
 				>
 			</div>
 		</div>
-		<div class="ml-16">
+		<div class="sm:ml-16 sm:mb-0 mb-8">
 			<p class="text-lg font-bold mb-2">Links</p>
             <p class="font-semibold">Online-Kataloge</p>
             <a href="https://www.ue-ei-portal-sammlerkatalog.de/"><p class="underline">Der Sammlerkatalog des Ü-Ei-Portal rund um Ferrero</p></a>
@@ -102,7 +102,7 @@
 	</div>
 
 	<div class="mb-8">
-		<h3 class="h3 mb-1 w-full">Bannertausch</h3>
+		<h3 class="font-bold text-xl mb-1 w-full">Bannertausch</h3>
 		<div class="">
 			<p class="underline mb-1">Code:</p>
 			<code class="text-sm bg-surface-200-700-token rounded-sm p-0.5 cursor-text">

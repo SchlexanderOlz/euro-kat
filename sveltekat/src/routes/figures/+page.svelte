@@ -7,7 +7,7 @@
 	export let data: PageData;
 </script>
 
-<div class="h-full w-full px-16 pt-12">
+<div class="h-full w-full sm:px-[10%] px-[5%] sm:mt-12 mt-6">
 	<FigureList>
 		{#each figures as figure (figure.id)}
 			<FigureListItem {figure} />

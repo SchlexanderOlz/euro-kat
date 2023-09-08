@@ -2,13 +2,11 @@
 </script>
 
 <h1 class="h1 w-full flex justify-center mt-8 cursor-default">Das Team</h1>
-<div class="mx-[10%] mt-8 cursor-default">
+<div class="mx-[10%] my-8 cursor-default">
 
-	<div class="card flex p-2">
-		<div class="mr-6 w-[21rem]">
+	<div class="card p-2 relative">
+		<img class=" float-right ml-2" src="images/helmut.jpg" alt="helmut"/>
 			<p class="font-bold underline mb-1.5">Helmut J.F.Henze</p>
-			<img class="w-full" src="images/helmut.jpg" />
-		</div>
 		<div class="text-sm">
 			<p class="">
 				Für alle, die mich etwas näher kennen lernen wollen. Ich bin Helmut Henze, geboren 1957 in
@@ -27,15 +25,13 @@
 				PEZ-Spender, "Margarinefiguren" und Sammelbilder der 50er<br />
 				<span class="font-bold italic">Ü-Eier, Fremdfiguren</span>
 			</p>
+			
 		</div>
 	</div>
 
-	<div class="flex mt-4">
-		<div class="card w-full mr-2 flex p-2">
-			<div class="mr-6 min-w-[12rem] w-[12rem]">
+	
+		<div class="card w-full mt-4 mr-2  p-2">
 				<p class="font-bold underline mb-1.5">Die vielen Unbekannten</p>
-				<img class="w-full" src="images/helmt.jpg" />
-			</div>
 			<div class="text-sm">
 				<p class="">
 					Ein besonderer Dank gilt den vielen unbenannten Sammlerinnen und Sammlern, die anderen und
@@ -45,18 +41,15 @@
 				</p>
 			</div>
 		</div>
-		<div class="card w-full ml-2 flex p-2">
-			<div class="mr-6 min-w-[12rem] w-[12rem]">
-				<p class="font-bold underline mb-1.5">Der Fehlerteufel</p>
-				<img class="w-full" src="images/helmt.jpg" />
-			</div>
+		<div class="card w-full mt-4 p-2">
+			<p class="font-bold underline mb-1.5">Der Fehlerteufel</p>
 			<div class="text-sm">
 				<p>
 					ist beständig an der Arbeit mit dem Katalog beteiligt. Mit unermüdlicher Aufopferung ist
 					er bemüht Zahlen zu verdrehen, Bilder zu verschieben und den einen oder anderen Link ins
 					irgenwo gleiten zu lassen.
 				</p>
-				<p class="mt-4">
+				<p class="mt-2">
 					Da er jedoch zu meinem langjährigsten Begleiter gehört, wäre ich für eine kurze Mail mit
 					einer Korrektur dankbar damit ich in aller Stille sein Werk verbessern kann ohne ihn zu
 					verärgern.<br />
@@ -64,13 +57,9 @@
 				</p>
 			</div>
 		</div>
-	</div>
 
-	<div class="card flex p-2 mt-4">
-		<div class="mr-6 w-[18rem]">
+	<div class="card p-2 mt-4">
 			<p class="font-bold underline mb-1.5">Software & Co. AG GmbH Institution</p>
-			<img class="w-full" src="images/helmt.jpg" />
-		</div>
 		<div class="text-sm">
 			<p class="">
 				Ohne der Software & Co. AG GmbH Institution wäre dieses Projekt nicht möglich gewesen.<br />

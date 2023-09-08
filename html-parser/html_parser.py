@@ -4,6 +4,7 @@ from colorama import init, Fore, Style
 from enum import Enum
 import threading
 import os
+import re
 from typing import List, Dict, Union, Set
 
 init(autoreset=True)
@@ -61,7 +62,6 @@ class InformationExtractor:
                 element.replace_with('???')
             return str(soup)
 
-
         html: str = ""
         with open(path) as file:
             html = file.read()
@@ -71,41 +71,78 @@ class InformationExtractor:
 
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
-        last_serial: str = "Error Value!!!!"
+        current_main_series: dict = { "seriesLetter" : None }
+        current_series: dict = None
         elements: list = []
+        last_series_name: str = ""
         for element in tr_elements:
-            tmp: dict[str, str] = {}
-            figure_name: str
-            for i, td in enumerate(element.find_all('td')):
-                content: str = InformationExtractor.__cleanup(td.get_text(strip=True))
-                mapped_contend: dict[str, str]
-                match i:
-                    case InformationExtractor.TablePosition.MPG_NR.value:
-                        figure_name = content.strip()
-                        mapped_contend = { "mpg_nr" : content }
-                    case InformationExtractor.TablePosition.SERIES_NAME.value:
-                        if content == '"':
-                            content = last_serial
-                        else:
-                            last_serial = content
-                        mapped_contend = { "series" : content }
-                    case InformationExtractor.TablePosition.FIGURE_NAME.value:
-                        mapped_contend = { "figure" : content }
-                    case InformationExtractor.TablePosition.YEAR.value:
-                        mapped_contend = { "year" : content }
-                    case _:
-                        raise RuntimeError("Invalid table-form")
-                if figure_name != "???":
-                    tmp.update(mapped_contend)
-                
+            tds: ResultSet[BeautifulSoup] = element.find_all('td')
+            series: str
+            name: str 
+            mpg_nr: str
+
+            try:
+                series = cleanup(tds[2].get_text(strip=True))
+                name = cleanup(tds[1].get_text(strip=True))
+                mpg_nr = cleanup(tds[0].get_text(strip=True))
+            except IndexError:
+                print("[-] Key was out of bound")
+                continue
+            
+            if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
+                print("[-] Figure has no name: Nr: " + mpg_nr)
+                continue
+
+            series_letter: str
+            match = re.match(r"\D*", mpg_nr)
+            if match:
+                series_letter = match.group()
+
+            if current_main_series['seriesLetter'] == None:
+                current_main_series['seriesLetter'] = series_letter
+                current_main_series['subSeries'] = []
+
+            element_data: dict = {
+                "mpgNr" : mpg_nr,
+                "name" : name,
+                "year" : cleanup(tds[3].get_text(strip=True)),
+                "packageInserts" : []
+            }
+              
             link: BeautifulSoup = element.find('a')
-
+            absolut_path: str 
             if link:
-                absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-                tmp.update({ "figure_info" : InformationExtractor.get_figure_content(absolut_path, figure_name) })
-            if tmp:    
-                elements.append(tmp)
+                absolut_path = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
+            else:
+                print(element_data)
 
+            element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
+
+            def move_mpgs(current_series: dict):
+                pckgi: list = current_series["pckgi"]
+                for insert in pckgi:
+                    for figure in current_series["figures"]:
+                        if insert["mpgNr"] == figure["mpgNr"]:
+                            figure["packageInserts"].append(insert["picture"])
+                del current_series["pckgi"]
+            
+            if series == '"' or series == last_series_name:
+                current_series["figures"].append(element_data)
+            else:
+                if current_series:
+                    move_mpgs(current_series)
+                    current_main_series["subSeries"].append(current_series)
+                    if current_main_series["seriesLetter"] != series_letter:
+                        elements.append(current_main_series)    
+                        current_main_series = { "seriesLetter" : series_letter, "subSeries" : []}
+
+                current_series = { "name" : series, "figures" : [element_data] }
+                current_series.update(InformationExtractor.get_series_info(absolut_path))
+                last_series_name = series
+
+        move_mpgs(current_series)
+        current_main_series['subSeries'].append(current_series)
+        elements.append(current_main_series)
         return elements
 
     @staticmethod
@@ -130,7 +167,7 @@ class InformationExtractor:
 
         values: tuple = ()
         for tr in figure_tr:
-            found_element = tr.find('b', string=lambda text: text and text.strip().lower() == figure_id.lower())
+            found_element = tr.find('b', string=lambda text: text and figure_id in text.strip())
             if found_element:
                 images: list = None
                 images = [element.get('src') for element in tr.find_all('img') if element]
@@ -138,17 +175,16 @@ class InformationExtractor:
                 if len(images) == 0:
                     InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No Image found for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
-                b_images: set[bytes] = set()
+                b_images: set[str] = set()
                 for image in images:
                     absolut_path: str = InformationExtractor.__join_paths("../" + image, href)
-                    b_image: bytes = InformationExtractor.get_image(absolut_path)
-                    b_images.add(b_image)
+                    b_images.add(absolut_path)
                 del images
 
-                kennung: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                aufkleber: bool = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
-                note: str = InformationExtractor.__cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : b_images }  # TODO b_images needs to be added as the last element. For debugging purposes (and readability of ouput) it was temporarily removed
+                kennung: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                aufkleber: bool = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
+                note: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
+                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
                 break
 
         if not values:
@@ -173,59 +209,6 @@ class InformationExtractor:
                 return file.read()
         except FileNotFoundError:
             InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
-
-
-
-
-    @staticmethod
-    def get_series_content(path: str) -> List[Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]]:
-
-        def replace_nbsp_elements(html) -> str:
-            soup = BeautifulSoup(html, 'html.parser')
-            for element in soup.find_all(text=lambda t: t == '\xa0'):
-                element.replace_with('???')
-            return str(soup)
-
-
-        html: str = ""
-        with open(path) as file:
-            html = file.read()
-
-        soup = BeautifulSoup(replace_nbsp_elements(html), 'html.parser')
-        del html
-
-        tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
-
-        elements: list = []
-        for element in tr_elements:
-            element_is_valid = False
-            tmp: dict[str, str] = {}
-            for i, td in enumerate(element.find_all('td')):
-                content: str = InformationExtractor.__cleanup(td.get_text(strip=True))
-                mapped_contend: dict[str, str] = []
-                match i:
-                    case InformationExtractor.TablePosition.SERIES_NAME.value:
-                        if content != '"':
-                            element_is_valid = True
-                            mapped_contend = { "series" : content }
-                if len(mapped_contend) and content != "???" and element_is_valid:
-                    tmp.update(mapped_contend)
-            if element_is_valid:    
-                link: BeautifulSoup = element.find('a')
-
-            if link and element_is_valid:
-                absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-                tmp.update({ "series_info" : InformationExtractor.get_series_info(absolut_path) })
-            is_not_part = True
-            for item in elements:
-                if item == tmp:
-                    is_not_part = False
-            if is_not_part and tmp:
-                elements.append(tmp)
-
-        return elements
-
-
 
 
     @staticmethod
@@ -277,7 +260,7 @@ class InformationExtractor:
             thanks_end: int = names.find('!') # NOTE This could be a potential error source
 
             thankings: str = names[thanks_begin:thanks_end] + "!"
-            thankings = InformationExtractor.__cleanup(thankings)
+            thankings = cleanup(thankings)
 
             del thanks_begin, thanks_end, names
             
@@ -285,24 +268,35 @@ class InformationExtractor:
                 InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
             return thankings
 
-        data_dict: dict = { "thanks_msg" : get_thanks_msg()}
+        data_dict: dict = { "thanks" : get_thanks_msg()}
+
+        data_dict.update({"pckgi" : []})
         if cv_info:
-            data_dict.update({"variation_infos" : cv_info})
+            for cv in cv_info:
+                for info in cv["pckgi"]:
+                    data_dict["pckgi"].append(info)
+                del cv["pckgi"]
+                data_dict.update({"countryVariations" : cv_info})
 
         if pckgi_info:
-            data_dict.update({"pckgi" : pckgi_info})
+            for data in pckgi_info:
+                data_dict["pckgi"].append(data)
+        
+        font: BeautifulSoup = soup.find("font", { "size" : '2'})
+        create_infos: list = font.get_text(strip=True).replace(";", "").split(" ")
+
+        try:
+            data_dict["year"] = create_infos[1]
+            data_dict["country"] = create_infos[2]
+        except IndexError:
+            pass
 
         return data_dict
 
 
     @staticmethod
     def get_pi_backside(href: str):
-        html: str = ""
-        try:
-            with open(href) as content:
-                html = content.read()
-        except Exception as e:
-            return None
+        html: str = open(href).read()
 
         soup: BeautifulSoup = BeautifulSoup(html, 'html.parser')
         
@@ -314,6 +308,7 @@ class InformationExtractor:
             img_srces.append(img.get("src"))
 
         resolved_images: list[dict[str, bytes]] = []
+        current_figure: dict
         for td in tds:
             mpg_nr: str = None
             try: 
@@ -321,10 +316,11 @@ class InformationExtractor:
             except AttributeError as e:
                 continue
 
+            # TODO Can be made more efficient by returning a list of pictures per mpgNr
             for src in img_srces:
                 if src.find(mpg_nr) == -1:
                     continue
-                resolved_images.append({ mpg_nr: InformationExtractor.get_image(InformationExtractor.__join_paths("../" + src, href))})
+                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : InformationExtractor.__join_paths("../" + src, href)})
                 #resolved_images.append({ mpg_nr : "Here should be an image" })
         return resolved_images
 
@@ -367,8 +363,7 @@ class InformationExtractor:
                     for img in pictures:
                         source: str = img.get('src')
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
-                        image: bytes = InformationExtractor.get_image(absolut_path)
-                        images.add(image)
+                        images.add(absolut_path)
                     del pictures
 
                     country, year = tr.find_next('tr').get_text(strip=True).split('-')
@@ -376,9 +371,9 @@ class InformationExtractor:
                     bpz_link: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find('a').get('href')
                     bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + bpz_link, href))
 
-                    note = InformationExtractor.__cleanup(note)
-                    country = InformationExtractor.__cleanup(country)
-                    year = InformationExtractor.__cleanup(year)
+                    note = cleanup(note)
+                    country = cleanup(country)
+                    year = cleanup(year)
 
                     if country is None and year is None and note is None:
                         InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
@@ -387,13 +382,6 @@ class InformationExtractor:
             except ValueError:
                 pass
         return informations
-
-    @staticmethod
-    def __cleanup(val: str):
-        """
-        Removes unwanted characters from a string
-        """
-        return val.replace('\n', '').replace('\t', '')
 
     @staticmethod
     def __join_paths(relative_path: str, other_path: str) -> str:
@@ -430,3 +418,11 @@ class InformationExtractor:
                     begin = f"""{Fore.BLUE}[*] INFO {Style.RESET_ALL}:"""
 
             print(begin + message)
+
+
+def cleanup(val: str):
+    """
+    Removes unwanted characters from a string
+    """
+    return val.replace('\n', '').replace('\t', '')
+
