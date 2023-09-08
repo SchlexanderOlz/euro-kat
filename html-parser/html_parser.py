@@ -70,11 +70,11 @@ class InformationExtractor:
 
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
+        current_main_series: dict = { "seriesLetter" : None }
         current_series: dict = None
         elements: list = []
         for element in tr_elements:
             tds: ResultSet[BeautifulSoup] = element.find_all('td')
-
             series: str
             name: str 
             mpg_nr: str
@@ -91,6 +91,7 @@ class InformationExtractor:
                 print("[-] Figure has no name: Nr: " + mpg_nr)
                 continue
 
+            series_letter: str = mpg_nr[0:2]
             element_data: dict = {
                 "mpgNr" : mpg_nr,
                 "name" : name,
@@ -99,7 +100,6 @@ class InformationExtractor:
             }
               
             link: BeautifulSoup = element.find('a')
-
             absolut_path: str 
             if link:
                 absolut_path = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
@@ -107,7 +107,6 @@ class InformationExtractor:
                 print(element_data)
 
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
-
             if series == '"':
                 current_series["figures"].append(element_data)
             else:
@@ -118,10 +117,17 @@ class InformationExtractor:
                             if insert["mpgNr"] == figure["mpgNr"]:
                                 figure["pckgi"].append(insert["picture"])
                     del current_series["pckgi"]
-                elements.append(current_series)
+
+                    if current_main_series["seriesLetter"] != series_letter:
+                        elements.append(current_main_series)    
+                        current_main_series = { "seriesLetter" : series_letter, "subSeries" : [current_series]}
+                    else:
+                        current_main_series["subSeries"].append(current_series)
+
                 current_series = { "name" : series, "figures" : [element_data] }
                 current_series.update(InformationExtractor.get_series_info(absolut_path))
- 
+            
+        elements.append(current_main_series)
         return elements
 
     @staticmethod
