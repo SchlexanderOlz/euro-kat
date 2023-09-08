@@ -73,6 +73,7 @@ class InformationExtractor:
         current_main_series: dict = { "seriesLetter" : None }
         current_series: dict = None
         elements: list = []
+        last_series_name: str = ""
         for element in tr_elements:
             tds: ResultSet[BeautifulSoup] = element.find_all('td')
             series: str
@@ -107,7 +108,7 @@ class InformationExtractor:
                 print(element_data)
 
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
-            if series == '"':
+            if series == '"' or series == last_series_name:
                 current_series["figures"].append(element_data)
             else:
                 if current_series:
@@ -126,6 +127,7 @@ class InformationExtractor:
 
                 current_series = { "name" : series, "figures" : [element_data] }
                 current_series.update(InformationExtractor.get_series_info(absolut_path))
+                last_series_name = series
             
         elements.append(current_main_series)
         return elements
@@ -266,7 +268,15 @@ class InformationExtractor:
         if pckgi_info:
             for data in pckgi_info:
                 data_dict["pckgi"].append(data)
+        
+        font: BeautifulSoup = soup.find("font", { "size" : '2'})
+        create_infos: list = font.get_text(strip=True).replace(";", "").split(" ")
 
+        try:
+            data_dict["year"] = create_infos[1]
+            data_dict["country"] = create_infos[2]
+        except IndexError:
+            pass
         return data_dict
 
 
