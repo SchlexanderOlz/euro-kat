@@ -4,6 +4,7 @@ from colorama import init, Fore, Style
 from enum import Enum
 import threading
 import os
+import re
 from typing import List, Dict, Union, Set
 
 init(autoreset=True)
@@ -88,16 +89,24 @@ class InformationExtractor:
                 print("[-] Key was out of bound")
                 continue
             
-            if name == None or "?" in name or name == "Figur":
+            if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
                 print("[-] Figure has no name: Nr: " + mpg_nr)
                 continue
 
-            series_letter: str = mpg_nr[0:2]
+            series_letter: str
+            match = re.match(r"\D*", mpg_nr)
+            if match:
+                series_letter = match.group()
+
+            if current_main_series['seriesLetter'] == None:
+                current_main_series['seriesLetter'] = series_letter
+                current_main_series['subSeries'] = []
+
             element_data: dict = {
                 "mpgNr" : mpg_nr,
                 "name" : name,
                 "year" : cleanup(tds[3].get_text(strip=True)),
-                "pckgi" : []
+                "packageInserts" : []
             }
               
             link: BeautifulSoup = element.find('a')
@@ -108,27 +117,31 @@ class InformationExtractor:
                 print(element_data)
 
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
+
+            def move_mpgs(current_series: dict):
+                pckgi: list = current_series["pckgi"]
+                for insert in pckgi:
+                    for figure in current_series["figures"]:
+                        if insert["mpgNr"] == figure["mpgNr"]:
+                            figure["packageInserts"].append(insert["picture"])
+                del current_series["pckgi"]
+            
             if series == '"' or series == last_series_name:
                 current_series["figures"].append(element_data)
             else:
                 if current_series:
-                    pckgi: list = current_series["pckgi"]
-                    for insert in pckgi:
-                        for figure in current_series["figures"]:
-                            if insert["mpgNr"] == figure["mpgNr"]:
-                                figure["pckgi"].append(insert["picture"])
-                    del current_series["pckgi"]
-
+                    move_mpgs(current_series)
+                    current_main_series["subSeries"].append(current_series)
                     if current_main_series["seriesLetter"] != series_letter:
                         elements.append(current_main_series)    
-                        current_main_series = { "seriesLetter" : series_letter, "subSeries" : [current_series]}
-                    else:
-                        current_main_series["subSeries"].append(current_series)
+                        current_main_series = { "seriesLetter" : series_letter, "subSeries" : []}
 
                 current_series = { "name" : series, "figures" : [element_data] }
                 current_series.update(InformationExtractor.get_series_info(absolut_path))
                 last_series_name = series
-            
+
+        move_mpgs(current_series)
+        current_main_series['subSeries'].append(current_series)
         elements.append(current_main_series)
         return elements
 
@@ -154,7 +167,7 @@ class InformationExtractor:
 
         values: tuple = ()
         for tr in figure_tr:
-            found_element = tr.find('b', string=lambda text: text and text.strip() == figure_id)
+            found_element = tr.find('b', string=lambda text: text and figure_id in text.strip())
             if found_element:
                 images: list = None
                 images = [element.get('src') for element in tr.find_all('img') if element]
@@ -171,7 +184,7 @@ class InformationExtractor:
                 kennung: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
                 aufkleber: bool = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
                 note: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "image" : b_images }
+                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
                 break
 
         if not values:
@@ -255,7 +268,7 @@ class InformationExtractor:
                 InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
             return thankings
 
-        data_dict: dict = { "thanks_msg" : get_thanks_msg()}
+        data_dict: dict = { "thanks" : get_thanks_msg()}
 
         data_dict.update({"pckgi" : []})
         if cv_info:
@@ -263,7 +276,7 @@ class InformationExtractor:
                 for info in cv["pckgi"]:
                     data_dict["pckgi"].append(info)
                 del cv["pckgi"]
-                data_dict.update({"variation_infos" : cv_info})
+                data_dict.update({"countryVariations" : cv_info})
 
         if pckgi_info:
             for data in pckgi_info:
@@ -277,6 +290,7 @@ class InformationExtractor:
             data_dict["country"] = create_infos[2]
         except IndexError:
             pass
+
         return data_dict
 
 
