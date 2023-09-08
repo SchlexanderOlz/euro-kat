@@ -276,7 +276,9 @@ class InformationExtractor:
                 for info in cv["pckgi"]:
                     data_dict["pckgi"].append(info)
                 del cv["pckgi"]
-                data_dict.update({"countryVariations" : cv_info})
+        else:
+            cv_info = []
+        data_dict.update({"countryVariations" : cv_info})
 
         if pckgi_info:
             for data in pckgi_info:
