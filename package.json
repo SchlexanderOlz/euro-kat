@@ -2,6 +2,7 @@
   "dependencies": {
     "mysql2": "^3.5.2",
     "pocketbase": "^0.16.0",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "ts-node": "^10.9.1"
   }
 }
