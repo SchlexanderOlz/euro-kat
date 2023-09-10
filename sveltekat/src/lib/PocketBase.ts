@@ -4,34 +4,12 @@ import PocketBase from 'pocketbase';
 import type {
 	Series,
 	SubSeries,
-	Country,
-	Packaging,
 	Figure,
 	Variation,
 	CountryVariation,
-	PackageInsert
 } from './Types';
 
-export type { Series, SubSeries, Country };
-
-const country: Country = {
-	collectionId: '1',
-	collectionName: 'Country',
-	id: '1',
-	created: 'cre',
-	updated: 'up',
-	countryName: 'Austria'
-};
-
-const packaging: Packaging = {
-	collectionId: '2',
-	collectionName: 'Packaging',
-	id: '1',
-	created: 'cre',
-	updated: 'up',
-	description: 'This is a package',
-	pictures: ['binary code', 'other binary code']
-};
+export type { Series, SubSeries, CountryVariation, Figure };
 
 const variation: Variation = {
 	collectionId: '3',
