@@ -39,6 +39,19 @@ class Scraper:
         with open(filename, "w") as file:
             json.dump(data, file, cls=SetEncoder)
 
+    @staticmethod
+    def cleanup(data: list[dict]):
+        for series in data:
+            sub_seris_names: list[str] = []
+            for sub in series["subSeries"]:
+                try:
+                    found_at: int = sub_seris_names.index(sub["name"])
+                    sub_series: dict = series["subSeries"][found_at]
+                    sub_series["figures"].extend(sub["figures"])
+                    series["subSeries"].remove(sub)
+                except ValueError:
+                    sub_seris_names.append(sub["name"])
+
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
@@ -58,6 +71,7 @@ if __name__ == "__main__":
 
         html_content_thread.join()
 
+        Scraper.cleanup(html_buff)
         Scraper.save_to_json(html_buff)
     except KeyboardInterrupt:
         print("Ctrl+C received. Exiting...")

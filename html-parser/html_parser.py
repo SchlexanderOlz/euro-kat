@@ -106,7 +106,6 @@ class InformationExtractor:
                 "mpgNr" : mpg_nr,
                 "name" : name,
                 "year" : cleanup(tds[3].get_text(strip=True)),
-                "packageInserts" : []
             }
               
             link: BeautifulSoup = element.find('a')
@@ -130,7 +129,6 @@ class InformationExtractor:
                 current_series["figures"].append(element_data)
             else:
                 if current_series:
-                    move_mpgs(current_series)
                     current_main_series["subSeries"].append(current_series)
                     if current_main_series["seriesLetter"] != series_letter:
                         elements.append(current_main_series)    
@@ -140,7 +138,6 @@ class InformationExtractor:
                 current_series.update(InformationExtractor.get_series_info(absolut_path))
                 last_series_name = series
 
-        move_mpgs(current_series)
         current_main_series['subSeries'].append(current_series)
         elements.append(current_main_series)
         return elements
@@ -212,7 +209,7 @@ class InformationExtractor:
 
 
     @staticmethod
-    def get_series_info(href: str) -> Dict[str, Union[str, List[Dict[str, Union[str, bool, Set[bytes]]]]]]:
+    def get_series_info(href: str) -> Dict:
         """
         Retrieves information about a series from an HTML file.
 
@@ -223,34 +220,8 @@ class InformationExtractor:
             tuple[str, list[tuple[str, str, str, set[bytes]]]]: A tuple containing the "thank you" message and country variation information.
 
         """
-        html: str
-        with open(href) as file:
-            html = file.read()
-        soup = BeautifulSoup(html, 'html.parser')
-        del html
 
-        b_text: ResultSet[BeautifulSoup] = soup.find_all('b')
-
-        cv_info: list[tuple[str, str, str, set[bytes]]] = None
-        for text in b_text:
-            if "beipackzettel" in text.get_text(strip=True).lower() or "bpz" in text.get_text(strip=True).lower():
-                found = text.find_next('a')
-
-                if found:
-                    link = found.get('href')
-                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
-                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
-
-
-        pckgi_info: list = None
-        if not cv_info:
-            # InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"No country-variation information could be retrieved for {Fore.BLUE}{href}{Style.RESET_ALL}")
-            pckgi_info = InformationExtractor.get_pi_backside(href)
-            if not pckgi_info:
-                InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"None of the package-insert patterns matched for {Fore.BLUE}{href}{Style.RESET_ALL}")
-            # InformationExtractor.__display_info(InformationExtractor.MessageType.INFO, f"Information for dev's: The function which handles direct package-inserts needs to be implemented and then called instead of this message")
-
-        def get_thanks_msg() -> str:
+        def get_thanks_msg(soup: BeautifulSoup) -> str:
             font_element = soup.find('div', align='center')
             names: str = font_element.get_text(strip=True)
 
@@ -268,32 +239,62 @@ class InformationExtractor:
                 InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No "thank you" message found in {Fore.BLUE}{href}{Style.RESET_ALL}""")
             return thankings
 
-        data_dict: dict = { "thanks" : get_thanks_msg()}
 
-        data_dict.update({"pckgi" : []})
+        html: str
+        with open(href) as file:
+            html = file.read()
+        soup = BeautifulSoup(html, 'html.parser')
+        del html
+
+        b_text: ResultSet[BeautifulSoup] = soup.find_all('b')
+
+        cv_info: list = None
+        for text in b_text:
+            if "beipackzettel" in text.get_text(strip=True).lower() or "bpz" in text.get_text(strip=True).lower():
+                found = text.find_next('a')
+
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+
+
+        sub_series: dict = {"thanks" : get_thanks_msg(soup)}
+        pckgi_info: list = None
+
         if cv_info:
-            for cv in cv_info:
-                for info in cv["pckgi"]:
-                    data_dict["pckgi"].append(info)
-                del cv["pckgi"]
-        else:
-            cv_info = []
-        data_dict.update({"countryVariations" : cv_info})
+            sub_series.update({
+                "variations" : cv_info
+            })
+            return sub_series  
 
-        if pckgi_info:
-            for data in pckgi_info:
-                data_dict["pckgi"].append(data)
-        
+        trs: ResultSet[BeautifulSoup] = soup.find_all("tr")
+        imgs: ResultSet[BeautifulSoup] = trs[0].find_all("img")
+        image_srces: list = []
+        for img in imgs:
+            image_srces.append(InformationExtractor.__join_paths("../" + img.get("src"), href))
+
         font: BeautifulSoup = soup.find("font", { "size" : '2'})
         create_infos: list = font.get_text(strip=True).replace(";", "").split(" ")
 
+        pckgi_info = InformationExtractor.get_pi_backside(href)
+        if not pckgi_info:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"None of the package-insert patterns matched for {Fore.BLUE}{href}{Style.RESET_ALL}")
+
         try:
-            data_dict["year"] = create_infos[1]
-            data_dict["country"] = create_infos[2]
+            sub_series.update({
+                "variations" : [
+                    {
+                        "year" : create_infos[1],
+                        "country" : create_infos[2],                           
+                        "pckgi" : pckgi_info,
+                        "images" : image_srces
+                    }
+                ],
+            })
         except IndexError:
             pass
-
-        return data_dict
+        return sub_series
 
 
     @staticmethod
@@ -310,7 +311,6 @@ class InformationExtractor:
             img_srces.append(img.get("src"))
 
         resolved_images: list[dict[str, bytes]] = []
-        current_figure: dict
         for td in tds:
             mpg_nr: str = None
             try: 
@@ -323,7 +323,6 @@ class InformationExtractor:
                 if src.find(mpg_nr) == -1:
                     continue
                 resolved_images.append({ "mpgNr" : mpg_nr, "picture" : InformationExtractor.__join_paths("../" + src, href)})
-                #resolved_images.append({ mpg_nr : "Here should be an image" })
         return resolved_images
 
 
@@ -361,14 +360,16 @@ class InformationExtractor:
                     bpz_index += 1
                     pictures: ResultSet[BeautifulSoup] = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
 
-                    images: set[bytes] = set()
+                    images: [dict] = []
                     for img in pictures:
                         source: str = img.get('src')
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
-                        images.add(absolut_path)
+                        images.append(absolut_path)
                     del pictures
 
                     country, year = tr.find_next('tr').get_text(strip=True).split('-')
+                    country = country.strip()
+                    year = year.strip()
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
                     bpz_link: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find('a').get('href')
                     bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + bpz_link, href))
