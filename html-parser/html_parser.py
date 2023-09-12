@@ -90,7 +90,6 @@ class InformationExtractor:
                 continue
             
             if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
-                print("[-] Figure has no name: Nr: " + mpg_nr)
                 continue
 
             series_letter: str
@@ -155,7 +154,7 @@ class InformationExtractor:
 
         figure_tr: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
-        values: tuple = ()
+        values: dict = {}
         for tr in figure_tr:
             found_element = tr.find('b', string=lambda text: text and figure_id in text.strip())
             if found_element:
@@ -179,10 +178,10 @@ class InformationExtractor:
                     note = cleanup(naming_field.get_text(strip=True))
                 except AttributeError:
                     pass
-                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : identifier, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
+                values = { "identifier" : identifier, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
                 break
 
-        if not values:
+        if values == {}:
             InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
         return values
@@ -229,7 +228,7 @@ class InformationExtractor:
 
         cv_info: list = None
         for text in b_text:
-            if "beipackzettel" in text.get_text(strip=True).lower() or "bpz" in text.get_text(strip=True).lower():
+            if "beipack" in text.get_text(strip=True).lower().strip() or "bpz" in text.get_text(strip=True).lower().strip():
                 found = text.find_next('a')
 
                 if found:
@@ -254,25 +253,35 @@ class InformationExtractor:
             image_srces.append(InformationExtractor.__join_paths("../" + img.get("src"), href))
 
         font: BeautifulSoup = soup.find("font", { "size" : '2'})
-        create_infos: list = font.get_text(strip=True).replace(";", "").split(" ")
+        span: BeautifulSoup = soup.find("span")
+        pattern = r'\b\d+-\d+\b'
+        year: str = re.findall(pattern, font.get_text(strip=True))[0]
+        create_infos: list = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
+
+        country: str = None
+        try:
+            country = create_infos[1]
+        except IndexError:
+            print(create_infos)
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR,
+                                            "Couldnt get year or country for: " + href)
+
 
         pckgi_info = InformationExtractor.get_pi_backside(href)
         if not pckgi_info:
             InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"None of the package-insert patterns matched for {Fore.BLUE}{href}{Style.RESET_ALL}")
 
-        try:
-            sub_series.update({
-                "variations" : [
-                    {
-                        "year" : create_infos[1],
-                        "country" : create_infos[2],                           
-                        "pckgi" : pckgi_info,
-                        "images" : image_srces
-                    }
-                ],
-            })
-        except IndexError:
-            pass
+        sub_series.update({
+            "variations" : [
+                {
+                    "year" : year,
+                    "country" : country,                           
+                    "pckgi" : pckgi_info,
+                    "images" : image_srces,
+                    "note" : ""
+                }
+            ],
+        })
         return sub_series
 
 
