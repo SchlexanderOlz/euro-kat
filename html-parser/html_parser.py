@@ -117,14 +117,7 @@ class InformationExtractor:
 
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
 
-            def move_mpgs(current_series: dict):
-                pckgi: list = current_series["pckgi"]
-                for insert in pckgi:
-                    for figure in current_series["figures"]:
-                        if insert["mpgNr"] == figure["mpgNr"]:
-                            figure["packageInserts"].append(insert["picture"])
-                del current_series["pckgi"]
-            
+ 
             if series == '"' or series == last_series_name:
                 current_series["figures"].append(element_data)
             else:
@@ -178,35 +171,21 @@ class InformationExtractor:
                     b_images.add(absolut_path)
                 del images
 
-                kennung: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                aufkleber: bool = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
-                note: str = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True))
-                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : kennung, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
+                aufkleber: bool = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
+                identifier: bool = cleanup(found_element.find_next('td').find_next('td').get_text(strip=True))
+                naming_field: BeautifulSoup = found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td')
+                note: str = "" 
+                try:
+                    note = cleanup(naming_field.get_text(strip=True))
+                except AttributeError:
+                    pass
+                values: dict[str, Union[str, bool, set[bytes]]] = { "identifier" : identifier, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
                 break
 
         if not values:
             InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
         return values
-
-    @staticmethod
-    def get_image(path: str) -> bytes:
-        """
-        Retrieves the binary content of an image file.
-
-        Args:
-            wd_path (str): The working directory path.
-            rel_path (str): The relative path to the image file.
-
-        Returns:
-            bytes: The binary content of the image file.
-        """
-        try:
-            with open(path, 'rb') as file:
-                return file.read()
-        except FileNotFoundError:
-            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, f"""File: {Fore.BLUE}{path}{Style.RESET_ALL} could not be found!""")
-
 
     @staticmethod
     def get_series_info(href: str) -> Dict:

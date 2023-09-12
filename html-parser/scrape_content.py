@@ -42,22 +42,29 @@ class Scraper:
     @staticmethod
     def cleanup(data: list[dict]):
         for series in data:
-            sub_seris_names: list[str] = []
+            sub_series_names = []
+            new_sub_series_list = []
+
             for sub in series["subSeries"]:
-                try:
-                    found_at: int = sub_seris_names.index(sub["name"])
-                    sub_series: dict = series["subSeries"][found_at]
-                    sub_series["figures"].extend(sub["figures"])
-                    series["subSeries"].remove(sub)
-                except ValueError:
-                    sub_seris_names.append(sub["name"])
+                if sub["name"] not in sub_series_names:
+                    sub_series_names.append(sub["name"])
+                    new_sub_series_list.append({
+                        "name": sub["name"],
+                        "figures": sub["figures"]
+                    })
+                else:
+                    for existing_sub in new_sub_series_list:
+                        if existing_sub["name"] == sub["name"]:
+                            existing_sub["figures"].extend(sub["figures"])
+                            break
+
+            series["subSeries"] = new_sub_series_list
+
 
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
             return list(obj)
-        if isinstance(obj, bytes):
-            return base64.b64encode(obj).decode('utf-8')
         return super().default(obj)
 
 
