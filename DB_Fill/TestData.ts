@@ -1,9 +1,10 @@
 import PocketBase from "pocketbase";
-import type {
+import {
   Series,
   SubSeries,
-  CountryVariation,
   Figure,
+  SubSeriesVariation,
+  FigureVariation,
 } from "../sveltekat/src/lib/PocketBase.js";
 import fs from "fs";
 
@@ -32,7 +33,8 @@ async function add() {
   const figures = pb.collection("Figure");
   const series = pb.collection("Series");
   const subSeries = pb.collection("SubSeries");
-  const countryVariations = pb.collection("CountryVariation");
+  const subSeriesVariations = pb.collection("SubSeriesVariation");
+  const figureVariations = pb.collection("FigureVariation");
 
   const data = fs.readFileSync("../html-parser/data.json", "utf8");
   const json = JSON.parse(data);
@@ -40,6 +42,7 @@ async function add() {
   await json.forEach(async (object: Series) => {
     let seriesData = new FormData();
     seriesData.append("seriesLetter", object.seriesLetter);
+
     object.subSeries.forEach(async (sub: SubSeries) => {
       let subSeriesData = new FormData();
       sub.figures.forEach(async (figure: Figure) => {
@@ -51,12 +54,6 @@ async function add() {
         formData.append("sticker", figure.sticker);
         formData.append("note", figure.note);
 
-        figure.packageInserts?.forEach((path: string) => {
-          const data = fs.readFileSync(path);
-          const blob = new Blob([data], { type: getTypeHeader(path) });
-          formData.append("packageInserts", blob, path.split("\\").pop());
-        });
-
         figure.pictures?.forEach((path: string) => {
           const data = fs.readFileSync(path);
           const blob = new Blob([data], { type: getTypeHeader(path) });
@@ -64,30 +61,42 @@ async function add() {
         });
 
         const record = await figures.create(formData);
-        subSeriesData.append("figures", record.id);
+      });
+
+      sub.variations.forEach(async (variation: SubSeriesVariation) => {
+        let subVariation = new FormData();
+        subVariation.append("year", variation.year);
+        subVariation.append("country", variation.country);
+        subVariation.append("note", variation.note);
+
+        variation.pckgi.forEach(async (pckgi: any) => {
+          let formData = new FormData();
+
+          const data = fs.readFileSync(pckgi.picture);
+          const blob = new Blob([data], { type: getTypeHeader(pckgi.picture) });
+          formData.append("packageInserts", blob);
+          const record = await figureVariations.create(formData);
+
+          try {
+            var figureRef = await figures.getFirstListItem(
+              `mpgNr="${pckgi.mpgNr}"`
+            );
+          } catch (Error) {
+            console.log("Ressource not found: " + pckgi.mpgNr);
+            return;
+          }
+
+          await figures.update(figureRef.id, {
+            "figureVariations+": record.id,
+          });
+          subVariation.append("figureVariations", record.id);
+        });
+        const record = await subSeriesVariations.create(subVariation);
+        subSeriesData.append("subSeriesVariations", record.id);
       });
 
       subSeriesData.append("name", sub.name);
       subSeriesData.append("thanks", sub.thanks);
-      subSeriesData.append("year", sub.year);
-      subSeriesData.append("country", sub.country);
-      sub.countryVariations.forEach(
-        async (countryVariation: CountryVariation) => {
-          let countryData = new FormData();
-          countryData.append("country", countryVariation.country);
-          countryData.append("year", countryVariation.year);
-          countryData.append("note", countryVariation.note);
-          countryVariation.images.forEach((path: string) => {
-            try {
-              const data = fs.readFileSync(path);
-              const blob = new Blob([data], { type: getTypeHeader(path) });
-              countryData.append("images", blob, path.split("\\").pop());
-            } catch (Error) {}
-          });
-          const record = await countryVariations.create(countryData);
-          subSeriesData.append("countryVariations", record.id);
-        }
-      );
       const record = await subSeries.create(subSeriesData);
       seriesData.append("subSeries", record.id);
     });

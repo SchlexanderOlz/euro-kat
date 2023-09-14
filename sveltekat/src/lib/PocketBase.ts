@@ -5,11 +5,11 @@ import type {
 	Series,
 	SubSeries,
 	Figure,
-	Variation,
-	CountryVariation,
+	SubSeriesVariation,
+	FigureVariation,
 } from './Types';
 
-export type { Series, SubSeries, CountryVariation, Figure };
+export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation};
 
 const variation: Variation = {
 	collectionId: '3',
