@@ -109,6 +109,18 @@ async function add() {
   }
 }
 
+async function addWarnings() {
+   console.log(
+    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
+  );
+  const data = fs.readFileSync("../html-parser/warnings.json", "utf8"); 
+  const json = JSON.parse(data)
+
+  json.forEach((warning: any/*Warning*/) => {
+    // TODO: Continue here
+  });
+}
+
 async function dropAll(collectionName: string) {
   await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!");
   const collection = pb.collection(collectionName);

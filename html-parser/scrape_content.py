@@ -1,4 +1,5 @@
 from html_parser import InformationExtractor
+from parse_special import ExtraParser, WarningParser
 from typing import Callable
 import threading
 import sys
@@ -34,8 +35,8 @@ class Scraper:
             thread.join()
 
     @staticmethod
-    def save_to_json(data: any):
-        filename = "data.json"
+    def save_to_json(name: str, data: any):
+        filename = "{}.json".format(name)
         with open(filename, "w") as file:
             json.dump(data, file, cls=SetEncoder)
 
@@ -66,6 +67,10 @@ class SetEncoder(json.JSONEncoder):
 
 
 if __name__ == "__main__":
+    warnings: list = WarningParser.parse_deez("I:\\Code\\(Deprecated)EuroKatFiles\\n_whz\\whzliste.htm")
+    extras: list = ExtraParser.sugg_on("I:\\Code\\(Deprecated)EuroKatFiles\\n_zwz\zwzliste.htm")
+    Scraper.save_to_json("warnings", warnings)
+    Scraper.save_to_json("extras", extras)
     try:
         html_buff: list = []
         html_content_thread = threading.Thread(
@@ -76,7 +81,9 @@ if __name__ == "__main__":
         html_content_thread.join()
 
         Scraper.cleanup(html_buff)
-        Scraper.save_to_json(html_buff)
+        Scraper.save_to_json("data", html_buff)
     except KeyboardInterrupt:
         print("Ctrl+C received. Exiting...")
         sys.exit(0)
+
+

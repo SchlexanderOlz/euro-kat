@@ -46,3 +46,10 @@ export interface Series {
 	seriesLetter: string;
 	subSeries: SubSeries[];
 }
+
+export interface Warning {
+	id: string;
+	created: DateTime;
+	updated: DateTime;
+	
+}

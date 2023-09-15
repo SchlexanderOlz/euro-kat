@@ -11,12 +11,12 @@ import re
 class WarningParser:
 
     @staticmethod
-    def parse_deez(href: str):
+    def parse_deez(href: str) -> list:
         soup: BeautifulSoup
         with open(href) as file:
            soup = BeautifulSoup(file.read(), "html.parser") 
 
-        result: dict = {}
+        result: list = []
         for ref in soup.find_all("a"):
             nuts: dict
             try:
@@ -24,24 +24,25 @@ class WarningParser:
             except Exception as e:
                 continue
             name: str = ref.get_text(strip=True)
-            result.update({ "name" : name, "data" : nuts })
-            print(result)
+            nuts.update({ "name" : name })
+            result.append(nuts)
+        return result
 
     @staticmethod
-    def join_tags(soup: BeautifulSoup, html_type: str):
-       return "\n".join([p.get_text(strip=True).replace("\t", "") for p in soup.find_all(html_type)])
+    def join_tags(soup: BeautifulSoup, html_type: str) -> str:
+       return "\n".join([p.get_text(strip=True).replace("\t", "").replace("\n", "") for p in soup.find_all(html_type)])
 
     @staticmethod 
-    def nuts(href: str):
+    def nuts(href: str) -> dict:
         soup: BeautifulSoup  
         with open(href) as file:
             soup = BeautifulSoup(file.read(), "html.parser")
 
         result: dict = {}
+        result.update({ "numbered" : bool(re.search(r'\d', href))})
         for element in soup.find_all("td"):
             b: BeautifulSoup = element.find("b")
             if not b: continue
-            result.update({ "numbered" : bool(re.search(r'\d', href))})
             match b.get_text(strip=True).strip():
                 case "Allgemeines:":
                     joined_ps: str = WarningParser.join_tags(soup, "p")
@@ -52,8 +53,9 @@ class WarningParser:
                     if not img:
                         continue
                     img_src: str = img.get("src")
+                    absolute_path: str = os.path.normpath(os.path.join(href, "../" + img_src))
 
-                    result.update({ "header" : img_src }) # TODO: Open this instead
+                    result.update({ "header" : absolute_path })
                     continue
                 case "Länderkennzeichen A-Seite:":
                     result.update({ "countryA" : element.get_text(strip=True) })
@@ -69,27 +71,32 @@ class WarningParser:
                     continue
                 case x:
                     print("Failed to process " + x)
-
         return result
 
+def next_cleanup(soup: BeautifulSoup) -> str:
+    return cleanup(soup.find_next("td").get_text(strip=True))
+
+def cleanup(cleaned: str) -> str:
+    return cleaned.replace("\t", "").replace("\n", "")
+    
 class ExtraParser:
 
     @staticmethod
-    def sugg_on(href: str):
+    def sugg_on(href: str) -> list:
         soup: BeautifulSoup
         with open(href) as file:
             soup = BeautifulSoup(file.read(), "html.parser")
-        result: dict = {}
+        result: list = []
         for a in soup.find_all("a"):
             try:
-                result.update({ "data" : ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href")))) })
+                result.append(ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href")))))
             except Exception as e:
                 pass
-        print(result)
+        return result
 
 
     @staticmethod
-    def deez(href: str):
+    def deez(href: str) -> dict:
         soup: BeautifulSoup
         with open(href) as file:
             soup = BeautifulSoup(file.read(), "html.parser")
@@ -98,34 +105,35 @@ class ExtraParser:
         for td in soup.find_all("td"):
             b: BeautifulSoup = td.find("b") 
             if not b: continue
+            pot_next: str = next_cleanup(td)
             match b.get_text(strip=True).strip():
                 case "Warntext:":
-                    result.update({ "text" : td.find_next("td").get_text(strip=True).replace("\t", "") })
+                    result.update({ "text" : pot_next })
                     continue
                 case "Kennzeichnung:":
-                    result.update({ "id" : td.find_next("td").get_text(strip=True) }) 
+                    result.update({ "id" : pot_next }) 
                     continue
                 case "Adresskopf:":
-                    result.update({ "address" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                    result.update({ "address" : pot_next })
                     continue
                 case "Format:":
-                    result.update({ "format" : td.find_next("td").get_text(strip=True) })
+                    result.update({ "format" : pot_next })
                     continue
                 case "Jahrgang:":
-                    result.update({ "year" : int(td.find_next("td").get_text(strip=True)) })
+                    result.update({ "year" : int(pot_next) })
                     continue
                 case "Hinweis:":
-                    result.update({ "note" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                    result.update({ "note" : pot_next })
                     continue
                 case x:
                     if "serie" in x.lower(): 
-                        result.update({ "series" : td.find_next("td").get_text(strip=True) })
+                        result.update({ "series" : pot_next })
                         continue
                     if "dank" in x.lower():
-                        result.update({ "thanks" : td.find_next("td").get_text(strip=True).replace("\t", "")  })
+                        result.update({ "thanks" : pot_next })
                         continue
                     if "typ" in x.lower():
-                        text: str = td.find_next("td").get_text(strip=True).replace("\t", "")
+                        text: str = pot_next
                         match result.get("types"):
                             case None:
                                 result.update({ "types" : [text] })
@@ -135,7 +143,3 @@ class ExtraParser:
                                 continue
                     print("failed to parse" + x)
         return result
-        
-if __name__ == "__main__":
-    WarningParser.parse_deez("tmp-files/warnhinweise.html")
-    ExtraParser.sugg_on("tmp-files/zusatz.html")
