@@ -6,7 +6,7 @@ export async function get(req: Request) {
     const data = fs.readFileSync("../../html-parser/data.json", "utf8");
     const json = JSON.parse(data);
 
-    json.forEach(async (object: object) => {
+    json.forEach(async (object: pb.Series) => {
         await pb.insertSeries(object);
     });
 
