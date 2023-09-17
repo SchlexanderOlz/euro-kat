@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pocketbase": "^0.16.0",
+    "ts-node": "^10.9.1"
+  }
+}
