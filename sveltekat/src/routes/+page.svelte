@@ -17,11 +17,11 @@
 			
 		</p>
 
-		<div class="flex sm:flex-row flex-col card p-2 mx-4 mt-8 max-w-[1166px]">
+		<div class="card p-2 mx-4 mt-8 max-w-[1166px]">
 			<img
 				height="116px"
 				width="101px"
-				class="sm:h-36 sm:w-auto w-40 inline"
+				class="sm:h-36 sm:w-auto w-40 float-left mr-4"
 				alt="helmut"
 				src="images/helmut.jpg"
 			/>
