@@ -6,7 +6,7 @@ import type {
 	Figure,
 } from './Types';
 
-class FigurFilterBuilder {
+export class FigurFilterBuilder {
   filter: Set<string>;
   figureCollection: RecordService 
   constructor() {
@@ -36,7 +36,7 @@ class FigurFilterBuilder {
 
   yearRange(year : number){
     // NOTE: Think about implemening this as a range-query on second-call
-    // TODO: Handle the case where there was already a range inserted before
+    // TODO: Handle the case where there was already a range inserted befores
     for (const value of this.filter.values()) {
       if (value.startsWith('year=')) {
         const oldYear = Number.parseInt(value.split("=")[1])
@@ -74,6 +74,8 @@ class FigurFilterBuilder {
 
   async run() : Promise<Figure[]> {
     // Remove this implicit copy -> f.e. manull iteration
-    return await this.figureCollection.getFullList({ "filter" : Array.from(this.filter).join(" && ") });
+    return structuredClone(await this.figureCollection.getFullList({ "filter" : Array.from(this.filter).join(" && ") }));
   }
 }
+
+export let figureBuilder = new FigurFilterBuilder()
