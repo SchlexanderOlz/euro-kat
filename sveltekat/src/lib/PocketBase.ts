@@ -10,7 +10,11 @@ import type {
 } from './Types';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation};
-export const connection: PocketBase = new PocketBase('https://ek.krenn.tech/_/');
+export const domain: string = "ek.krenn.tech:443"
+export const imgdom: string = `https://${domain}/api/files`;
+export const connection: PocketBase = new PocketBase(`https://${domain}`);
+
+export const figureInitLoadCount: number = 50;
 
 export async function getSubSeriesByLetter(seriesLetter: string): Promise<SubSeries> {
 	if (seriesLetter === 'soos') {
