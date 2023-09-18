@@ -1,7 +1,7 @@
 export interface Figure {
 	id: string;
 	created: DateTime;
-	modified: DateTime;
+	modified: DateTime; // TODO: change DateTime to string
 	mpgNr: string;
 	name: string;
 	sticker: boolean;
