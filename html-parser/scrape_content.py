@@ -5,9 +5,18 @@ import threading
 import sys
 import json
 import base64
+import os
 
 SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
 
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        if isinstance(obj, bytes):
+            return base64.b64encode(obj).decode('utf-8')
+        return super().default(obj)
 
 class Scraper:
     @staticmethod
@@ -56,14 +65,6 @@ class Scraper:
                 except ValueError:
                     i += 1
                     sub_seris_names.append(sub["name"])
-
-class SetEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, set):
-            return list(obj)
-        if isinstance(obj, bytes):
-            return base64.b64encode(obj).decode('utf-8')
-        return super().default(obj)
 
 
 if __name__ == "__main__":

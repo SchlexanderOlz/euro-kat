@@ -22,7 +22,7 @@ class WarningParser:
             try:
                 nuts = WarningParser.nuts(os.path.normpath(os.path.join(href, "../" + ref.get("href"))))
             except Exception as e:
-                continue
+                print(e)
             name: str = ref.get_text(strip=True)
             nuts.update({ "name" : name })
             result.append(nuts)
@@ -40,6 +40,15 @@ class WarningParser:
 
         result: dict = {}
         result.update({ "numbered" : bool(re.search(r'\d', href))})
+        picContainers: ResultSet[BeautifulSoup] = soup.find_all("td", { "class" : "pic"} )
+        result.update({ "imgs" : set()})
+        for container in picContainers:
+            pic: BeautifulSoup = container.find_next("img")
+            if not pic: continue
+            picSrc: str = container.find_next("img").get("src")
+            absPath: str = os.path.normpath(os.path.join(href, "../" + picSrc))
+            result["imgs"].add(absPath)
+
         for element in soup.find_all("td"):
             b: BeautifulSoup = element.find("b")
             if not b: continue
@@ -50,8 +59,7 @@ class WarningParser:
                     continue
                 case "Adresskopf:":
                     img: BeautifulSoup = b.find_next("img")
-                    if not img:
-                        continue
+                    if not img: continue
                     img_src: str = img.get("src")
                     absolute_path: str = os.path.normpath(os.path.join(href, "../" + img_src))
 
@@ -64,7 +72,7 @@ class WarningParser:
                     result.update({ "countryB" : element.get_text(strip=True) })
                     continue
                 case "Format:":
-                    result.update({ "format" : element.get_text(strip=True)})
+                    result.update({ "format" : element.get_text(strip=True).replace("Format:", "")})
                     continue
                 case "Bekannte Varianten:":
                     result.update({ "variations" : WarningParser.join_tags(b, "p")})
