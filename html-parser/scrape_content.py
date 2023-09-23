@@ -5,9 +5,8 @@ import threading
 import sys
 import json
 import base64
-import os
 
-SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm"]
+SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm", "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDV.htm", "I:/Code/(Deprecated)EuroKatFiles/JGListen/WFF.htm"]
 
 
 class SetEncoder(json.JSONEncoder):
@@ -25,9 +24,6 @@ class Scraper:
 
         def execute_and_print(callback: Callable, param: str) -> None:
             result = callback(param)
-            """for el in result:
-                print(el)
-                print("\n\n")"""
             buff.extend(result)
 
         for src in SRCES:

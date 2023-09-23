@@ -334,8 +334,12 @@ class InformationExtractor:
         font: BeautifulSoup = soup.find("font", { "size" : '2'})
         span: BeautifulSoup = soup.find("span")
         pattern = r'\b\d+-\d+\b'
-        year: str = re.findall(pattern, font.get_text(strip=True))[0]
-        create_infos: list = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
+        year: str = "???"
+        if font:
+            year = re.findall(pattern, font.get_text(strip=True))[0]
+        create_infos: list = []
+        if span:
+            create_infos = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
 
         country: str = None
         try:
@@ -385,11 +389,13 @@ class InformationExtractor:
             except AttributeError as e:
                 continue
 
-            # TODO Can be made more efficient by returning a list of pictures per mpgNr
+            myImages: list = []
             for src in img_srces:
                 if src.find(mpg_nr) == -1:
                     continue
-                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : InformationExtractor.__join_paths("../" + src, href)})
+                myImages.append(InformationExtractor.__join_paths("../" + src, href))
+            if len(myImages) > 0:
+                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : myImages})
         return resolved_images
 
 
@@ -438,8 +444,12 @@ class InformationExtractor:
                     country = country.strip()
                     year = year.strip()
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
-                    bpz_link: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find('a').get('href')
-                    bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + bpz_link, href))
+                    bpz_container: BeautifulSoup = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr')
+                    bpz_info: dict = {}
+                    if bpz_container:
+                        a = bpz_container.find('a')
+                        if a:
+                            bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + a.get("href"), href))
 
                     note = cleanup(note)
                     country = cleanup(country)
