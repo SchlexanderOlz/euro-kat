@@ -97,7 +97,8 @@ class ExtraParser:
         result: list = []
         for a in soup.find_all("a"):
             try:
-                result.append(ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href")))))
+                data: dict = ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href"))))
+                result.append(data)
             except Exception as e:
                 pass
         return result
@@ -109,12 +110,16 @@ class ExtraParser:
         with open(href) as file:
             soup = BeautifulSoup(file.read(), "html.parser")
 
-        result: dict = {}
+        result: dict = { "numbered" : bool(re.search(r'\d', href)), "types" : []}
+
+
         for td in soup.find_all("td"):
             b: BeautifulSoup = td.find("b") 
             if not b: continue
             pot_next: str = next_cleanup(td)
             match b.get_text(strip=True).strip():
+                case "Nr.":
+                    result.update({"name" : pot_next})
                 case "Warntext:":
                     result.update({ "text" : pot_next })
                     continue
@@ -133,7 +138,22 @@ class ExtraParser:
                 case "Hinweis:":
                     result.update({ "note" : pot_next })
                     continue
+                case "Ländertexte":
+                    result.update({ "countries" : pot_next})
+                    continue
                 case x:
+                    if "zusatz" in x.lower() or "typ" in x.lower():
+                        types: list = []
+                        oldTd: BeautifulSoup = b
+                        while True:
+                            nextTd: BeautifulSoup = oldTd.find_next("td")
+                            oldTd = nextTd
+                            if nextTd.find("b") != None: break
+                            src: str = nextTd.find("img").get("src")
+                            absPath: str = os.path.normpath(os.path.join(href, "../" + src))
+                            types.append(absPath)
+                        result["types"].append(types)
+                        continue
                     if "serie" in x.lower(): 
                         result.update({ "series" : pot_next })
                         continue
@@ -149,5 +169,8 @@ class ExtraParser:
                             case y:
                                 y.append(text)
                                 continue
-                    print("failed to parse" + x)
+                    print("[-] Failed to parse: " + x)
+        if result["types"] == []:
+            result["types"] = [os.path.normpath(os.path.join(href, "../" + element.get("src"))) for element in soup.find_all("img")]
+
         return result
