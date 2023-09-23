@@ -121,6 +121,7 @@ class ExtraParser:
                 data: dict = ExtraParser.deez(os.path.normpath(os.path.join(href, "../" + a.get("href"))))
                 result.append(data)
             except Exception as e:
+                print(e)
                 pass
         return result
 
@@ -154,7 +155,7 @@ class ExtraParser:
                     result.update({ "format" : pot_next })
                     continue
                 case "Jahrgang:":
-                    result.update({ "year" : int(pot_next) })
+                    result.update({ "year" : pot_next })
                     continue
                 case "Hinweis:":
                     result.update({ "note" : pot_next })
@@ -169,8 +170,11 @@ class ExtraParser:
                         while True:
                             nextTd: BeautifulSoup = oldTd.find_next("td")
                             oldTd = nextTd
+                            if not oldTd: break
                             if nextTd.find("b") != None: break
-                            src: str = nextTd.find("img").get("src")
+                            img: BeautifulSoup = nextTd.find("img")
+                            if not img: continue
+                            src: str = img.get("src")
                             absPath: str = os.path.normpath(os.path.join(href, "../" + src))
                             types.append(absPath)
                         result["types"].append(types)

@@ -187,6 +187,34 @@ class InformationExtractor:
         return values
 
     @staticmethod
+    def parse_packaging(href: str) -> List:
+        html: str = ""
+        with open(href) as file:
+            html = file.read()
+        soup = BeautifulSoup(html, 'html.parser')
+        del html
+
+        result: list = []
+        for td in soup.find_all("td"):
+            b: BeautifulSoup = td.find("b")
+            if not b: continue
+            name: str = b.get_text(strip=True)
+            thanks: str = td.get_text(strip=True).replace(name, "")
+
+            lastTd: BeautifulSoup = td
+            images: list = []
+            while True:
+                next: BeautifulSoup = lastTd.find_next("td")
+                if not next: break
+                imgs: ResultSet = next.find_all("img")
+                if not imgs or len(imgs) == 0: break
+                images.extend([os.path.normpath(os.path.join(href, "../" + image.get("src"))) for image in imgs])
+                if len(images) == 0: break
+                lastTd = next
+            result.append({ "name" : name, "thanks" : thanks, "images": images})
+        return result
+
+    @staticmethod
     def get_series_info(href: str) -> Dict:
         """
         Retrieves information about a series from an HTML file.
@@ -227,17 +255,23 @@ class InformationExtractor:
         b_text: ResultSet[BeautifulSoup] = soup.find_all('b')
 
         cv_info: list = None
+        variation_info: list = None
         for text in b_text:
             if "beipack" in text.get_text(strip=True).lower().strip() or "bpz" in text.get_text(strip=True).lower().strip():
+                found = text.find_next('a')
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+            elif "verpackungen" in text.get_text(strip=True).lower().strip():
                 found = text.find_next('a')
 
                 if found:
                     link = found.get('href')
                     absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
-                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+                    variation_info = InformationExtractor.parse_packaging(absolut_path)
 
-
-        sub_series: dict = {"thanks" : get_thanks_msg(soup)}
+        sub_series: dict = {"thanks" : get_thanks_msg(soup), "packaging": variation_info}
         pckgi_info: list = None
 
         if cv_info:
