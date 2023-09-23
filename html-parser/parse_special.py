@@ -38,16 +38,9 @@ class WarningParser:
         with open(href) as file:
             soup = BeautifulSoup(file.read(), "html.parser")
 
-        result: dict = {}
+        result: dict = { "varTypes" : []}
         result.update({ "numbered" : bool(re.search(r'\d', href))})
-        picContainers: ResultSet[BeautifulSoup] = soup.find_all("td", { "class" : "pic"} )
-        result.update({ "imgs" : set()})
-        for container in picContainers:
-            pic: BeautifulSoup = container.find_next("img")
-            if not pic: continue
-            picSrc: str = container.find_next("img").get("src")
-            absPath: str = os.path.normpath(os.path.join(href, "../" + picSrc))
-            result["imgs"].add(absPath)
+
 
         for element in soup.find_all("td"):
             b: BeautifulSoup = element.find("b")
@@ -74,11 +67,39 @@ class WarningParser:
                 case "Format:":
                     result.update({ "format" : element.get_text(strip=True).replace("Format:", "")})
                     continue
-                case "Bekannte Varianten:":
-                    result.update({ "variations" : WarningParser.join_tags(b, "p")})
-                    continue
                 case x:
+                    if "bekannte" in x.lower():
+                        result.update({ "variations" : WarningParser.join_tags(element, "p")})
+                        continue
+                    if "typ" in x.lower():
+                        oldTd: BeautifulSoup = element
+                        types: list = []
+                        while True:
+                            nextTd: BeautifulSoup = oldTd.find_next("td")
+                            oldTd = nextTd
+                            if oldTd == None: break
+                            if nextTd.find("b") != None: break
+                            img: str = nextTd.find("img")
+                            if not img: continue
+                            src: str = img.get("src")
+                            absPath: str = os.path.normpath(os.path.join(href, "../" + src))
+                            types.append(absPath)
+                            print(absPath)
+                        result["varTypes"].append({ "typeName" : x, "images" : types})
+                        continue
+
                     print("Failed to process " + x)
+
+        if len(result["varTypes"]) == 0:
+            picContainers: ResultSet[BeautifulSoup] = soup.find_all("td", { "class" : "pic"} )
+            del result["varTypes"]
+            result.update({ "imgs" : set()})
+            for container in picContainers:
+                pic: BeautifulSoup = container.find_next("img")
+                if not pic: continue
+                picSrc: str = container.find_next("img").get("src")
+                absPath: str = os.path.normpath(os.path.join(href, "../" + picSrc))
+                result["imgs"].add(absPath)
         return result
 
 def next_cleanup(soup: BeautifulSoup) -> str:
@@ -170,7 +191,7 @@ class ExtraParser:
                                 y.append(text)
                                 continue
                     print("[-] Failed to parse: " + x)
-        if result["types"] == []:
+        if len(result["types"]) == 0:
             result["types"] = [os.path.normpath(os.path.join(href, "../" + element.get("src"))) for element in soup.find_all("img")]
 
         return result
