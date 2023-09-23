@@ -81,6 +81,7 @@ class InformationExtractor:
             name: str 
             mpg_nr: str
 
+
             try:
                 series = cleanup(tds[2].get_text(strip=True))
                 name = cleanup(tds[1].get_text(strip=True))
@@ -91,6 +92,14 @@ class InformationExtractor:
             
             if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
                 continue
+
+            questionable: bool = False
+            if "fraglich" in series.lower() or "fraglich" in name.lower():
+                questionable = True
+            
+            fake: bool = False
+            if "fälschung" in series.lower() or "fälschung" in name.lower():
+                fake = True
 
             series_letter: str
             match = re.match(r"\D*", mpg_nr)
@@ -105,6 +114,8 @@ class InformationExtractor:
                 "mpgNr" : mpg_nr,
                 "name" : name,
                 "year" : cleanup(tds[3].get_text(strip=True)),
+                "fake" : fake,
+                "questionable" : questionable
             }
               
             link: BeautifulSoup = element.find('a')
@@ -187,6 +198,32 @@ class InformationExtractor:
         return values
 
     @staticmethod
+    def parse_variation(href: str) -> List:
+        html: str = ""
+        with open(href) as file:
+            html = file.read()
+        soup = BeautifulSoup(html, 'html.parser')
+        del html
+        result: list = []
+        for td in soup.find_all("td"):
+            b: ResultSet[BeautifulSoup] = td.find_all("b")
+            if not b: continue
+            mpgNr: str = b[0].get_text(strip=True)
+            if not re.search(r'\d', mpgNr): continue
+
+            images: list = []
+            oldTd: BeautifulSoup = td
+            while True:
+                next: BeautifulSoup = oldTd.find_next("td")
+                oldTd = next
+                if not next or next.get("bgcolor"): break
+                imgs: ResultSet[BeautifulSoup] = next.find_all("img")
+                if not imgs: continue
+                images.extend([os.path.normpath(os.path.join(href, "../" + img.get("src"))) for img in imgs])
+            result.append({ "mpgNr" : mpgNr, "images": images})
+        return result
+
+    @staticmethod
     def parse_packaging(href: str) -> List:
         html: str = ""
         with open(href) as file:
@@ -256,6 +293,7 @@ class InformationExtractor:
 
         cv_info: list = None
         variation_info: list = None
+        figure_variation_info: list = None
         for text in b_text:
             if "beipack" in text.get_text(strip=True).lower().strip() or "bpz" in text.get_text(strip=True).lower().strip():
                 found = text.find_next('a')
@@ -270,8 +308,15 @@ class InformationExtractor:
                     link = found.get('href')
                     absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
                     variation_info = InformationExtractor.parse_packaging(absolut_path)
+            elif "variation" in text.get_text(strip=True).lower().strip():
+                found = text.find_next('a')
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    figure_variation_info = InformationExtractor.parse_variation(absolut_path)
+                
 
-        sub_series: dict = {"thanks" : get_thanks_msg(soup), "packaging": variation_info}
+        sub_series: dict = {"thanks" : get_thanks_msg(soup), "packaging": variation_info, "figureVariations": figure_variation_info}
         pckgi_info: list = None
 
         if cv_info:
