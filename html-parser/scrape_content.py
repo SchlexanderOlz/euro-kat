@@ -5,9 +5,32 @@ import threading
 import sys
 import json
 import base64
+import os
 
-SRCES: list[str] = ["I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm", "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDV.htm", "I:/Code/(Deprecated)EuroKatFiles/JGListen/WFF.htm"]
+SRCES: list[str] = [
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WEN.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDV.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WFF.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WC.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDC.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDE.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WDV.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WFS.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WFT.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WNV.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WS.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WSD.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WSE.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WST.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WTR.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WTT.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WUN.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WVU.htm",
+    "I:/Code/(Deprecated)EuroKatFiles/JGListen/WVV.htm"
+    ]
 
+
+quiet: bool = False
 
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -32,8 +55,6 @@ class Scraper:
                 args=(InformationExtractor.get_html_content, src),
             )
             threads.append(thread)
-
-        for thread in threads:
             thread.start()
 
         for thread in threads:
@@ -47,7 +68,20 @@ class Scraper:
 
     @staticmethod
     def cleanup(data: list[dict]):
-        for series in data:
+        series_names: list[str] = []
+        y: int = 0
+        while y < len(data):
+            series = data[y]
+            try:
+                found_series_at: int = series_names.index(series["seriesLetter"])
+                new_series: dict = data[found_series_at]
+                new_series["subSeries"].extend(series["subSeries"])
+
+                data.pop(y)
+            except ValueError:
+                y += 1
+                series_names.append(series["seriesLetter"])
+
             sub_seris_names: list[str] = []
             i: int = 0
             while i < len(series["subSeries"]):
@@ -70,12 +104,7 @@ if __name__ == "__main__":
     Scraper.save_to_json("extras", extras)
     try:
         html_buff: list = []
-        html_content_thread = threading.Thread(
-            target=Scraper.get_html_content, args=(html_buff,)
-        )
-        html_content_thread.start()
-
-        html_content_thread.join()
+        Scraper.get_html_content(html_buff)
 
         Scraper.cleanup(html_buff)
         Scraper.save_to_json("data", html_buff)

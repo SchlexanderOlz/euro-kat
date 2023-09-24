@@ -7,6 +7,7 @@ import type {
 	Figure,
 	SubSeriesVariation,
 	FigureVariation,
+	Packaging
 } from './Types';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation};

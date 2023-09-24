@@ -12,6 +12,7 @@ init(autoreset=True)
 LOCK = threading.Lock()
 
 
+QUIET: bool = True
 
 # TODO
 # --> Some checks are missing
@@ -158,8 +159,11 @@ class InformationExtractor:
             tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
         """
         html: str = ""
-        with open(href) as file:
-            html = file.read()
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "File not found: " + href)
         soup = BeautifulSoup(html, 'html.parser')
         del html
 
@@ -200,8 +204,12 @@ class InformationExtractor:
     @staticmethod
     def parse_variation(href: str) -> List:
         html: str = ""
-        with open(href) as file:
-            html = file.read()
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "Couldnt open file: " + href)
+            return
         soup = BeautifulSoup(html, 'html.parser')
         del html
         result: list = []
@@ -335,11 +343,12 @@ class InformationExtractor:
         span: BeautifulSoup = soup.find("span")
         pattern = r'\b\d+-\d+\b'
         year: str = "???"
-        if font:
-            year = re.findall(pattern, font.get_text(strip=True))[0]
         create_infos: list = []
-        if span:
-            create_infos = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
+        if font:
+            year = re.findall(pattern, font.get_text(strip=True))
+            if len(year) > 0 and span:
+                year = year[0]
+                create_infos = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
 
         country: str = None
         try:
@@ -417,8 +426,12 @@ class InformationExtractor:
 
         """
         html: str = ""
-        with open(href) as file:
-            html = file.read()
+
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "File could not be found: " + href)
         
         soup = BeautifulSoup(html, 'html.parser')
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
@@ -445,7 +458,7 @@ class InformationExtractor:
                     year = year.strip()
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
                     bpz_container: BeautifulSoup = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr')
-                    bpz_info: dict = {}
+                    bpz_info: dict = []
                     if bpz_container:
                         a = bpz_container.find('a')
                         if a:
@@ -479,7 +492,7 @@ class InformationExtractor:
         return joined_path
 
     @staticmethod
-    def __display_info(message_type: MessageType, message: str) -> None:
+    def __display_info(message_type: MessageType, message: str):
         """
         Displays a formatted message of a specific message type.
 
@@ -487,6 +500,7 @@ class InformationExtractor:
             message_type (MessageType): The type of the message (ERROR, WARNING, INFO).
             message (str): The message content.
         """
+        if QUIET: return
         with LOCK:
             begin: str
             match message_type:
