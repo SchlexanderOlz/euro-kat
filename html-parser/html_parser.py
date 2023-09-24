@@ -12,6 +12,7 @@ init(autoreset=True)
 LOCK = threading.Lock()
 
 
+QUIET: bool = True
 
 # TODO
 # --> Some checks are missing
@@ -81,6 +82,7 @@ class InformationExtractor:
             name: str 
             mpg_nr: str
 
+
             try:
                 series = cleanup(tds[2].get_text(strip=True))
                 name = cleanup(tds[1].get_text(strip=True))
@@ -91,6 +93,14 @@ class InformationExtractor:
             
             if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
                 continue
+
+            questionable: bool = False
+            if "fraglich" in series.lower() or "fraglich" in name.lower():
+                questionable = True
+            
+            fake: bool = False
+            if "fälschung" in series.lower() or "fälschung" in name.lower():
+                fake = True
 
             series_letter: str
             match = re.match(r"\D*", mpg_nr)
@@ -105,6 +115,8 @@ class InformationExtractor:
                 "mpgNr" : mpg_nr,
                 "name" : name,
                 "year" : cleanup(tds[3].get_text(strip=True)),
+                "fake" : fake,
+                "questionable" : questionable
             }
               
             link: BeautifulSoup = element.find('a')
@@ -147,8 +159,11 @@ class InformationExtractor:
             tuple[str, bool, str, set[bytes]]: A tuple containing the extracted information.
         """
         html: str = ""
-        with open(href) as file:
-            html = file.read()
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "File not found: " + href)
         soup = BeautifulSoup(html, 'html.parser')
         del html
 
@@ -185,6 +200,64 @@ class InformationExtractor:
             InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
         return values
+
+    @staticmethod
+    def parse_variation(href: str) -> List:
+        html: str = ""
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "Couldnt open file: " + href)
+            return
+        soup = BeautifulSoup(html, 'html.parser')
+        del html
+        result: list = []
+        for td in soup.find_all("td"):
+            b: ResultSet[BeautifulSoup] = td.find_all("b")
+            if not b: continue
+            mpgNr: str = b[0].get_text(strip=True)
+            if not re.search(r'\d', mpgNr): continue
+
+            images: list = []
+            oldTd: BeautifulSoup = td
+            while True:
+                next: BeautifulSoup = oldTd.find_next("td")
+                oldTd = next
+                if not next or next.get("bgcolor"): break
+                imgs: ResultSet[BeautifulSoup] = next.find_all("img")
+                if not imgs: continue
+                images.extend([os.path.normpath(os.path.join(href, "../" + img.get("src"))) for img in imgs])
+            result.append({ "mpgNr" : mpgNr, "images": images})
+        return result
+
+    @staticmethod
+    def parse_packaging(href: str) -> List:
+        html: str = ""
+        with open(href) as file:
+            html = file.read()
+        soup = BeautifulSoup(html, 'html.parser')
+        del html
+
+        result: list = []
+        for td in soup.find_all("td"):
+            b: BeautifulSoup = td.find("b")
+            if not b: continue
+            name: str = b.get_text(strip=True)
+            thanks: str = td.get_text(strip=True).replace(name, "")
+
+            lastTd: BeautifulSoup = td
+            images: list = []
+            while True:
+                next: BeautifulSoup = lastTd.find_next("td")
+                if not next: break
+                imgs: ResultSet = next.find_all("img")
+                if not imgs or len(imgs) == 0: break
+                images.extend([os.path.normpath(os.path.join(href, "../" + image.get("src"))) for image in imgs])
+                if len(images) == 0: break
+                lastTd = next
+            result.append({ "name" : name, "thanks" : thanks, "images": images})
+        return result
 
     @staticmethod
     def get_series_info(href: str) -> Dict:
@@ -227,17 +300,31 @@ class InformationExtractor:
         b_text: ResultSet[BeautifulSoup] = soup.find_all('b')
 
         cv_info: list = None
+        variation_info: list = None
+        figure_variation_info: list = None
         for text in b_text:
             if "beipack" in text.get_text(strip=True).lower().strip() or "bpz" in text.get_text(strip=True).lower().strip():
+                found = text.find_next('a')
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+            elif "verpackungen" in text.get_text(strip=True).lower().strip():
                 found = text.find_next('a')
 
                 if found:
                     link = found.get('href')
                     absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
-                    cv_info = InformationExtractor.get_country_variation_info(absolut_path)
+                    variation_info = InformationExtractor.parse_packaging(absolut_path)
+            elif "variation" in text.get_text(strip=True).lower().strip():
+                found = text.find_next('a')
+                if found:
+                    link = found.get('href')
+                    absolut_path: str = InformationExtractor.__join_paths('../' + link, href)
+                    figure_variation_info = InformationExtractor.parse_variation(absolut_path)
+                
 
-
-        sub_series: dict = {"thanks" : get_thanks_msg(soup)}
+        sub_series: dict = {"thanks" : get_thanks_msg(soup), "packaging": variation_info, "figureVariations": figure_variation_info}
         pckgi_info: list = None
 
         if cv_info:
@@ -255,8 +342,13 @@ class InformationExtractor:
         font: BeautifulSoup = soup.find("font", { "size" : '2'})
         span: BeautifulSoup = soup.find("span")
         pattern = r'\b\d+-\d+\b'
-        year: str = re.findall(pattern, font.get_text(strip=True))[0]
-        create_infos: list = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
+        year: str = "???"
+        create_infos: list = []
+        if font:
+            year = re.findall(pattern, font.get_text(strip=True))
+            if len(year) > 0 and span:
+                year = year[0]
+                create_infos = span.get_text(strip=True).replace(";", "").replace("Joy", "").split(year)
 
         country: str = None
         try:
@@ -306,11 +398,13 @@ class InformationExtractor:
             except AttributeError as e:
                 continue
 
-            # TODO Can be made more efficient by returning a list of pictures per mpgNr
+            myImages: list = []
             for src in img_srces:
                 if src.find(mpg_nr) == -1:
                     continue
-                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : InformationExtractor.__join_paths("../" + src, href)})
+                myImages.append(InformationExtractor.__join_paths("../" + src, href))
+            if len(myImages) > 0:
+                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : myImages})
         return resolved_images
 
 
@@ -332,8 +426,12 @@ class InformationExtractor:
 
         """
         html: str = ""
-        with open(href) as file:
-            html = file.read()
+
+        try:
+            with open(href) as file:
+                html = file.read()
+        except FileNotFoundError as e:
+            InformationExtractor.__display_info(InformationExtractor.MessageType.ERROR, "File could not be found: " + href)
         
         soup = BeautifulSoup(html, 'html.parser')
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
@@ -359,8 +457,12 @@ class InformationExtractor:
                     country = country.strip()
                     year = year.strip()
                     note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
-                    bpz_link: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find('a').get('href')
-                    bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + bpz_link, href))
+                    bpz_container: BeautifulSoup = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr')
+                    bpz_info: dict = []
+                    if bpz_container:
+                        a = bpz_container.find('a')
+                        if a:
+                            bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + a.get("href"), href))
 
                     note = cleanup(note)
                     country = cleanup(country)
@@ -390,7 +492,7 @@ class InformationExtractor:
         return joined_path
 
     @staticmethod
-    def __display_info(message_type: MessageType, message: str) -> None:
+    def __display_info(message_type: MessageType, message: str):
         """
         Displays a formatted message of a specific message type.
 
@@ -398,6 +500,7 @@ class InformationExtractor:
             message_type (MessageType): The type of the message (ERROR, WARNING, INFO).
             message (str): The message content.
         """
+        if QUIET: return
         with LOCK:
             begin: str
             match message_type:
