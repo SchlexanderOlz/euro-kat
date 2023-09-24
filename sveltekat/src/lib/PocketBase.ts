@@ -10,7 +10,7 @@ import type {
 	Packaging
 } from './Types';
 
-export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation};
+export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging};
 export const domain: string = "ek.krenn.tech:443"
 export const imgdom: string = `https://${domain}/api/files`;
 export const connection: PocketBase = new PocketBase(`https://${domain}`);

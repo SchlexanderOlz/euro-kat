@@ -5,6 +5,7 @@ import {
   Figure,
   SubSeriesVariation,
   FigureVariation,
+  Packaging
 } from "../sveltekat/src/lib/PocketBase.js";
 
 const pb = new PocketBase("https://ek.krenn.tech/");
@@ -66,6 +67,29 @@ async function GetAllFigureVariation(): Promise<FigureVariation[]> {
 
 }
 
+async function GetFigureByMPG(mpg:string): Promise<Figure> {
+  console.log(
+    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
+  );
+
+  const figure = await pb.collection('Figure').getFullList({
+    filter: `mpgNr = "${mpg}"`
+  });
+
+  return figure;
+}
+
+async function GetAllPackaging(): Promise<Packaging[]> {
+  console.log(
+    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
+  );
+
+  const packaging = await pb.collection('Packaging').getFullList();
+
+  return packaging;
+
+}
+
 
 //Print outputs of all Queries
 
@@ -95,6 +119,18 @@ async function GetAllFigureVariation(): Promise<FigureVariation[]> {
 
 /*GetAllFigureVariation().then((figurevariation) => {
   console.log(figurevariation);
+}).catch((error) => {
+  console.error(error);
+});*/
+
+/*GetFigureByMPG('SEF07').then((figure) => {
+  console.log(figure);
+}).catch((error) => {
+  console.error(error);
+});*/
+
+/*GetAllPackaging().then((packaging) => {
+  console.log(packaging);
 }).catch((error) => {
   console.error(error);
 });*/
