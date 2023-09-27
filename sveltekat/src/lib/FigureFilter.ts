@@ -1,5 +1,5 @@
 import type { Collection, RecordService } from 'pocketbase';
-import { connection } from './PocketBase';
+import { connection, figureInitLoadCount } from './PocketBase';
 import type { Series, SubSeries, Figure } from './Types';
 
 export class FigurFilterBuilder {
@@ -52,13 +52,13 @@ export class FigurFilterBuilder {
 	}
 
   name(name: string) {
-    this.findRemove("name~")
-    this.filter.add(`name~${name}`)
+    this.findRemove("name ~")
+    this.filter.add(`name ~ "${name}"`)
   }
 
   identifier(id: string) {
     this.findRemove("identifier~")
-    this.filter.add(`identifier~${id}`)
+    this.filter.add(`identifier~ "${id}"`)
   }
 
   note(note: string) {
@@ -99,7 +99,8 @@ export class FigurFilterBuilder {
 	async run(): Promise<Figure[]> {
 		// Remove this implicit copy -> f.e. manull iteration
 		return structuredClone(
-			await this.figureCollection.getFullList({ filter: Array.from(this.filter).join(' && '), expand: this.expand })
+			// TODO: How to handle multiple pages
+			(await this.figureCollection.getList(1, figureInitLoadCount, { filter: Array.from(this.filter).join(' && '), expand: this.expand })).items
 		);
 	}
 }
