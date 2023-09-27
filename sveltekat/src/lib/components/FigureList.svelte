@@ -10,14 +10,11 @@
 	import FilterIcon from '$lib/icons/FilterIcon.svelte';
 
 	import { figureBuilder } from '$lib/FigureFilter';
+	import CloseIcon from '$lib/icons/CloseIcon.svelte';
+	import CDownIcon from '$lib/icons/CDownIcon.svelte';
+	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
 	export let figures: Figure[];
-
-	const updateSearchParams = (key: string, value: string) => {
-		const searchParams = new URLSearchParams($page.url.searchParams);
-		searchParams.set(key, value);
-		goto(`?${searchParams.toString()}`, { keepFocus: true });
-	};
 
 	let inputValue = '';
 
@@ -34,13 +31,10 @@
 	//}
 
 	// QUERY UNFRIENDLY (lots of db requests if user spams keys), but don't need "go" button
-	function updateResults() {
-		updateSearchParams('q', inputValue);
-	}
 
 	async function update() {
-		figureBuilder.sticker(); // TODO: for every filter
-    
+		figureBuilder.country('Deutschland'); // TODO: for every filter
+
 		figures = await figureBuilder.run();
 	}
 
@@ -48,52 +42,45 @@
 		Sticker: update
 	};
 
-	let filterSelect = '';
-
-	$: lang = $page.url.searchParams.get('lang') || 'en';
-
-	const popupCombobox: PopupSettings = {
-		event: 'click',
-		target: 'genbox',
-		closeQuery: '.listbox-item',
-		placement: 'bottom'
-	};
+	let filter = true;
 </script>
 
 <div>
-	<div class="flex flex-col sm:flex-row mb-3">
+	<div class="flex flex-col sm:flex-row">
 		<div class="w-full mr-2 relative">
-			<input
-				bind:value={inputValue}
-				on:input={updateResults}
-				class="input w-full"
-				placeholder="Suche"
-			/>
-			<button class="btn absolute right-0 variant-ringed ring-opacity-30" on:click={updateResults}
-				>Los</button
+			<input bind:value={inputValue} class="input w-full" placeholder="Suche" />
+			<button
+				class="btn absolute right-0 variant-ringed ring-opacity-30"
+				on:click={() => {
+					console.log('update');
+				}}>Los</button
 			>
 		</div>
 
-		<button class="btn variant-filled select-none sm:mt-0 mt-1" use:popup={popupCombobox}>
-			Filter <span class="ml-2 -mr-2"><FilterIcon /></span>
+		<button
+			class="btn variant-filled select-none sm:mt-0 mt-2"
+			on:click={() => {
+				filter = !filter;
+			}}
+		>
+			Filter <span class="ml-2 -mr-2">
+				{#if filter}
+					<CUpIcon styles="h-6 w-auto stroke-2"/>
+				{:else}
+					<CDownIcon styles="h-6 w-auto stroke-2"/>
+				{/if}
+			</span>
 		</button>
+	</div>
 
-		<div class="card text-xl shadow-xl select-none" data-popup="genbox">
-			<ListBox rounded="rounded-lg">
-				{#each Object.keys(filterOptions) as filter}
-					<ListBoxItem
-						active="variant-ringed"
-						bind:group={filterSelect}
-						name="medium"
-						aria-label={filter}
-						value={filter}
-						on:click={async () => {
-							update();
-						}}>{filter}</ListBoxItem
-					>
-				{/each}
-			</ListBox>
-		</div>
+	{#if filter}
+		<div class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2">huan</div>
+	{/if}
+
+	<div class="w-full h-8 flex items-center relative mt-2">
+		<button class="ml-2 w-80 text-start"> Name </button>
+		<button class="ml-4 md:flex hidden"> Notiz </button>
+		<button class="absolute right-2"> Mpg Nr. </button>
 	</div>
 
 	{#each figures as figure (figure.id)}
