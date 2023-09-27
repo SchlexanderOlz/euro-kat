@@ -48,6 +48,7 @@ export interface SubSeriesVariation {
 	year: number;
 	figuresVariation: FigureVariation[];
 	note: string;
+  country: string
 }
 
 export interface SubSeries {

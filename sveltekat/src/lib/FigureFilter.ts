@@ -4,60 +4,87 @@ import type { Series, SubSeries, Figure } from './Types';
 
 export class FigurFilterBuilder {
 	filter: Set<string>;
-	figureCollection: RecordService;
+  expand: string;
+	figureCollection: RecordService<Figure>;
+
 	constructor() {
 		this.figureCollection = connection.collection('Figure');
+    this.expand = "";
 		this.filter = new Set();
 	}
 
 	fake() {
-		if (this.filter.has('fake=true')) {
-			this.filter.delete('fake=true');
-			this.filter.add('fake=false');
+    this.toggleBoolConatined("fake")
+	}
+
+  private toggleBoolConatined(field: string) {
+		if (this.filter.has(`${field}=true`)) {
+			this.filter.delete(`${field}=true`);
+			this.filter.add(`${field}=false`);
 		} else {
-			this.filter.delete('fake=false');
-			this.filter.add('fake=true');
+			this.filter.delete(`${field}=false`);
+			this.filter.add(`${field}=true`);
 		}
+  }
+
+	questionable() {
+    this.toggleBoolConatined("questionable")
 	}
 
-	sticker(): boolean {
-		if (this.filter.has('sticker=true')) {
-			this.filter.delete('sticker=true');
-			this.filter.add('sticker=false');
-			return true;
-		}
-		this.filter.delete('sticker=false');
-		this.filter.add('sticker=true');
-		return false;
+	sticker() {
+    this.toggleBoolConatined("sticker")
 	}
 
-	yearRange(year: number) {
-		// NOTE: Think about implemening this as a range-query on second-call
-		// TODO: Handle the case where there was already a range inserted befores
-		for (const value of this.filter.values()) {
-			if (value.startsWith('year=')) {
-				const oldYear = Number.parseInt(value.split('=')[1]);
-				this.filter.delete(value);
-				const older = Math.min(year, oldYear);
-				const younger = Math.max(year, oldYear);
-				this.filter.add(`year>=${older} && year<=${younger}`);
-				return;
-			}
-		}
-		this.filter.add(`year=${year}`);
-	}
+  yearBegin(year: number | undefined) {
+    this.findRemove('year>=')
+    this.filter.add(`year>=${year}`)
+  }
 
-	year(year: number) {
-		const found = this.findRemove('year');
+  yearEnd(year: number | undefined) {
+    this.findRemove('year<=')
+    this.filter.add(`year<=${year}`)
+  }
+
+	year(year: number | undefined) {
+		const found = this.findRemove('year=');
 		if (found) return;
 		this.filter.add(`year=${year}`);
 	}
+
+  name(name: string) {
+    this.findRemove("name~")
+    this.filter.add(`name~${name}`)
+  }
+
+  identifier(id: string) {
+    this.findRemove("identifier~")
+    this.filter.add(`identifier~${id}`)
+  }
+
+  note(note: string) {
+    this.findRemove("note~")
+    this.filter.add(`note~${note}`)
+  }
+
+  id(id: string) {
+    this.findRemove("id=")
+    this.filter.add(`id=${id}`)
+  }
 
 	mpgnumber(mpgNr: string | undefined) {
 		const found = this.findRemove('mpgNr');
 		if (found) return;
 		this.filter.add(`mpgNr=${mpgNr}`);
 	}
+
+  country(country: string) {
+    if (!(this.expand == "FigureVariation,SubSeriesVariation(figureVariation).country")) {
+      this.expand = "FigureVariation,SubSeriesVariation(figureVariation).country"
+    }
+
+    this.findRemove("country=")
+    this.filter.add(`country=${country}`)
+  }
 
 	private findRemove(search: string) {
 		for (const element of this.filter.values()) {
@@ -72,7 +99,7 @@ export class FigurFilterBuilder {
 	async run(): Promise<Figure[]> {
 		// Remove this implicit copy -> f.e. manull iteration
 		return structuredClone(
-			await this.figureCollection.getFullList({ filter: Array.from(this.filter).join(' && ') })
+			await this.figureCollection.getFullList({ filter: Array.from(this.filter).join(' && '), expand: this.expand })
 		);
 	}
 }
