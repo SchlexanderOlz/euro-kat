@@ -8,9 +8,8 @@
   <div class="flex">
     <p class="w-80 flex-shrink-0">{figure.name}</p>
     {#if figure.note && figure.note != 'undefined'}
-      <p class="text-surface-400 ml-4 mr-16 md:flex hidden">Notiz: {figure.note.substring(0, 30)}...</p>
+      <p class="text-surface-400 ml-4 mr-16 md:flex hidden">{figure.note.substring(0, 30)}...</p>
     {/if}
-    
   </div>
   <p class="w-max absolute right-2 text-right">#{figure.mpgNr}</p>
 </div>
