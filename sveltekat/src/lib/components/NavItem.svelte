@@ -1,9 +1,15 @@
 <script lang="ts">
-	import type { Item } from "$lib/NavItems";
+	import { page } from '$app/stores';
 
-  export let title: string;
-  export let link: string;
-  export let styles: string = "";
+	export let title: string;
+	export let link: string;
+	export let styles: string = '';
+
+	$: path = $page.url.pathname || '';
 </script>
 
-<a data-sveltekit-preload-data class="btn variant-ringed mx-1 select-none {styles}" href={link}><p>{title}</p></a>
+<a
+	data-sveltekit-preload-data
+	class="btn variant-ringed mx-1 select-none {styles} {path == link ? 'variant-ghost' : ''}"
+	href={link}><p>{title}</p></a
+>

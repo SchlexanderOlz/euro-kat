@@ -9,7 +9,9 @@
 	import type { Item } from '$lib/NavItems';
 
 	export let item: Item;
-	let testvalue = $page.url.pathname || '';
+	$: path = $page.url.pathname || '';
+	$: selected = Object.values(item.references).includes(path);
+	
 
 	const popupCombobox: PopupSettings = {
 		event: 'click',
@@ -19,26 +21,24 @@
 	};
 </script>
 
-<button class="btn variant-ringed mx-1 select-none" use:popup={popupCombobox}>
+<button class="btn mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}" use:popup={popupCombobox}>
 	{item.title}<DownIcon />
 </button>
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
 	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
-		<a href={item.references[reference]} data-sveltekit-preload-data>
-			<ListBoxItem
+		<ListBoxItem
 			class=""
-			active="variant-ringed-surface"
-			bind:group={testvalue}
+			active="variant-ringed-surface rounded-sm"
+			bind:group={path}
 			name="medium"
 			value={item.references[reference]}
 			on:click={() => {
-				console.log(item.references[reference]);
+				goto(item.references[reference])
 			}}
 		>
 			{reference}</ListBoxItem
 		>
-		</a>
 			
 		{/each}
 	</ListBox>
