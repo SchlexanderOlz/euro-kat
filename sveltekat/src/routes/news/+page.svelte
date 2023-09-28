@@ -2,7 +2,7 @@
 </script>
 
 <div class="w-full flex flex-col items-center mt-6 px-[10%] cursor-default berichte mb-16">
-	<h1 class="h1 mb-5 select-none ">Berichte</h1>
+	<h1 class="h1 mb-5 select-none">Berichte</h1>
 
 	<!-- Berichte -->
 
@@ -33,21 +33,24 @@
 	<div>
 		<h3>Bermes Design</h3>
 		<p>
-			Peter Bermes (Bermes Design) gehörte, neben Koch, Havranek und kurzzeitig Roth, zu den Designer der Inhalte aus den deutschen Überraschungseiern der ersten Stunde. In 20 Jahren Arbeit für Ferrero (1975-1995) hat er unzählige Entwürfe gefertigt und zeichnet als Urheber zahlreicher Inhalte. Die von ihm entwickelten Spielprinzipien finden sich teilweise noch in aktuellen Inhalten wieder.
+			Peter Bermes (Bermes Design) gehörte, neben Koch, Havranek und kurzzeitig Roth, zu den
+			Designer der Inhalte aus den deutschen Überraschungseiern der ersten Stunde. In 20 Jahren
+			Arbeit für Ferrero (1975-1995) hat er unzählige Entwürfe gefertigt und zeichnet als Urheber
+			zahlreicher Inhalte. Die von ihm entwickelten Spielprinzipien finden sich teilweise noch in
+			aktuellen Inhalten wieder.
 		</p>
 		<p>
-			Obwohl Ferrero langsam beginnt das eine oder andere Archiv zu öffnen, so bleibt doch noch vieles im Dunklen.
+			Obwohl Ferrero langsam beginnt das eine oder andere Archiv zu öffnen, so bleibt doch noch
+			vieles im Dunklen.
 		</p>
-		<p>
-			.... es wird weiter dran gearbeitet!
-		</p>
+		<p>.... es wird weiter dran gearbeitet!</p>
 		<a href="https://www.orf.at">
 			<button>- zur Bermes Liste -</button>
 		</a>
 	</div>
 
-    <!-- Restliche Berichte von Euro-Kat Berichte -->
-    <p>Restliche Berichte hinzufügen</p>
+	<!-- Restliche Berichte von Euro-Kat Berichte -->
+	<p>Restliche Berichte hinzufügen</p>
 </div>
 
 <!-- Standard-Bericht Styles (nicht verändern, außer man weiß, was man tut!) -->

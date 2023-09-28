@@ -89,8 +89,12 @@
 	</div>
 
 	{#if filter}
-		<div class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center">
-			<div class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-fit px-[5%] sm:px-0">
+		<div
+			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
+		>
+			<div
+				class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-fit px-[5%] sm:px-0"
+			>
 				<div class="flex flex-col sm:flex-row items-center">
 					<p class="sm:hidden flex mb-1">Sticker</p>
 					<SlideToggle
@@ -106,7 +110,7 @@
 					/>
 					<p class="ml-2 sm:flex hidden">Sticker</p>
 				</div>
-				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0 ">
+				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
 					<p class="sm:hidden flex mb-1">Fake</p>
 					<SlideToggle
 						on:change={() => {
@@ -138,8 +142,8 @@
 				</div>
 			</div>
 
-			<div class="sm:w-[40%] sm:min-w-[20rem] w-full sm:ml-8 flex-shrink-0 mt-4 sm:mt-0  ">
-				<p class="ml-2 w-full text-center ">Jahre: {yearrange.join('-')}</p>
+			<div class="sm:w-[40%] sm:min-w-[20rem] w-full sm:ml-10 flex-shrink-0 mt-4 sm:mt-0">
+				<p class="ml-2 w-full text-center">Jahre: {yearrange.join('-')}</p>
 				<RangeSlider
 					on:change={updateYear}
 					bind:values={yearrange}

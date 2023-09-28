@@ -1,20 +1,14 @@
-<script lang="ts">
-</script>
-
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
-
-
-
 <div class="w-full flex flex-col items-center mb-8">
 	<div class="text-xl mt-3 opacity-60 text-center">
 		<p>Willkommen! Welcome! Accueillir! Bienvenido! приветствие!</p>
 	</div>
 	<div class="flex items-center flex-col cursor-default lg:w-[75%] w-[90%]">
-		<h1 class="h1 md:text-8xl text-5xl h-full flex mt-5  cursor-default text-center">Euro-Katalog</h1>
+		<h1 class="h1 md:text-8xl text-5xl h-full flex mt-5 cursor-default text-center">
+			Euro-Katalog
+		</h1>
 		<p class="mt-8 text-2xl text-center">
 			Der <span class="font-bold">Euro-Katalog</span> als die umfangreichste Informationssammlung zu
 			den Ü-Ei-Inhalten der vergangenen Jahre.
-			
 		</p>
 
 		<div class="card p-2 mx-4 mt-8 max-w-[1166px]">

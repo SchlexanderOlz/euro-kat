@@ -16,7 +16,7 @@
 
 <AppShell>
 	<svelte:fragment slot="header">
-		<NavBar/>
+		<NavBar />
 	</svelte:fragment>
 	<slot />
 	<svelte:fragment slot="pageFooter">

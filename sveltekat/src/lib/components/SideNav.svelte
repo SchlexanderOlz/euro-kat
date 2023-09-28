@@ -36,8 +36,8 @@
 	let curPath = path;
 
 	$: if (path != curPath) {
-		sideClose()
-		curPath = path
+		sideClose();
+		curPath = path;
 	}
 </script>
 

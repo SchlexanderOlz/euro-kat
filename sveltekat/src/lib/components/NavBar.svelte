@@ -34,6 +34,5 @@
 			</div>
 			<SideNav />
 		</div>
-		
 	</svelte:fragment>
 </AppBar>
