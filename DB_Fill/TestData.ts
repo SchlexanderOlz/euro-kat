@@ -7,6 +7,7 @@ import type {
   Packaging,
   Variation,
   FigureVariation,
+  Warning,
 } from "../sveltekat/src/lib/Types.js";
 import fs from "fs";
 
@@ -47,14 +48,18 @@ async function add() {
     for (const sub of object.subSeries) {
       for (const figure of sub.figures) {
         let formData = new FormData();
-        formData.append("mpgNr", figure.mpgNr);
-        formData.append("name", figure.name);
-        formData.append("year", figure.year);
-        formData.append("identifier", figure.identifier);
-        formData.append("sticker", figure.sticker);
-        formData.append("note", figure.note);
-        formData.append("fake", figure.fake);
-        formData.append("questionable", figure.questionable);
+
+        if (!figure.mpgNr) continue;
+        formData.append("mpgNr", figure?.mpgNr);
+        if (figure.name) formData.append("name", figure?.name);
+        if (figure.year) formData.append("year", figure?.year);
+        if (figure.identifier)
+          formData.append("identifier", figure?.identifier);
+        if (figure.sticker) formData.append("sticker", figure?.sticker);
+        if (figure.note) formData.append("note", figure?.note);
+        if (figure.fake) formData.append("fake", figure?.fake);
+        if (figure.questionable)
+          formData.append("questionable", figure?.questionable);
 
         figure.pictures?.forEach((path: string) => {
           if (path.search("want_fig.jpg") >= 0) return;
@@ -80,10 +85,13 @@ async function add() {
       let subSeriesData = new FormData();
       for (const variation of sub.variations) {
         let subVariation = new FormData();
-        subVariation.append("year", variation.year);
-        subVariation.append("country", variation.country);
-        subVariation.append("note", variation.note);
 
+        if (variation.year) subVariation.append("year", variation.year);
+        if (variation.country)
+          subVariation.append("country", variation.country);
+        if (variation.note) subVariation.append("note", variation.note);
+
+        let packages: FormData[] = [];
         for (const pckgi of variation.pckgi) {
           let formData = new FormData();
 
@@ -97,7 +105,6 @@ async function add() {
               continue;
             }
           }
-          const figureCreate = figureVariations.create(formData);
 
           try {
             var figureRef = await figures.getFirstListItem(
@@ -107,14 +114,17 @@ async function add() {
             console.log("Ressource not found: " + pckgi.mpgNr);
             continue;
           }
-          const record = await figureCreate;
 
-          figures.update(figureRef.id, {
-            "figureVariations+": record.id,
-          });
-          subVariation.append("figureVariations", record.id);
+          formData.append("figureId", figureRef.id);
+          packages.push(formData);
         }
         const record = await subSeriesVariations.create(subVariation);
+
+        for (let formData of packages) {
+          formData.append("subSeriesVariationId", record.id);
+          await figureVariations.create(formData);
+        }
+
         subSeriesData.append("subSeriesVariations", record.id);
       }
 
@@ -131,8 +141,8 @@ async function add() {
               return;
             }
           });
-          packageData.append("name", packag.name);
-          packageData.append("thanks", packag.thanks);
+          if (packag.name) packageData.append("name", packag.name);
+          if (packag.thanks) packageData.append("thanks", packag.thanks);
           const record = await packaging.create(packageData);
           subSeriesData.append("packaging", record.id);
         }
@@ -176,10 +186,59 @@ async function addWarnings() {
   );
   const data = fs.readFileSync("../html-parser/warnings.json", "utf8");
   const json = JSON.parse(data);
+  const warnings = pb.collection("Warning");
+  const warningTypes = pb.collection("WarningType");
 
-  json.forEach((warning: any /*Warning*/) => {
-    // TODO: Continue here
-  });
+  for (const warning of json) {
+    let formData = new FormData();
+
+    if (warning.varTypes) {
+      for (const type of warning.varTypes) {
+        let warningData = new FormData();
+        warningData.append("name", type.typeName);
+
+        for (const path of type.images) {
+          try {
+            const data = fs.readFileSync(path);
+            const blob = new Blob([data], { type: getTypeHeader(path) });
+            warningData.append("images", blob, path.split("\\").pop());
+          } catch (Error) {}
+        }
+        const record = await warningTypes.create(warningData);
+        formData.append("types", record.id);
+      }
+    } else {
+      let warningData = new FormData();
+      warningData.append("name", "Typ 1");
+
+      for (const path of warning.imgs) {
+        try {
+          const data = fs.readFileSync(path);
+          const blob = new Blob([data], { type: getTypeHeader(path) });
+          warningData.append("images", blob, path.split("\\").pop());
+        } catch (Error) {}
+      }
+      const record = await warningTypes.create(warningData);
+      formData.append("types", record.id);
+    }
+
+    formData.append("numbered", warning.numbered);
+    if (warning.general) formData.append("general", warning.general);
+    if (warning.header) {
+      try {
+        const data = fs.readFileSync(warning.header);
+        const blob = new Blob([data], { type: getTypeHeader(warning.header) });
+        formData.append("header", blob);
+      } catch (Error) {}
+    }
+    if (warning.countryA) formData.append("countryA", warning.countryA);
+    if (warning.countryB) formData.append("countryB", warning.countryB);
+    if (warning.format) formData.append("format", warning.format);
+    if (warning.variations) formData.append("variations", warning.variations);
+    if (warning.name) formData.append("name", warning.name);
+
+    warnings.create(formData);
+  }
 }
 
 async function dropAll(collectionName: string) {
@@ -205,9 +264,19 @@ function main() {
         dropAll("SubSeriesVariation");
         dropAll("Packaging");
         dropAll("Variation");
+        dropAll("Warning");
+        dropAll("WarningType");
         return;
       case "--add":
         add();
+        return;
+      case "--add-warnings":
+        addWarnings();
+        return;
+      case "--drop-warnings":
+        dropAll("Warning");
+        dropAll("WarningType");
+        return;
     }
   });
 }
