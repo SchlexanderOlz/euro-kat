@@ -70,6 +70,47 @@ export interface Series {
 
 export interface Warning {
 	id: string;
-	created: string;
-	updated: string;
+	created: Date;
+	updated: Date;
+	name: string;
+	numbered: boolean;
+	general: string;
+	header: string;
+	countryA: string;
+	countryB: string;
+	format: string;
+	variations: string;
+	types: WarningType[]
+}
+
+export interface WarningType {
+	id: string;
+	created: Date;
+	updated: Date;
+	name: string;
+	images: string[];
+}
+
+export interface Extra {
+	id: string;
+	created: Date;
+	updated: Date;
+	numbered: boolean;
+	name: string;
+	text: string;
+	identifier: string;
+	address: string;
+	format: string;
+	series: string;
+	year: string;
+	note: string;
+	thanks: string;
+	types: ExtraType[];
+}
+
+export interface ExtraType {
+	id: string;
+	created: Date;
+	updated: Date;
+	images: string[];
 }
