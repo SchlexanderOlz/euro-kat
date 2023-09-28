@@ -3,13 +3,12 @@
 
 <div class="w-full flex flex-col px-[10%] cursor-default items-center">
 	<h1 class="h1 mb-4 mt-8 w-full flex justify-center">Links</h1>
-    <p class="text-center">
-        Hier findet Ihr Links zu anderen Seiten die ich des Öfteren aufsuche und aus dem einen oder
-        anderem Grund für interessant halte. Ich möchte die Seiten nicht kommentieren, sondern gebe
-        höchstens mir wichtige Inhaltsangaben zur Orientierung.
-    </p>
+	<p class="text-center">
+		Hier findet Ihr Links zu anderen Seiten die ich des Öfteren aufsuche und aus dem einen oder
+		anderem Grund für interessant halte. Ich möchte die Seiten nicht kommentieren, sondern gebe
+		höchstens mir wichtige Inhaltsangaben zur Orientierung.
+	</p>
 	<div class="flex sm:flex-row flex-col mt-4">
-        
 		<div class="">
 			<p class="text-lg font-bold mb-2">Meine TOP-Info Seiten</p>
 			<div class="mb-4 card px-2 pb-2 pt-1">
@@ -87,18 +86,30 @@
 		</div>
 		<div class="sm:ml-16 sm:mb-0 mb-8">
 			<p class="text-lg font-bold mb-2">Links</p>
-            <p class="font-semibold">Online-Kataloge</p>
-            <a href="https://www.ue-ei-portal-sammlerkatalog.de/"><p class="underline">Der Sammlerkatalog des Ü-Ei-Portal rund um Ferrero</p></a>
-            <a href="https://www.yumpu.com/de/ferrero"><p class="underline">Achim Grundgeigers Online-Kataloge</p></a>
-            <a href="https://www.online-fremdfigurenkatalog.de/"><p class="underline">Der Online Fremdfiguren Katalog</p></a>
-            
-            <p class="font-semibold mt-4">Sonstige Ü-Ei-Seiten</p>
-            <a href="http://www.kindermanie.penzes.cz/"><p class="underline">Kindermánie Portál pro sběratele Kinder Surprise</p></a>
-            
-            <p class="font-semibold mt-4">Fremdfiguren</p>
-            <a href="http://www.margarinefiguren.de/"><p class="underline">Margarinefiguren-Online-Katalog</p></a>
-            <a href="http://www.werbetruck-onlinekatalog.de/"><p class="underline">Werbetruck-Online-Katalog</p></a>
-        </div>
+			<p class="font-semibold">Online-Kataloge</p>
+			<a href="https://www.ue-ei-portal-sammlerkatalog.de/"
+				><p class="underline">Der Sammlerkatalog des Ü-Ei-Portal rund um Ferrero</p></a
+			>
+			<a href="https://www.yumpu.com/de/ferrero"
+				><p class="underline">Achim Grundgeigers Online-Kataloge</p></a
+			>
+			<a href="https://www.online-fremdfigurenkatalog.de/"
+				><p class="underline">Der Online Fremdfiguren Katalog</p></a
+			>
+
+			<p class="font-semibold mt-4">Sonstige Ü-Ei-Seiten</p>
+			<a href="http://www.kindermanie.penzes.cz/"
+				><p class="underline">Kindermánie Portál pro sběratele Kinder Surprise</p></a
+			>
+
+			<p class="font-semibold mt-4">Fremdfiguren</p>
+			<a href="http://www.margarinefiguren.de/"
+				><p class="underline">Margarinefiguren-Online-Katalog</p></a
+			>
+			<a href="http://www.werbetruck-onlinekatalog.de/"
+				><p class="underline">Werbetruck-Online-Katalog</p></a
+			>
+		</div>
 	</div>
 
 	<div class="mb-8">
