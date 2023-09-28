@@ -22,13 +22,18 @@
 
 	// QUERY FRIENDLY (max. 1 request/sec to db)
 	let debounceTimer: NodeJS.Timeout;
-	async function updateNameSearch() {
+	async function updateSearch() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
-			figureBuilder.name(inputValue);
+			if (inputValue[0] == '#') {
+				figureBuilder.mpgnumber(inputValue.substring(1));
+			} else {
+				figureBuilder.name(inputValue);
+			}
 			figures = await figureBuilder.run();
 		}, 500);
 	}
+
 	async function update() {
 		//figureBuilder.country('Deutschland'); // TODO: for every filter
 		figures = await figureBuilder.run();
@@ -47,7 +52,7 @@
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
 			figureBuilder.yearBegin(yearrange[0]);
-			figureBuilder.yearEnd(yearrange[1])
+			figureBuilder.yearEnd(yearrange[1]);
 			figures = await figureBuilder.run();
 		}, 500);
 	}
@@ -58,11 +63,11 @@
 		<div class="w-full mr-2 relative">
 			<input
 				on:input={() => {
-					updateNameSearch();
+					updateSearch();
 				}}
 				bind:value={inputValue}
 				class="input w-full"
-				placeholder="Suche"
+				placeholder="Suche:  'Name/Notiz', '#Mpg Nr.'"
 			/>
 			<button class="btn absolute right-0 variant-ringed ring-opacity-30">Los</button>
 		</div>
@@ -84,52 +89,57 @@
 	</div>
 
 	{#if filter}
-		<div class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2">
-			<div class="flex">
-				<SlideToggle
-					on:change={() => {
-						figureBuilder.sticker();
-						update();
-					}}
-					name="sticker"
-					checked={false}
-					active="bg-primary-500"
-					size="sm"
-					rounded="rounded"
-				/>
-				<p class="ml-2">Sticker</p>
-			</div>
-			<div class="flex mt-2">
-				<SlideToggle
-					on:change={() => {
-						figureBuilder.fake();
-						update();
-					}}
-					name="sticker"
-					checked={false}
-					active="bg-primary-500"
-					size="sm"
-					rounded="rounded"
-				/>
-				<p class="ml-2">Fake</p>
-			</div>
-			<div class="flex mt-2">
-				<SlideToggle
-					on:change={() => {
-						figureBuilder.questionable();
-						update();
-					}}
-					name="sticker"
-					checked={false}
-					active="bg-primary-500"
-					size="sm"
-					rounded="rounded"
-				/>
-				<p class="ml-2">Fragwürdig</p>
+		<div class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center">
+			<div class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-fit px-[5%] sm:px-0">
+				<div class="flex flex-col sm:flex-row items-center">
+					<p class="sm:hidden flex mb-1">Sticker</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.sticker();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Sticker</p>
+				</div>
+				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0 ">
+					<p class="sm:hidden flex mb-1">Fake</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.fake();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Fake</p>
+				</div>
+				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
+					<p class="sm:hidden flex mb-1">Fragwürdig</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.questionable();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Fragwürdig</p>
+				</div>
 			</div>
 
-			<div class="mt-2 w-[20rem]">
-				<p class="ml-2 w-full text-center -mb-2">{yearrange.join('-')}</p>
+			<div class="sm:w-[40%] sm:min-w-[20rem] w-full sm:ml-8 flex-shrink-0 mt-4 sm:mt-0  ">
+				<p class="ml-2 w-full text-center ">Jahre: {yearrange.join('-')}</p>
 				<RangeSlider
 					on:change={updateYear}
 					bind:values={yearrange}
@@ -141,14 +151,6 @@
 					springValues={{ stiffness: 1, damping: 1 }}
 				/>
 			</div>
-			
-			<p>TODO: mpgnr - is #nr okay</p>
-			<p>TODO: note - figurebuilder change (not && instead ||) (note + name in one function?)</p>
-			<p>TODO: country - which countrys</p>
-			<p>TODO: identifier - ?</p>
-			<p>TODO: conatined?</p>
-			<p>TODO: remove unnecessary functions in figurebuilder (year, id, (note + name in one function?))</p>
-
 		</div>
 	{/if}
 
@@ -170,25 +172,25 @@
 </div>
 
 <style>
-  :root {
-    --range-slider:            hsl(180, 3.9%, 84.9%);
-    --range-handle-inactive:   hsl(31, 82.9%, 65.7%);
-    --range-handle:            hsl(31, 82.9%, 65.7%);
-    --range-handle-focus:      hsl(31.2, 83.2%, 51%);
-    --range-handle-border:     hsl(31, 82.9%, 65.7%);
-    --range-range-inactive:    hsl(31, 82.9%, 65.7%);
-    --range-range:             hsl(31, 82.9%, 65.7%);
-    --range-float-inactive:    hsl(31.2, 83.2%, 51%);
-    --range-float:             hsl(31.2, 83.2%, 51%);
-    --range-float-text:        hsl(0, 0%, 100%);
+	:root {
+		--range-slider: hsl(180, 3.9%, 84.9%);
+		--range-handle-inactive: hsl(31, 82.9%, 65.7%);
+		--range-handle: hsl(31, 82.9%, 65.7%);
+		--range-handle-focus: hsl(31.2, 83.2%, 51%);
+		--range-handle-border: hsl(31, 82.9%, 65.7%);
+		--range-range-inactive: hsl(31, 82.9%, 65.7%);
+		--range-range: hsl(31, 82.9%, 65.7%);
+		--range-float-inactive: hsl(31.2, 83.2%, 51%);
+		--range-float: hsl(31.2, 83.2%, 51%);
+		--range-float-text: hsl(0, 0%, 100%);
 
-    --range-pip:               hsl(210, 14.3%, 53.3%);
-    --range-pip-text:          hsl(210, 14.3%, 53.3%);
-    --range-pip-active:        hsl(180, 25.4%, 24.7%);
-    --range-pip-active-text:   hsl(180, 25.4%, 24.7%);
-    --range-pip-hover:         hsl(180, 25.4%, 24.7%);
-    --range-pip-hover-text:    hsl(180, 25.4%, 24.7%);
-    --range-pip-in-range:      hsl(180, 25.4%, 24.7%);
-    --range-pip-in-range-text: hsl(180, 25.4%, 24.7%);
-  }
+		--range-pip: hsl(210, 14.3%, 53.3%);
+		--range-pip-text: hsl(210, 14.3%, 53.3%);
+		--range-pip-active: hsl(180, 25.4%, 24.7%);
+		--range-pip-active-text: hsl(180, 25.4%, 24.7%);
+		--range-pip-hover: hsl(180, 25.4%, 24.7%);
+		--range-pip-hover-text: hsl(180, 25.4%, 24.7%);
+		--range-pip-in-range: hsl(180, 25.4%, 24.7%);
+		--range-pip-in-range-text: hsl(180, 25.4%, 24.7%);
+	}
 </style>
