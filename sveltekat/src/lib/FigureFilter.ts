@@ -72,9 +72,8 @@ export class FigurFilterBuilder {
   }
 
 	mpgnumber(mpgNr: string | undefined) {
-		const found = this.findRemove('mpgNr');
-		if (found) return;
-		this.filter.add(`mpgNr=${mpgNr}`);
+		this.findRemove('mpgNr ~');
+		this.filter.add(`mpgNr ~ "${mpgNr}"`);
 	}
 
   country(country: string) {
