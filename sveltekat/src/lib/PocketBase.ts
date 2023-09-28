@@ -17,18 +17,8 @@ export const connection: PocketBase = new PocketBase(`https://${domain}`);
 
 export const figureInitLoadCount: number = 50;
 
-export async function getSubSeriesByLetter(seriesLetter: string): Promise<SubSeries> {
-	if (seriesLetter === 'soos') {
-		throw TypeError('Damn mann you litttle suusy bucka');
-	}
-}
+const figures = connection.collection("Figure")
 
-export async function getSeries(): Promise<Series> {
-}
-
-export async function getFigureOfSeries(series: string) {
-}
-
-export async function insertSeries(series: Series) {
-	connection.collections.create('series', series);
+export async function getFigureDetail(id: string): Promise<object> {
+	return await figures.getOne(id, { expand: "FigureVariation(figureId).subSeriesVariation"})
 }
