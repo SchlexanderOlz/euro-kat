@@ -1,11 +1,11 @@
 export interface Figure {
 	id: string;
-	created: Date;
-	modified: Date; // TODO: change DateTime to string
+	created: string;
+	modified: string; // TODO: change DateTime to string
 	mpgNr: string;
 	fake: boolean;
 	questionable: boolean;
-	variations: Variation[]
+	variations: Variation[];
 	name: string;
 	sticker: boolean;
 	identifier: string;
@@ -18,60 +18,58 @@ export interface Figure {
 
 export interface Packaging {
 	id: string;
-	created: Date;
-	modified: Date;
+	created: string;
+	modified: string;
 	images: string[];
-	name: string
-	thanks: string
+	name: string;
+	thanks: string;
 }
 
 export interface FigureVariation {
 	id: string;
-	created: Date;
-	modified: Date;
-	packageInserts: string[] // Not how pictures are retrieved
+	created: string;
+	modified: string;
+	packageInserts: string[]; // Not how pictures are retrieved
 }
 
 export interface Variation {
 	id: string;
-	created: Date;
-	modified: Date;
+	created: string;
+	modified: string;
 	variation: string;
-	images: string[]
+	images: string[];
 }
-
 
 export interface SubSeriesVariation {
 	id: string;
-	created: Date;
-	update: Date;
+	created: string;
+	update: string;
 	year: number;
 	figuresVariation: FigureVariation[];
 	note: string;
-  country: string
+	country: string;
 }
 
 export interface SubSeries {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	name: string;
 	thanks: string;
 	subSeriesVariations: SubSeriesVariation[];
-	packaging: Packaging[]
+	packaging: Packaging[];
 }
 
 export interface Series {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	seriesLetter: string;
 	subSeries: SubSeries[];
 }
 
 export interface Warning {
 	id: string;
-	created: Date;
-	updated: Date;
-	
+	created: string;
+	updated: string;
 }
