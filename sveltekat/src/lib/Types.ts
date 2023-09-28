@@ -70,8 +70,8 @@ export interface Series {
 
 export interface Warning {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	name: string;
 	numbered: boolean;
 	general: string;
@@ -85,16 +85,16 @@ export interface Warning {
 
 export interface WarningType {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	name: string;
 	images: string[];
 }
 
 export interface Extra {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	numbered: boolean;
 	name: string;
 	text: string;
@@ -110,7 +110,7 @@ export interface Extra {
 
 export interface ExtraType {
 	id: string;
-	created: Date;
-	updated: Date;
+	created: string;
+	updated: string;
 	images: string[];
 }
