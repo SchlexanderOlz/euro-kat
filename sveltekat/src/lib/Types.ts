@@ -114,3 +114,23 @@ export interface ExtraType {
 	updated: string;
 	images: string[];
 }
+
+export interface FigurePage {
+	id: string;
+	created: string;
+	modified: string;
+	mpgNr: string;
+	fake: boolean;
+	questionable: boolean;
+	variations: Variation[];
+	name: string;
+	sticker: boolean;
+	identifier: string;
+	note: string;
+	pictures: string[];
+	figureVariations: FigureVariation[];
+	packageInserts: string[];
+	year: string;
+	subSeriesVariation: SubSeriesVariation[];
+	subSeries: SubSeries
+}

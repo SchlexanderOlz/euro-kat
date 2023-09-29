@@ -8,7 +8,7 @@ import type {
 	SubSeriesVariation,
 	FigureVariation,
 	Packaging
-} from './Types';
+} from './Types.js';
 import type Warning from 'postcss/lib/warning';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
