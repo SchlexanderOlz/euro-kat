@@ -10,6 +10,7 @@ import type {
   Warning,
 } from "../sveltekat/src/lib/Types.js";
 import fs from "fs";
+import { connection } from "../sveltekat/src/lib/PocketBase.js";
 
 const pb = new PocketBase("https://ek.krenn.tech/");
 pb.autoCancellation(false);
@@ -129,7 +130,7 @@ async function add() {
             );
           } catch (Error) {
             console.log("Ressource not found: " + variation.mpgNr);
-            continue
+            continue;
           }
           let formData = new FormData();
           variation.images.forEach(async (path: string) => {
@@ -198,11 +199,56 @@ async function add() {
   }
 }
 
-async function addWarnings() {
+async function addExtras() {
   console.log(
     await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
   );
-  const data = fs.readFileSync("../html-parser/warnings.json", "utf8");
+  const data = fs.readFileSync("../html-parser/extras.json", "utf8");
+  const json = JSON.parse(data);
+  const extras = pb.collection("Extra");
+  const extraTypes = pb.collection("ExtraType");
+
+  for (const extra of json) {
+    let formData = new FormData();
+
+    if (extra.types) {
+      let typeCount = 1;
+      for (const type of extra.types) {
+        let extraData = new FormData();
+        extraData.append("name", `Typ ${typeCount}`);
+        typeCount += 1;
+
+        for (const path of type) {
+          try {
+            const data = fs.readFileSync(path);
+            const blob = new Blob([data], { type: getTypeHeader(path) });
+            extraData.append("images", blob, path.split("\\").pop());
+          } catch (Error) {continue}
+        }
+        const record = await extraTypes.create(extraData);
+        formData.append("types", record.id);
+      }
+    }
+
+    formData.append("numbered", extra.numbered);
+
+    if (extra.format) formData.append("format", extra.format);
+    if (extra.name) formData.append("name", extra.name);
+    if (extra.text) formData.append("text", extra.text);
+    if (extra.id) formData.append("identifier", extra.id);
+    if (extra.address) formData.append("address", extra.address);
+    if (extra.series) formData.append("series", extra.series);
+    if (extra.year) formData.append("year", extra.year);
+    if (extra.note) formData.append("note", extra.note);
+    if (extra.thanks) formData.append("thanks", extra.thanks);
+
+    await extras.create(formData);
+  }
+}
+
+async function addWarnings() {
+  await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!");
+  const data = fs.readFileSync("../html-parser/extras.json", "utf8");
   const json = JSON.parse(data);
   const warnings = pb.collection("Warning");
   const warningTypes = pb.collection("WarningType");
@@ -229,12 +275,14 @@ async function addWarnings() {
       let warningData = new FormData();
       warningData.append("name", "Typ 1");
 
-      for (const path of warning.imgs) {
-        try {
-          const data = fs.readFileSync(path);
-          const blob = new Blob([data], { type: getTypeHeader(path) });
-          warningData.append("images", blob, path.split("\\").pop());
-        } catch (Error) {}
+      if (warning.imgs) {
+        for (const path of warning.imgs) {
+          try {
+            const data = fs.readFileSync(path);
+            const blob = new Blob([data], { type: getTypeHeader(path) });
+            warningData.append("images", blob, path.split("\\").pop());
+          } catch (Error) {}
+        }
       }
       const record = await warningTypes.create(warningData);
       formData.append("types", record.id);
@@ -296,6 +344,13 @@ function main() {
         dropAll("Warning");
         dropAll("WarningType");
         return;
+      case "--add-extras":
+        addExtras();
+        return
+      case "--drop-extras":
+        dropAll("Extra");
+        dropAll("ExtraType");
+        return
     }
   });
 }
