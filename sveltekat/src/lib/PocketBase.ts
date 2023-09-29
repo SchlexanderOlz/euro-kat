@@ -7,7 +7,9 @@ import type {
 	Figure,
 	SubSeriesVariation,
 	FigureVariation,
-	Packaging
+	Packaging,
+	FigurePage,
+	FigurePageCleaned
 } from './Types.js';
 import type Warning from 'postcss/lib/warning';
 
@@ -22,11 +24,31 @@ const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
 const subSeriesVariations = connection.collection('SubSeriesVariation');
 
-export async function getFigureDetail(id: string): Promise<object> {
-	return await figures.getOne(id, {
+export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
+	const res: FigurePage = await figures.getOne<FigurePage>(id, {
 		expand:
 			'FigureVariation(figureId), FigureVariation(figureId).subSeriesVariationId, FigureVariation(figureId).subSeriesVariationId.subSeriesId'
 	});
+
+	let figvars: FigureVariation[] = res.expand["FigureVariation(figureId)"]
+	let subservar: SubSeriesVariation = figvars[0].expand.subSeriesVariationId
+	let subser: SubSeries = subservar.expand.subSeriesId
+
+	res.expand = null
+	figvars[0].expand = null
+	subservar.expand = null
+	
+	let vals: FigurePageCleaned = {
+		figure: res,
+		figvars: figvars,
+		subservar: subservar,
+		subser: subser
+	}
+	console.log(vals);
+
+	// packaging?
+	return vals;
+	
 }
 
 export async function getPackageInserts(): Promise<Warning[]> {
