@@ -30,6 +30,7 @@ export interface FigureVariation {
 	created: string;
 	modified: string;
 	packageInserts: string[]; // Not how pictures are retrieved
+	expand: any; 
 }
 
 export interface Variation {
@@ -48,6 +49,7 @@ export interface SubSeriesVariation {
 	figuresVariation: FigureVariation[];
 	note: string;
 	country: string;
+	expand: any;
 }
 
 export interface SubSeries {
@@ -132,5 +134,13 @@ export interface FigurePage {
 	packageInserts: string[];
 	year: string;
 	subSeriesVariation: SubSeriesVariation[];
-	subSeries: SubSeries
+	subSeries: SubSeries;
+	expand: any;
+}
+
+export interface FigurePageCleaned {
+	figure: Figure;
+	figvars: FigureVariation[];
+	subservar: SubSeriesVariation;
+	subser: SubSeries;
 }
