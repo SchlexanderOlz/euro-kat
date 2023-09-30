@@ -11,7 +11,8 @@ import type {
 	FigurePage,
 	FigurePageCleaned,
 	WarningZ,
-	WarningZD
+	WarningZD,
+	Extra
 } from './Types.js';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
@@ -26,6 +27,7 @@ const warnings = connection.collection('Warning');
 const subSeriesVariations = connection.collection('SubSeriesVariation');
 const subSeries = connection.collection("SubSeries")
 const subSeriesVar = connection.collection("SubSeriesVariation")
+const extras = connection.collection("Extra")
 
 export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 	const res: FigurePage = await figures.getOne<FigurePage>(id, {
@@ -57,6 +59,10 @@ export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 
 export async function getWarnings(): Promise<WarningZ[]> {
 	return await warnings.getFullList<WarningZ>({ sort: 'numbered', fields:'id, name, general, numbered' });
+}
+
+export async function getExtras(): Promise<Extra[]> {
+	return await extras.getFullList<Extra>({expand: "types"})
 }
 
 export async function getWarningDetail(id: string): Promise<WarningZD> {

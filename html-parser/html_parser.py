@@ -105,7 +105,7 @@ class InformationExtractor:
             series_letter: str
             match = re.match(r"\D*", mpg_nr.replace("-", ""))
             if match:
-                series_letter = match.group()
+                series_letter = match.group().upper()
 
             if current_main_series['seriesLetter'] == None:
                 current_main_series['seriesLetter'] = series_letter

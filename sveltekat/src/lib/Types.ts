@@ -12,6 +12,7 @@ export interface Figure {
 	note: string;
 	pictures: string[]; // TODO: Find out how pictures are fetched
 	figureVariations: FigureVariation[];
+	subSeries: SubSeries;
 	packageInserts: string[]; // Just images currently
 	year: string;
 }
@@ -30,6 +31,8 @@ export interface FigureVariation {
 	created: string;
 	modified: string;
 	packageInserts: string[]; // Not how pictures are retrieved
+	figureId: Figure;
+	subSeriesId: SubSeries;
 	expand: any; 
 }
 
@@ -90,6 +93,7 @@ export interface WarningZD {
 	countryB: string;
 	format: string;
 	variations: string;
+	thanks: string
 	types: WarningType[];
 	expand: {
 		types: WarningType[];
@@ -102,6 +106,7 @@ export interface WarningType {
 	created: string;
 	updated: string;
 	name: string;
+	description: string;
 	images: string[];
 }
 
@@ -126,6 +131,7 @@ export interface ExtraType {
 	id: string;
 	created: string;
 	updated: string;
+	description: string;
 	images: string[];
 }
 

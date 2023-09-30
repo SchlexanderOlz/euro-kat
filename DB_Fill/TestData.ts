@@ -7,7 +7,7 @@ import type {
   Packaging,
   Variation,
   FigureVariation,
-  Warning,
+  WarningZD,
 } from "../sveltekat/src/lib/Types.js";
 import fs from "fs";
 import { connection } from "../sveltekat/src/lib/PocketBase.js";
@@ -248,7 +248,7 @@ async function addExtras() {
 
 async function addWarnings() {
   await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!");
-  const data = fs.readFileSync("../html-parser/extras.json", "utf8");
+  const data = fs.readFileSync("../html-parser/warnings.json", "utf8");
   const json = JSON.parse(data);
   const warnings = pb.collection("Warning");
   const warningTypes = pb.collection("WarningType");
@@ -302,6 +302,7 @@ async function addWarnings() {
     if (warning.format) formData.append("format", warning.format);
     if (warning.variations) formData.append("variations", warning.variations);
     if (warning.name) formData.append("name", warning.name);
+    if (warning.thanks) formData.append("thanks", warning.thanks)
 
     warnings.create(formData);
   }
