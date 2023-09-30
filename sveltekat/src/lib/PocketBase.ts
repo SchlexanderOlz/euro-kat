@@ -23,6 +23,8 @@ export const figureInitLoadCount: number = 50;
 const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
 const subSeriesVariations = connection.collection('SubSeriesVariation');
+const subSeries = connection.collection("SubSeries")
+const subSeriesVar = connection.collection("SubSeriesVariation")
 
 export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 	const res: FigurePage = await figures.getOne<FigurePage>(id, {
@@ -49,6 +51,18 @@ export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 	// packaging?
 	return vals;
 	
+}
+
+export async function getFigurePageData(figureId: string) {
+	return await figures.getOne(figureId, { expand: "subSeriesId"});
+}
+
+export async function getSubSeriesVariations(subSeriesId: string) {
+	return await subSeries.getOne(subSeriesId, { expand: "SubSeriesVariation(subSeriesId)"})
+}
+
+export async function getFigureVariations(subSeriesVarId: string) {
+	return await subSeriesVar.getOne(subSeriesVarId, { expand: "FigureVariation(subSeriesVariationId), figureId"})
 }
 
 export async function getPackageInserts(): Promise<Warning[]> {
