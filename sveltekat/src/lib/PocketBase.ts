@@ -9,9 +9,10 @@ import type {
 	FigureVariation,
 	Packaging,
 	FigurePage,
-	FigurePageCleaned
+	FigurePageCleaned,
+	WarningZ,
+	WarningZD
 } from './Types.js';
-import type Warning from 'postcss/lib/warning';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
 export const domain: string = 'ek.krenn.tech:443';
@@ -31,6 +32,7 @@ export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 	});
 
 	let figvars: FigureVariation[] = res.expand["FigureVariation(figureId)"]
+	
 	let subservar: SubSeriesVariation = figvars[0].expand.subSeriesVariationId
 	let subser: SubSeries = subservar.expand.subSeriesId
 
@@ -51,8 +53,12 @@ export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
 	
 }
 
-export async function getPackageInserts(): Promise<Warning[]> {
-	return await warnings.getFullList({ expand: 'types' });
+export async function getWarnings(): Promise<WarningZ[]> {
+	return await warnings.getFullList<WarningZ>({ sort: 'numbered', fields:'id, name, general, numbered' });
+}
+
+export async function getWarningDetail(id: string): Promise<WarningZD> {
+	return await warnings.getOne<WarningZD>(id, { expand: 'types', sort: 'numbered' });
 }
 
 export async function getCountrys(): Promise<Set<string>> {
