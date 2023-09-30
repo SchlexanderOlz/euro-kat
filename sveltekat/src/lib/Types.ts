@@ -15,6 +15,9 @@ export interface Figure {
 	subSeries: SubSeries;
 	packageInserts: string[]; // Just images currently
 	year: string;
+	expand: {
+		subSeriesId: SubSeries;
+	}
 }
 
 export interface Packaging {
@@ -63,6 +66,9 @@ export interface SubSeries {
 	thanks: string;
 	subSeriesVariations: SubSeriesVariation[];
 	packaging: Packaging[];
+	expand: {
+		"SubSeriesVariation(subSeriesId)": SubSeriesVariation[]
+	}
 }
 
 export interface Series {
@@ -114,6 +120,14 @@ export interface Extra {
 	id: string;
 	created: string;
 	updated: string;
+	name: string;
+	text: string;
+}
+
+export interface ExtraDetail {
+	id: string;
+	created: string;
+	updated: string;
 	numbered: boolean;
 	name: string;
 	text: string;
@@ -124,14 +138,18 @@ export interface Extra {
 	year: string;
 	note: string;
 	thanks: string;
-	types: ExtraType[];
+	expand: {
+		types: ExtraType[];
+	};
 }
 
 export interface ExtraType {
 	id: string;
+	collectionId: string;
 	created: string;
 	updated: string;
 	description: string;
+	name: string;
 	images: string[];
 }
 
@@ -158,7 +176,7 @@ export interface FigurePage {
 
 export interface FigurePageCleaned {
 	figure: Figure;
-	figvars: FigureVariation[];
-	subservar: SubSeriesVariation;
 	subser: SubSeries;
+	subservars: SubSeriesVariation[];
+	figvars: FigureVariation[];
 }

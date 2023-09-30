@@ -12,7 +12,8 @@ import type {
 	FigurePageCleaned,
 	WarningZ,
 	WarningZD,
-	Extra
+	Extra,
+	ExtraDetail
 } from './Types.js';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
@@ -25,60 +26,63 @@ export const figureInitLoadCount: number = 50;
 const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
 const subSeriesVariations = connection.collection('SubSeriesVariation');
-const subSeries = connection.collection("SubSeries")
-const subSeriesVar = connection.collection("SubSeriesVariation")
-const extras = connection.collection("Extra")
-
-export async function getFigureDetail(id: string): Promise<FigurePageCleaned> {
-	const res: FigurePage = await figures.getOne<FigurePage>(id, {
-		expand:
-			'FigureVariation(figureId), FigureVariation(figureId).subSeriesVariationId, FigureVariation(figureId).subSeriesVariationId.subSeriesId'
-	});
-
-	let figvars: FigureVariation[] = res.expand["FigureVariation(figureId)"]
-	
-	let subservar: SubSeriesVariation = figvars[0].expand.subSeriesVariationId
-	let subser: SubSeries = subservar.expand.subSeriesId
-
-	res.expand = null
-	figvars[0].expand = null
-	subservar.expand = null
-	
-	let vals: FigurePageCleaned = {
-		figure: res,
-		figvars: figvars,
-		subservar: subservar,
-		subser: subser
-	}
-	console.log(vals);
-
-	// packaging?
-	return vals;
-	
-}
+const subSeries = connection.collection('SubSeries');
+const subSeriesVar = connection.collection('SubSeriesVariation');
+const extras = connection.collection('Extra');
 
 export async function getWarnings(): Promise<WarningZ[]> {
-	return await warnings.getFullList<WarningZ>({ sort: 'numbered', fields:'id, name, general, numbered' });
-}
-
-export async function getExtras(): Promise<Extra[]> {
-	return await extras.getFullList<Extra>({expand: "types"})
+	return await warnings.getFullList<WarningZ>({
+		sort: 'numbered',
+		fields: 'id, name, general, numbered'
+	});
 }
 
 export async function getWarningDetail(id: string): Promise<WarningZD> {
 	return await warnings.getOne<WarningZD>(id, { expand: 'types', sort: 'numbered' });
 }
 
-export async function getFigurePageData(figureId: string) {
-	return await figures.getOne(figureId, { expand: "subSeriesId"});
+export async function getExtras(): Promise<Extra[]> {
+	return await extras.getFullList<Extra>({ fields: 'id, name, text', sort: '-numbered' });
 }
 
-export async function getSubSeriesVariations(subSeriesId: string) {
-	return await subSeries.getOne(subSeriesId, { expand: "SubSeriesVariation(subSeriesId)"})
+export async function getExtraDetail(id: string): Promise<ExtraDetail> {
+	return await extras.getOne<ExtraDetail>(id, { expand: 'types' });
 }
 
-export async function getFigureVariations(subSeriesVarId: string) {
-	return await subSeriesVar.getOne(subSeriesVarId, { expand: "FigureVariation(subSeriesVariationId), figureId"})
+export async function getFigurePageData(figureId: string): Promise<Figure> {
+	return await figures.getOne(figureId, { expand: 'subSeriesId' });
+}
+
+export async function getSubSeriesVariations(subSeriesId: string): Promise<SubSeries> {
+	return await subSeries.getOne(subSeriesId, {
+		expand: 'SubSeriesVariation(subSeriesId)'
+	});
+}
+
+export async function getFigureVariation(subSeriesVarId: string): Promise<FigureVariation> {
+	return await subSeriesVar.getOne(subSeriesVarId, {
+		expand: 'FigureVariation(subSeriesVariationId), FigureVariation(subSeriesVariationId).figureId'
+	});
+}
+
+export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
+	let figure: Figure = await getFigurePageData(fid);
+
+	let subser: SubSeries = await getSubSeriesVariations(figure.expand.subSeriesId.id);
+	let subservars: SubSeriesVariation[] = subser.expand['SubSeriesVariation(subSeriesId)'];
+	let figvars: FigureVariation[] = [];
+	subservars.forEach(async (subservar) => {
+		figvars.push(await getFigureVariation(subservar.id));
+	});
+	const vals: FigurePageCleaned = {
+		figure,
+		subser,
+		subservars,
+		figvars
+	};
+	console.log(figvars);
+	
+	return vals;
 }
 
 export async function getCountrys(): Promise<Set<string>> {
