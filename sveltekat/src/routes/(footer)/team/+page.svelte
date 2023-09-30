@@ -56,7 +56,7 @@
 	</div>
 
 	<div class="card p-2 mt-4">
-		<p class="font-bold underline mb-1.5">Software & Co. AG GmbH Institution</p>
+		<p class="font-bold underline mb-1.5">Software & Co.™ KG GmbH AG stGes OG GesBR USP OHG e.K. Institution sponsored by ™evon®© - Automation | Evolution in automation GmBH</p>
 		<div class="text-sm">
 			<p class="">
 				Ohne der Software & Co. AG GmbH Institution wäre dieses Projekt nicht möglich gewesen.<br />
