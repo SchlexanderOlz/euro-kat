@@ -2,7 +2,7 @@
 </script>
 
 <div class="mx-[10%] cursor-default">
-	<h1 class="justify-center w-full flex h1 mt-6 mb-8 break-all text-center">
+	<h1 class="justify-center w-full flex h1 my-8 break-all text-center">
 		Datenschutzerklärung
 	</h1>
 
