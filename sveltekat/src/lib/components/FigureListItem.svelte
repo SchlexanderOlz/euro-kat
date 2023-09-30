@@ -4,7 +4,7 @@
 	export let figure: Figure;
 </script>
 
-<div class="card py-1 px-2 my-1.5 flex relative cursor-default">
+<a class="card card-hover py-1 px-2 my-1.5 flex relative hover:bg-surface-200-700-token" href="/figures/{figure.id}">
 	<div class="flex">
 		<p class="w-80 flex-shrink-0">{figure.name}</p>
 		{#if figure.note && figure.note != 'undefined'}
@@ -12,4 +12,4 @@
 		{/if}
 	</div>
 	<p class="w-max absolute right-2 text-right">#{figure.mpgNr}</p>
-</div>
+</a>
