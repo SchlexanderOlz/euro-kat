@@ -5,8 +5,6 @@
 
 	export let data: PageData;
 
-	console.log(data.warningDetail.expand.types);
-
 	let warn: WarningZD = data.warningDetail;
 
 	// thanks
@@ -56,7 +54,7 @@
 
 	{#each warn.expand.types as vari}
 		<div class="card w-fit my-2 pt-1 pb-2 px-2">
-			<p class="mb-2">{vari.name}</p>
+			<p class="mb-1">{vari.name}</p>
 			{#each vari.images as imag}
 				<img src="{imgdom}/{vari.collectionId}/{vari.id}/{imag}" alt={vari.name} />
 			{/each}
