@@ -11,7 +11,7 @@
 		<a class="flex-shrink-0" href="/">
 			<img
 				class="h-14 w-auto m-2 -mr-1 hover:scale-110 duration-150 cursor-pointer flex-shrink-0"
-				src="images/logo_klein.png"
+				src="/images/logo_klein.png"
 				alt="Elefant"
 				width="124px"
 				height="120px"
