@@ -103,7 +103,7 @@ class InformationExtractor:
                 fake = True
 
             series_letter: str
-            match = re.match(r"\D*", mpg_nr)
+            match = re.match(r"\D*", mpg_nr.replace("-", ""))
             if match:
                 series_letter = match.group()
 
