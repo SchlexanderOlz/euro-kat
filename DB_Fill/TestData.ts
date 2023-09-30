@@ -33,51 +33,6 @@ function getTypeHeader(path: string): string {
   }
 }
 
-async function addFigures() {
-  console.log(
-    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
-  );
-
-  const figures = pb.collection("Figure");
-  const data = fs.readFileSync("../html-parser/data.json", "utf8");
-  const json = JSON.parse(data);
-
-  for (const object of json) {
-    for (const sub of object.subSeries) {
-      for (const figure of sub.figures) {
-        let formData = new FormData();
-
-        if (!figure.mpgNr) continue;
-        formData.append("mpgNr", figure?.mpgNr);
-        if (figure.name) formData.append("name", figure?.name);
-        if (figure.year) formData.append("year", figure?.year);
-        if (figure.identifier)
-          formData.append("identifier", figure?.identifier);
-        if (figure.sticker) formData.append("sticker", figure?.sticker);
-        if (figure.note) formData.append("note", figure?.note);
-        if (figure.fake) formData.append("fake", figure?.fake);
-        if (figure.questionable)
-          formData.append("questionable", figure?.questionable);
-
-        const promises = figure.pictures?.map(async (path: string) => {
-          if (path.search("Detail.gif") >= 0) return;
-          if (path.search("want_fig.jpg") >= 0) return;
-
-          try {
-            const data = fs.readFileSync(path);
-            const blob = new Blob([data], { type: getTypeHeader(path) });
-            formData.append("pictures", blob, path.split("\\").pop());
-          } catch (error) {}
-        });
-
-        await Promise.all(promises || []);
-
-        await figures.create(formData);
-      }
-    }
-  }
-}
-
 async function add() {
   console.log(
     await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
@@ -92,14 +47,14 @@ async function add() {
   const variations = pb.collection("Variation");
 
   const data = fs.readFileSync("../html-parser/data.json", "utf8");
-  const json = JSON.parse(data);
+  let json = JSON.parse(data);
 
-  for (const object of json) {
+  for (let object of json) {
     let seriesData = new FormData();
     seriesData.append("seriesLetter", object.seriesLetter);
     const seriesRecord = await series.create(seriesData);
 
-    for (const sub of object.subSeries) {
+    for (let sub of object.subSeries) {
       let subSeriesData = new FormData();
 
       if (sub.packaging != null) {
@@ -122,36 +77,52 @@ async function add() {
         }
       }
 
-      if (sub.figureVariations != null) {
-        for (const variation of sub.figureVariations) {
-          try {
-            var figureRef = await figures.getFirstListItem<RecordModel>(
-              `mpgNr="${variation.mpgNr}"`
-            );
-          } catch (Error) {
-            console.log("Ressource not found: " + variation.mpgNr);
-            continue;
-          }
-          let formData = new FormData();
-          variation.images.forEach(async (path: string) => {
-            const data = fs.readFileSync(path);
-            const blob = new Blob([data], { type: getTypeHeader(path) });
-            formData.append("images", blob, path.split("\\").pop());
-          });
-          formData.append("variation", variation.variation);
-          const record = await variations.create(formData);
-
-          await figures.update(figureRef.id, {
-            "variations+": record.id,
-          });
-        }
-      }
-
       subSeriesData.append("name", sub.name);
       subSeriesData.append("thanks", sub.thanks);
       subSeriesData.append("seriesId", seriesRecord.id);
       const subSeriesRecord = await subSeries.create(subSeriesData);
+      sub.recordId = subSeriesRecord.id;
 
+      // Inserting figures
+      for (const figure of sub.figures) {
+        let formData = new FormData();
+
+        const promises = figure.pictures?.map(async (path: string) => {
+          if (path.search("Detail.gif") >= 0) return;
+          if (path.search("want_fig.jpg") >= 0) return;
+
+          try {
+            const data = fs.readFileSync(path);
+            const blob = new Blob([data], { type: getTypeHeader(path) });
+            formData.append("pictures", blob, path.split("\\").pop());
+          } catch (error) {}
+        });
+
+        if (!figure.mpgNr) continue;
+        formData.append("mpgNr", figure?.mpgNr);
+        if (figure.name) formData.append("name", figure?.name);
+        if (figure.year) formData.append("year", figure?.year);
+        if (figure.identifier)
+          formData.append("identifier", figure?.identifier);
+        if (figure.sticker) formData.append("sticker", figure?.sticker);
+        if (figure.note) formData.append("note", figure?.note);
+        if (figure.fake) formData.append("fake", figure?.fake);
+        if (figure.questionable)
+          formData.append("questionable", figure?.questionable);
+
+        formData.append("subSeriesId", subSeriesRecord.id);
+
+        await Promise.all(promises || []);
+
+        try {
+          await figures.create(formData);
+        } catch (Error) {}
+      }
+    }
+  }
+
+  for (const object of json) {
+    for (const sub of object.subSeries) {
       for (const variation of sub.variations) {
         let subVariation = new FormData();
 
@@ -187,13 +158,40 @@ async function add() {
           formData.append("figureId", figureRef.id);
           packages.push(formData);
         }
-        subVariation.append("subSeriesId", subSeriesRecord.id);
+        subVariation.append("subSeriesId", sub.recordId);
         const record = await subSeriesVariations.create(subVariation);
 
         for (let formData of packages) {
           formData.append("subSeriesVariationId", record.id);
           await figureVariations.create(formData);
         }
+      }
+
+      if (sub.figureVariations == null) continue;
+      for (const variation of sub.figureVariations) {
+        try {
+          var figureRef = await figures.getFirstListItem<RecordModel>(
+            `mpgNr="${variation.mpgNr}"`
+          );
+        } catch (Error) {
+          console.log("Ressource not found: " + variation.mpgNr);
+          continue;
+        }
+        let formData = new FormData();
+
+        if (variation.images) {
+          for (const path of variation.images) {
+            const data = fs.readFileSync(path);
+            const blob = new Blob([data], { type: getTypeHeader(path) });
+            formData.append("images", blob, path.split("\\").pop());
+          }
+        }
+        formData.append("variation", variation.variation);
+        const record = await variations.create(formData);
+
+        await figures.update(figureRef.id, {
+          "variations+": record.id,
+        });
       }
     }
   }
@@ -223,7 +221,9 @@ async function addExtras() {
             const data = fs.readFileSync(path);
             const blob = new Blob([data], { type: getTypeHeader(path) });
             extraData.append("images", blob, path.split("\\").pop());
-          } catch (Error) {continue}
+          } catch (Error) {
+            continue;
+          }
         }
         const record = await extraTypes.create(extraData);
         formData.append("types", record.id);
@@ -333,8 +333,15 @@ function main() {
         dropAll("Warning");
         dropAll("WarningType");
         return;
+      case "--drop-figures":
+        dropAll("Series");
+        dropAll("Figure");
+        dropAll("FigureVariation");
+        dropAll("SubSeries");
+        dropAll("SubSeriesVariation");
+        dropAll("Packaging");
+        return;
       case "--add":
-        addFigures();
         add();
         return;
       case "--add-warnings":
@@ -346,11 +353,11 @@ function main() {
         return;
       case "--add-extras":
         addExtras();
-        return
+        return;
       case "--drop-extras":
         dropAll("Extra");
         dropAll("ExtraType");
-        return
+        return;
     }
   });
 }
