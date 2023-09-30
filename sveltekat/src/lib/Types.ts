@@ -70,8 +70,16 @@ export interface Series {
 	subSeries: SubSeries[];
 }
 
-export interface Warning {
+export interface WarningZ {
 	id: string;
+	name: string;
+	numbered: boolean;
+	general: string;
+}
+
+export interface WarningZD {
+	id: string;
+	collectionId: string;
 	created: string;
 	updated: string;
 	name: string;
@@ -82,11 +90,15 @@ export interface Warning {
 	countryB: string;
 	format: string;
 	variations: string;
-	types: WarningType[]
+	types: WarningType[];
+	expand: {
+		types: WarningType[];
+	};
 }
 
 export interface WarningType {
 	id: string;
+	collectionId: string;
 	created: string;
 	updated: string;
 	name: string;
