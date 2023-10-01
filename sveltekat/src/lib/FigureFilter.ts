@@ -1,4 +1,4 @@
-import type { Collection, RecordService } from 'pocketbase';
+import type { Collection, ListResult, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
 import type { Series, SubSeries, Figure } from './Types';
 
@@ -162,7 +162,7 @@ export class FigurFilterBuilder {
 		return false;
 	}
 
-	async run(): Promise<Figure[]> {
+	async run(): Promise<ListResult<Figure>> {
 		if (this.filter.size == 0 && this.optionals.size == 0)
 			return await this.figureCollection.getList(1, figureInitLoadCount);
 
