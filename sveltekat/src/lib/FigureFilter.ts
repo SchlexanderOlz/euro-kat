@@ -123,7 +123,6 @@ export class FigurFilterBuilder {
 			(
 				await this.figureCollection.getList(1, figureInitLoadCount, {
 					filter: query,
-					expand: "subSeriesId"
 				})
 			).items
 		);
