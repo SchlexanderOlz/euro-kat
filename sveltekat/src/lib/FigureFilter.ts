@@ -49,12 +49,12 @@ export class FigurFilterBuilder {
 
 	yearBegin(year: number | undefined) {
 		this.findRemove('year>=', this.filter);
-		this.filter.add(`year>="${year}"`);
+		this.filter.add(`year>='${year}'`);
 	}
 
 	yearEnd(year: number | undefined) {
 		this.findRemove('year<=', this.filter);
-		this.filter.add(`year<="${year}"`);
+		this.filter.add(`year<='${year}'`);
 	}
 
 	year(year: number | undefined) {
