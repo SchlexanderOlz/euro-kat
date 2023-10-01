@@ -158,18 +158,13 @@ export class FigurFilterBuilder {
 			return await this.figureCollection.getList(this.currentPage, figureInitLoadCount);
 
 		let query = '';
-		let query = '';
 		if (this.filter.size > 0) {
-			query = Array.from(this.filter).join('&&');
-			if (this.optionals.size > 0) query += '&&(';
 			query = Array.from(this.filter).join('&&');
 			if (this.optionals.size > 0) query += '&&(';
 		}
 		if (this.optionals.size > 0) {
 			query += Array.from(this.optionals).join('||');
-			query += Array.from(this.optionals).join('||');
 			if (this.filter.size > 0) {
-				query += ')';
 				query += ')';
 			}
 		}
