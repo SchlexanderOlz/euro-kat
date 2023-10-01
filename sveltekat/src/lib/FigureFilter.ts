@@ -14,7 +14,7 @@ export class FigurFilterBuilder {
 		this.optionals = new Set();
 		this.filter = new Set();
 		this.sort = new Set();
-		this.sortName();
+		this.sortMpgNr();
 	}
 
 	fake() {
