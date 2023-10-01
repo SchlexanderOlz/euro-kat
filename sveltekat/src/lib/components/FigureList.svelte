@@ -13,9 +13,6 @@
 	export let figures: Figure[];
 	export let pages: number;
 
-	
-	
-
 	let inputValue = '';
 
 	let debounceTimer: NodeJS.Timeout;
@@ -40,8 +37,6 @@
 		let res: ListResult<Figure> = await figureBuilder.run()
 		figures = res.items;
 		pages = res.totalPages
-		console.log(figureBuilder.currentPage);
-		
 	}
 
 	$: loading = false
@@ -52,11 +47,9 @@
 		let res = structuredClone(await figureBuilder.run());
 		figures = [...figures, ...res.items]
 		loading = false
-		console.log(figureBuilder.currentPage);
-		
 	}
 	
-	let filter = true;
+	let filter = false;
 
 	let yearrange = [2004, 2023];
 	async function updateYear() {
