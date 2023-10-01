@@ -18,16 +18,18 @@
 </svelte:head>
 
 
-<div use:tocCrawler={{ mode: 'generate' }}>
-	<h2>Heading 2</h2>
-	<p>...</p>
-	<h3>Heading 3</h3>
-	<p>...</p>
+<!-- 		https://www.skeleton.dev/utilities/table-of-contents
+	
+	<div class="absolute top-0 left-0" use:tocCrawler={{ mode: 'generate' }}>
+	<h2>Figuren</h2>
+	<h3>Variationen</h3>
+	<a href="#variationen">test</a>
+	<a href="#figuren">test</a>
 </div>
 
-<TableOfContents />
+<TableOfContents />-->
 
-<h2 class="h2 my-4 text-center break-all">{data.pageData.subser.name}</h2>
+<h2 id="tset" class="h2 my-4 text-center break-all">{data.pageData.subser.name}</h2>
 
 <p class="text-center">{data.pageData.subser.thanks}</p>
 
@@ -43,7 +45,7 @@
 	<p>verpackungen</p>
 
 	
-	<h2 class="h2  mb-4 mt-6 text-center">Figuren</h2>
+	<h2 id="figuren" class="h2  mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-fit">
 		{#each data.pageData.subSeriesFigures as fig}
 			<div class="flex card my-2 p-2">
@@ -67,7 +69,7 @@
 			</div>
 		{/each}
 
-		<h2 class="h2  mb-4 mt-6 text-center">Variationen</h2>
+		<h2 id="variationen" class="h2  mb-4 mt-6 text-center">Variationen</h2>
 		<div class="card w-full">
 			<Accordion>
 				{#each data.pageData.subservars as subservar}
