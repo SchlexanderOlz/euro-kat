@@ -163,7 +163,7 @@ export class FigurFilterBuilder {
 	}
 
 	async run(): Promise<ListResult<Figure>> {
-		if (this.filter.size == 0 && this.optionals.size == 0)
+		if (this.filter.size == 0 && this.optionals.size == 0 && this.sort.size == 0)
 			return await this.figureCollection.getList(1, figureInitLoadCount);
 
 		let query = '';

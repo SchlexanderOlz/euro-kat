@@ -9,6 +9,8 @@
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { ListResult } from 'pocketbase';
 	import type { Figure } from '$lib/Types';
+	import ADownIcon from '$lib/icons/ADownIcon.svelte';
+	import AupIcon from '$lib/icons/AUPIcon.svelte';
 
 	export let figures: Figure[];
 	export let pages: number;
@@ -34,21 +36,21 @@
 
 	async function update() {
 		figureBuilder.currentPage = 1;
-		let res: ListResult<Figure> = await figureBuilder.run()
+		let res: ListResult<Figure> = structuredClone(await figureBuilder.run());
 		figures = res.items;
-		pages = res.totalPages
+		pages = res.totalPages;
 	}
 
-	$: loading = false
+	$: loading = false;
 
 	async function loadMore() {
-		loading = true
+		loading = true;
 		figureBuilder.currentPage += 1;
-		let res = structuredClone(await figureBuilder.run());
-		figures = [...figures, ...res.items]
-		loading = false
+		let res: ListResult<Figure> = structuredClone(await figureBuilder.run());
+		figures = [...figures, ...res.items];
+		loading = false;
 	}
-	
+
 	let filter = false;
 
 	let yearrange = [2004, 2023];
@@ -57,7 +59,7 @@
 		debounceTimer = setTimeout(async () => {
 			figureBuilder.yearBegin(yearrange[0]);
 			figureBuilder.yearEnd(yearrange[1]);
-			update()
+			update();
 		}, 500);
 	}
 </script>
@@ -163,9 +165,52 @@
 	{/if}
 
 	<div class="w-full h-8 flex items-center relative mt-2">
-		<button class="ml-2 w-80 text-start"> Name </button>
-		<button class="ml-4 md:flex hidden"> Notiz </button>
-		<button class="absolute right-2"> Mpg Nr. </button>
+		<div class="w-80 ">
+			<button
+			on:click={() => {
+				figureBuilder.sortName();
+				update();
+			}}
+			class="ml-2 text-start flex"
+		>
+			Name
+
+			{#if figureBuilder.sort.has("+name")}
+				 <AupIcon/>
+			{:else if figureBuilder.sort.has("-name")}
+				 <ADownIcon/>
+			{/if}
+		</button>
+		</div>
+		
+		<button
+			on:click={() => {
+				figureBuilder.sortNote();
+				update();
+			}}
+			class="ml-4 md:flex hidden"
+		>
+			Notiz
+			{#if figureBuilder.sort.has("+note")}
+			<AupIcon/>
+	 {:else if figureBuilder.sort.has("-note")}
+			<ADownIcon/>
+	 {/if}
+		</button>
+		<button
+			on:click={() => {
+				figureBuilder.sortMpgNr();
+				update();
+			}}
+			class="absolute right-2 flex"
+		>
+			Mpg Nr.
+			{#if figureBuilder.sort.has("+mpgNr")}
+				 <AupIcon/>
+			{:else if figureBuilder.sort.has("-mpgNr")}
+				 <ADownIcon/>
+			{/if}
+		</button>
 	</div>
 
 	{#if figures.length != 0}
@@ -173,18 +218,17 @@
 			<FigureListItem {figure} />
 		{/each}
 		{#if figureBuilder.currentPage < pages}
-		<div class="w-full flex justify-center mt-6">
-			<button on:click={loadMore} disabled={loading} class="btn variant-filled-surface w-40">Mehr Laden</button>
-		</div>
+			<div class="w-full flex justify-center mt-6">
+				<button on:click={loadMore} disabled={loading} class="btn variant-filled-surface w-40"
+					>Mehr Laden</button
+				>
+			</div>
 		{/if}
-		
 	{:else}
 		<div class="w-full flex justify-center items-center">
 			<p class="mt-8 text-center">Es konnten keine Ergebnisse gefunden werden.</p>
 		</div>
 	{/if}
-
-
 </div>
 
 <style>
