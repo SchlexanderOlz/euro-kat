@@ -1,4 +1,4 @@
-import type { Collection, RecordService } from 'pocketbase';
+import type { Collection, ListResult, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
 import type { Series, SubSeries, Figure } from './Types';
 
@@ -6,6 +6,7 @@ export class FigurFilterBuilder {
 	filter: Set<string>;
 	figureCollection: RecordService<Figure>;
 	optionals: Set<string>;
+	currentPage: number = 1;
 
 	constructor() {
 		this.figureCollection = connection.collection('Figure');
@@ -18,7 +19,7 @@ export class FigurFilterBuilder {
 	}
 
 	killFake() {
-		this.findRemove("fake", this.filter)
+		this.findRemove('fake', this.filter);
 	}
 
 	private toggleBoolConatined(field: string) {
@@ -36,7 +37,7 @@ export class FigurFilterBuilder {
 	}
 
 	killQuestionable() {
-		this.findRemove("questionable", this.filter)
+		this.findRemove('questionable', this.filter);
 	}
 
 	sticker() {
@@ -44,7 +45,7 @@ export class FigurFilterBuilder {
 	}
 
 	killSticker() {
-		this.findRemove("sticker", this.filter)
+		this.findRemove('sticker', this.filter);
 	}
 
 	yearBegin(year: number | undefined) {
@@ -103,28 +104,26 @@ export class FigurFilterBuilder {
 		return false;
 	}
 
-	async run(): Promise<Figure[]> {
-		if (this.filter.size == 0 && this.optionals.size == 0) return await this.figureCollection.getList(1, figureInitLoadCount);
+	async run(): Promise<ListResult<Figure>> {
+		if (this.filter.size == 0 && this.optionals.size == 0)
+			return await this.figureCollection.getList(this.currentPage, figureInitLoadCount);
 
-		let query = "";
+		let query = '';
 		if (this.filter.size > 0) {
-			query = Array.from(this.filter).join("&&")
-			if (this.optionals.size > 0) query += "&&("
+			query = Array.from(this.filter).join('&&');
+			if (this.optionals.size > 0) query += '&&(';
 		}
 		if (this.optionals.size > 0) {
-			query += Array.from(this.optionals).join("||")
+			query += Array.from(this.optionals).join('||');
 			if (this.filter.size > 0) {
-				query += ")"
+				query += ')';
 			}
 		}
 
 		return structuredClone(
-			// TODO: How to handle multiple pages
-			(
-				await this.figureCollection.getList(1, figureInitLoadCount, {
-					filter: query,
-				})
-			).items
+			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
+				filter: query
+			})
 		);
 	}
 }

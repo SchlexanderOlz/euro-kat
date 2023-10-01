@@ -1,26 +1,23 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import type { Figure } from '$lib/PocketBase';
 	import FigureListItem from './FigureListItem.svelte';
-	import { ListBox, ListBoxItem, SlideToggle, popup } from '@skeletonlabs/skeleton';
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
-
-	import FilterIcon from '$lib/icons/FilterIcon.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	import { figureBuilder } from '$lib/FigureFilter';
-	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import CDownIcon from '$lib/icons/CDownIcon.svelte';
 	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
 	import RangeSlider from 'svelte-range-slider-pips';
+	import type { ListResult } from 'pocketbase';
+	import type { Figure } from '$lib/Types';
 
 	export let figures: Figure[];
+	export let pages: number;
+
+	
+	
 
 	let inputValue = '';
 
-	// QUERY FRIENDLY (max. 1 request/sec to db)
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
 		clearTimeout(debounceTimer);
@@ -28,32 +25,46 @@
 			if (inputValue[0] == '#') {
 				figureBuilder.mpgnumber(inputValue.substring(1));
 			} else {
-				figureBuilder.name(inputValue);
+				figureBuilder.mpgnumber(inputValue.substring(1));
 			}
-			figures = await figureBuilder.run();
+
+			figureBuilder.name(inputValue);
+			figureBuilder.note(inputValue);
+
+			await update();
 		}, 500);
 	}
 
 	async function update() {
-		//figureBuilder.country('Deutschland'); // TODO: for every filter
-		figures = await figureBuilder.run();
+		figureBuilder.currentPage = 1;
+		let res: ListResult<Figure> = await figureBuilder.run()
+		figures = res.items;
+		pages = res.totalPages
+		console.log(figureBuilder.currentPage);
+		
 	}
 
-	const filterOptions: { [filter: string]: () => void } = {
-		Sticker: update
-	};
+	$: loading = false
 
-	// TODO: Mpgnr & note suchen
-	// TODO: Sort name, note, mpgnr
+	async function loadMore() {
+		loading = true
+		figureBuilder.currentPage += 1;
+		let res = structuredClone(await figureBuilder.run());
+		figures = [...figures, ...res.items]
+		loading = false
+		console.log(figureBuilder.currentPage);
+		
+	}
+	
 	let filter = true;
 
-	let yearrange = [2000, 2023];
+	let yearrange = [2004, 2023];
 	async function updateYear() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
 			figureBuilder.yearBegin(yearrange[0]);
 			figureBuilder.yearEnd(yearrange[1]);
-			figures = await figureBuilder.run();
+			update()
 		}, 500);
 	}
 </script>
@@ -147,7 +158,7 @@
 				<RangeSlider
 					on:change={updateYear}
 					bind:values={yearrange}
-					min={2000}
+					min={2004}
 					max={2023}
 					range
 					pips
@@ -165,14 +176,22 @@
 	</div>
 
 	{#if figures.length != 0}
-		{#each figures as figure (figure.id)}
+		{#each figures as figure (figure.mpgNr)}
 			<FigureListItem {figure} />
 		{/each}
+		{#if figureBuilder.currentPage < pages}
+		<div class="w-full flex justify-center mt-6">
+			<button on:click={loadMore} disabled={loading} class="btn variant-filled-surface w-40">Mehr Laden</button>
+		</div>
+		{/if}
+		
 	{:else}
 		<div class="w-full flex justify-center items-center">
 			<p class="mt-8 text-center">Es konnten keine Ergebnisse gefunden werden.</p>
 		</div>
 	{/if}
+
+
 </div>
 
 <style>

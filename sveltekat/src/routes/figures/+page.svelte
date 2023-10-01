@@ -8,8 +8,9 @@
 	export let data: PageData;
 
 	const figures: Figure[] = data.figures;	
+	const pages: number = data.totalPages
 </script>
 
 <div class="h-full w-full sm:px-[10%] px-[5%] sm:mt-12 mt-6 mb-16">
-	<FigureList {figures} />
+	<FigureList {figures} {pages} />
 </div>
