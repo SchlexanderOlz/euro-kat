@@ -2,6 +2,12 @@ import { domain, figureInitLoadCount, type Figure } from '$lib/PocketBase';
 import type { PageServerLoad } from './$types';
 import PocketBase, { ListResult } from 'pocketbase';
 
+export const config = {
+	isr: {
+		expiration: 86400
+	}
+};
+
 export const load = (async () => {
 	const pb: PocketBase = new PocketBase(`https://${domain}`);
 	const result: ListResult<Figure> = await pb
