@@ -24,9 +24,14 @@
 	{#each extra.expand.types as ext}
 		<div class="card w-fit my-2 pt-1 pb-2 px-2">
 			<p class="mb-1">{ext.name}</p>
-			{#each ext.images as imag}
-				<img src="{imgdom}/{ext.collectionId}/{ext.id}/{imag}" alt={ext.name} />
-			{/each}
+
+			{#if ext.images.length != 0}
+				{#each ext.images as imag}
+					<img src="{imgdom}/{ext.collectionId}/{ext.id}/{imag}" alt={ext.name} />
+				{/each}
+			{:else}
+				<p class="text-red-500">Beipackzettel gesucht!</p>
+			{/if}
 		</div>
 	{/each}
 </div>

@@ -12,8 +12,8 @@
 
 <div class="w-full md:px-[20%] sm:px-[15%] px-[10%] my-8">
 	<h2 class="h2 mb-4">{warn.name}</h2>
-	{#if false}
-		<p class="mb-1 font-bold">Dank an: <span class="text-red-600 font-normal">to add</span></p>
+	{#if warn.thanks != '' && warn.thanks != null}
+		<p class="mb-1">{warn.thanks}</p>
 	{/if}
 
 	{#if warn.general != '' && warn.general != null}
@@ -55,9 +55,14 @@
 	{#each warn.expand.types as vari}
 		<div class="card w-fit my-2 pt-1 pb-2 px-2">
 			<p class="mb-1">{vari.name}</p>
-			{#each vari.images as imag}
-				<img src="{imgdom}/{vari.collectionId}/{vari.id}/{imag}" alt={vari.name} />
-			{/each}
+
+			{#if vari.images.length != 0}
+				{#each vari.images as imag}
+					<img src="{imgdom}/{vari.collectionId}/{vari.id}/{imag}" alt={vari.name} />
+				{/each}
+			{:else}
+				<p class="text-red-500">Beipackzettel gesucht!</p>
+			{/if}
 		</div>
 	{/each}
 </div>
