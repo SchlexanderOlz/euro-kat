@@ -7,13 +7,14 @@ export class FigurFilterBuilder {
 	figureCollection: RecordService<Figure>;
 	optionals: Set<string>;
 	sort: Set<string>;
+	currentPage: number = 1;
 
 	constructor() {
 		this.figureCollection = connection.collection('Figure');
 		this.optionals = new Set();
 		this.filter = new Set();
 		this.sort = new Set();
-		this.sortName()
+		this.sortName();
 	}
 
 	fake() {
@@ -158,13 +159,12 @@ export class FigurFilterBuilder {
 
 		return structuredClone(
 			// TODO: How to handle multiple pages
-			(
-				await this.figureCollection.getList(1, figureInitLoadCount, {
-					filter: query,
-					sort: Array.from(this.sort).join(','),
-					expand: "subSeriesId"
-				})
-			).items
+
+			await this.figureCollection.getList(1, figureInitLoadCount, {
+				filter: query,
+				sort: Array.from(this.sort).join(','),
+				expand: 'subSeriesId'
+			})
 		);
 	}
 }
