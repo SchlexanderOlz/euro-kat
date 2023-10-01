@@ -1,3 +1,8 @@
+<svelte:head>
+	<title>Euro-Kat | Hauptseite</title>
+	<meta name="description" content='Der Euro-Katalog als die umfangreichste Informationssammlung zu den Ü-Ei-Inhalten der vergangenen Jahre."' />
+</svelte:head>
+
 <div class="w-full flex flex-col items-center mb-8">
 	<div class="text-xl mt-3 opacity-60 text-center">
 		<p>Willkommen! Welcome! Accueillir! Bienvenido! приветствие!</p>

@@ -3,6 +3,14 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+	<title>Euro-Kat | Warnhinweiszettel</title>
+	<meta
+		name="description"
+		content="Der Katalog für Warnhinweiszettel. 1989 begann Ferrero neben dem Beipackzettel einen zusätzlichen Warnhinweiszettel den Ü-Ei-Inhalten beizufügen mit dem Hinweis, dass das Spielzeug für Kinder unter 3(5) Jahren nicht geeignet ist, da Kleinteile verschluckt bzw. eingeatmet werden können. Der genaue Text wechselte im Lauf der Jahre, blieb vom Sinn her jedoch immer gleich. Da diese zusätzlichen Zettel in der Vergangenheit (nicht nur von mir) kurz nach dem Öffnen des Ü-Ei's meist entsorgt wurden, ist es heute nicht ganz einfach die verschiedenen WHZ einem Zeitraum oder auch einer regionalen Verbreitung zuzuordnen. So stellen die dokumentierten (wann/wo gefunden) Warnhinweis-zettel immer eine Momentaufnahme da. Dies spiegelt sich in manchen Katalogangaben wie z.B. gefunden bei C-118 wieder. Dies meint nicht, dass dieser Zettel NUR bei dieser Nummer enthalten war. Sondern es sagt nur, dass dieses die einzige dokumentierte Erscheinung ist. In diesem Katalogteil geht es ausschließlich um die zusätzlichen Warnhinweiszettel!"
+	/>
+</svelte:head>
+
 <div class="md:mt-8 mt-4 w-full lg:px-[25%] sm:px-[15%] px-[10%] cursor-default">
 	<h1 class="h1 text-center md:mb-4 mb-1 break-all">Warnhinweiszettel</h1>
 	<p>

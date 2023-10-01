@@ -1,5 +1,7 @@
-<script lang="ts">
-</script>
+<svelte:head>
+	<title>Euro-Kat | Datenschutzerklärung</title>
+	<meta name="description" content='Datenschutzerklärung von Euro-Kat' />
+</svelte:head>
 
 <div class="mx-[10%] cursor-default">
 	<h1 class="justify-center w-full flex h1 my-8 break-all text-center">

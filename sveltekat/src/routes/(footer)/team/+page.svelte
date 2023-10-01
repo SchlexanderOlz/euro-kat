@@ -1,5 +1,7 @@
-<script lang="ts">
-</script>
+<svelte:head>
+	<title>Euro-Kat | Team</title>
+	<meta name="description" content='Das Team und alle Helfer' />
+</svelte:head>
 
 <h1 class="h1 w-full flex justify-center mt-8 cursor-default">Das Team</h1>
 <div class="mx-[10%] my-8 cursor-default">

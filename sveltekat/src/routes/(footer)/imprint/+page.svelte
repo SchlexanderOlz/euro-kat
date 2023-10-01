@@ -1,5 +1,7 @@
-<script lang="ts">
-</script>
+<svelte:head>
+	<title>Euro-Kat | Impressum</title>
+	<meta name="description" content='Impressum von Euro-Kat' />
+</svelte:head>
 
 <div class="w-full mt-6 px-[10%] cursor-default text-surface-900-50-token">
 	<h1 class="h1 mb-5 select-none w-full flex justify-center">Impressum</h1>

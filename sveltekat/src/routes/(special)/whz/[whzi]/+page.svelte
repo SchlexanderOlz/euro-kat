@@ -6,9 +6,12 @@
 	export let data: PageData;
 
 	let warn: WarningZD = data.warningDetail;
-
-	// thanks
 </script>
+
+<svelte:head>
+	<title>Euro-Kat | WHZ - {warn.name}</title>
+	<meta name="description" content="{warn.general}" />
+</svelte:head>
 
 <div class="w-full md:px-[20%] sm:px-[15%] px-[10%] my-8">
 	<h2 class="h2 mb-4">{warn.name}</h2>

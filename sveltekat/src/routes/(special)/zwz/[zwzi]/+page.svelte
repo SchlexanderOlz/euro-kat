@@ -10,6 +10,11 @@
 	let extra: ExtraDetail = data.extraDetail;
 </script>
 
+<svelte:head>
+	<title>Euro-Kat | ZWZ - {extra.name}</title>
+	<meta name="description" content="{extra.text}" />
+</svelte:head>
+
 <div class="w-full md:px-[20%] sm:px-[15%] px-[10%] my-8">
 	<h2 class="h2 mb-4 text-center">{extra.name}</h2>
 	<p class="font-bold my-1">Warntext: <span class="font-normal">{extra.text}</span></p>

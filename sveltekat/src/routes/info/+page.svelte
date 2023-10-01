@@ -1,5 +1,10 @@
-<script lang="ts">
-</script>
+<svelte:head>
+	<title>Euro-Kat | Info</title>
+	<meta
+		name="description"
+		content="Seit über 10 Jahren gibt es 'Helmut´s Sammlerseiten' als Katalogseiten für Jahrgangssammler D und EU. Angefangen mit reinen Excel-Jahrgangslisten hat sich in relativ kurzer Zeit, auch dank kräftiger Unterstützung durch viele Sammler aus dem In- und Ausland, einer der größten bebilderten Kataloge der Inhalte aus dem Überraschungsei entwickelt. Ende 2007 hat ich den 'Euro-Kat', an dem ich bereits seit Jahren an den Jahrgangslisten mitgearbeitet hat, übernommen und in den Katalog integriert."
+	/>
+</svelte:head>
 
 <div class="w-full flex flex-col items-center mt-6 px-[10%] mb-16 cursor-default">
 	<h1 class="h1">Etwas über diese Seite</h1>

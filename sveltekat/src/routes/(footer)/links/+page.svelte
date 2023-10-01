@@ -1,5 +1,8 @@
-<script lang="ts">
-</script>
+<svelte:head>
+	<title>Euro-Kat | Links</title>
+	<meta name="description" content='Hier findet Ihr Links zu anderen Seiten die ich des Öfteren aufsuche und aus dem einen oder anderem Grund für interessant halte. Ich möchte die Seiten nicht kommentieren, sondern gebe höchstens mir wichtige Inhaltsangaben zur Orientierung.' />
+</svelte:head>
+
 
 <div class="w-full flex flex-col px-[10%] cursor-default items-center">
 	<h1 class="h1 mb-4 mt-8 w-full flex justify-center">Links</h1>

@@ -6,7 +6,7 @@ export const load = (async () => {
 	const pb: PocketBase = new PocketBase(`https://${domain}`);
 	const result: ListResult<Figure> = await pb
 		.collection('Figure')
-		.getList<Figure>(1, figureInitLoadCount, { sort: '' });
+		.getList<Figure>(1, figureInitLoadCount, { sort: 'mpgNr' });
 	const items: Figure[] = result.items;
 	const totalPages: number = result.totalPages;
 
