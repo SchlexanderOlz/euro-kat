@@ -25,9 +25,9 @@ export const figureInitLoadCount: number = 50;
 
 const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
-const subSeriesVariations = connection.collection('SubSeriesVariation');
 const subSeries = connection.collection('SubSeries');
 const subSeriesVar = connection.collection('SubSeriesVariation');
+const figureVar = connection.collection('FigureVariation');
 const extras = connection.collection('Extra');
 
 export async function getWarnings(): Promise<WarningZ[]> {
@@ -66,27 +66,31 @@ export async function getFigureVariation(subSeriesVarId: string): Promise<Figure
 }
 
 export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
-	let figure: Figure = await getFigurePageData(fid);
-
-	let subser: SubSeries = await getSubSeriesVariations(figure.expand.subSeriesId.id);
-	let subservars: SubSeriesVariation[] = subser.expand['SubSeriesVariation(subSeriesId)'];
-	let figvars: FigureVariation[] = [];
-	subservars.forEach(async (subservar) => {
-		figvars.push(await getFigureVariation(subservar.id));
+	const figure: any = await figures.getOne(fid, {
+		expand:
+			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId'
 	});
+
+	const seriesFigures = await figures.getFullList<Figure>({ filter: `subSeriesId="${figure.subSeriesId}"` });
+	const subSeries = figure.expand.subSeriesId;
+	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
+
+	for (let sub of subSeriesVariations) {
+		sub.figvars = sub.expand['FigureVariation(subSeriesVariationId)'];
+	}
+
 	const vals: FigurePageCleaned = {
-		figure,
-		subser,
-		subservars,
-		figvars
+		subSeriesFigures: seriesFigures,
+		subser: subSeries,
+		subservars: subSeriesVariations,
 	};
-	console.log(figvars);
-	
+	console.log(vals)
+
 	return vals;
 }
 
 export async function getCountrys(): Promise<Set<string>> {
 	return new Set(
-		(await subSeriesVariations.getFullList<SubSeriesVariation>()).map((value) => value.country)
+		(await subSeriesVar.getFullList<SubSeriesVariation>()).map((value) => value.country)
 	);
 }

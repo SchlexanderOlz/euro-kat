@@ -175,8 +175,7 @@ export interface FigurePage {
 }
 
 export interface FigurePageCleaned {
-	figure: Figure;
+	subSeriesFigures: Figure[]
 	subser: SubSeries;
 	subservars: SubSeriesVariation[];
-	figvars: FigureVariation[];
 }
