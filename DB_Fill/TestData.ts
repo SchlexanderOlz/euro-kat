@@ -109,6 +109,7 @@ async function add() {
         if (figure.fake) formData.append("fake", figure?.fake);
         if (figure.questionable)
           formData.append("questionable", figure?.questionable);
+        if (figure.year) formData.append("year", figure.year);
 
         formData.append("subSeriesId", subSeriesRecord.id);
 
@@ -302,7 +303,7 @@ async function addWarnings() {
     if (warning.format) formData.append("format", warning.format);
     if (warning.variations) formData.append("variations", warning.variations);
     if (warning.name) formData.append("name", warning.name);
-    if (warning.thanks) formData.append("thanks", warning.thanks)
+    if (warning.thanks) formData.append("thanks", warning.thanks);
 
     warnings.create(formData);
   }

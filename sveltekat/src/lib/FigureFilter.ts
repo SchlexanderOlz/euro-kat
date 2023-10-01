@@ -6,12 +6,16 @@ export class FigurFilterBuilder {
 	filter: Set<string>;
 	figureCollection: RecordService<Figure>;
 	optionals: Set<string>;
+	sort: Set<string>;
+	expands: Set<string>;
 	currentPage: number = 1;
 
 	constructor() {
 		this.figureCollection = connection.collection('Figure');
 		this.optionals = new Set();
 		this.filter = new Set();
+		this.expands = new Set();
+		this.sort = new Set();
 	}
 
 	fake() {
@@ -38,6 +42,7 @@ export class FigurFilterBuilder {
 
 	killQuestionable() {
 		this.findRemove('questionable', this.filter);
+		this.findRemove('questionable', this.filter);
 	}
 
 	sticker() {
@@ -46,16 +51,17 @@ export class FigurFilterBuilder {
 
 	killSticker() {
 		this.findRemove('sticker', this.filter);
+		this.findRemove('sticker', this.filter);
 	}
 
 	yearBegin(year: number | undefined) {
 		this.findRemove('year>=', this.filter);
-		this.filter.add(`year>="${year}"`);
+		this.filter.add(`year>='${year}'`);
 	}
 
 	yearEnd(year: number | undefined) {
 		this.findRemove('year<=', this.filter);
-		this.filter.add(`year<="${year}"`);
+		this.filter.add(`year<='${year}'`);
 	}
 
 	year(year: number | undefined) {
@@ -94,6 +100,49 @@ export class FigurFilterBuilder {
 		this.filter.add(`country="${country}"`);
 	}
 
+	subSeries(name: string) {
+		this.expands.delete("subSeriesId")
+		this.expands.add("subSeriesId")
+		this.findRemove('subSeriesId.name~', this.filter);
+		this.filter.add(`subSeriesId.name~${name}`);
+	}
+
+	series(name: string) {
+		this.expands.delete("subSeriesId.seriesId")
+		this.expands.add("subSeriesId.seriesId")
+		this.findRemove("subSeriesId.seriesId.seriesLetter", this.filter)
+		this.filter.add(`subSeriesId.seriesId.seriesLetter~${name}`)
+	}
+
+	sortNote() {
+		this.toggleSort('note');
+	}
+
+	sortMpgNr() {
+		this.toggleSort('mpgNr');
+	}
+
+	sortName() {
+		this.toggleSort('name');
+	}
+
+	private toggleSort(sortName: string) {
+		for (const sort of this.sort) {
+			if (sort.startsWith('-' + sortName)) {
+				this.sort.delete(sort);
+				this.sort.add('+' + sortName);
+				return;
+			}
+
+			if (sort.startsWith('+' + sortName)) {
+				this.sort.delete(sort);
+				this.sort.add('-' + sortName);
+				return;
+			}
+		}
+		this.sort.add('+' + sortName);
+	}
+
 	private findRemove(search: string, lookupList: Set<string>) {
 		for (const element of lookupList.values()) {
 			if (element.startsWith(search)) {
@@ -109,21 +158,31 @@ export class FigurFilterBuilder {
 			return await this.figureCollection.getList(this.currentPage, figureInitLoadCount);
 
 		let query = '';
+		let query = '';
 		if (this.filter.size > 0) {
+			query = Array.from(this.filter).join('&&');
+			if (this.optionals.size > 0) query += '&&(';
 			query = Array.from(this.filter).join('&&');
 			if (this.optionals.size > 0) query += '&&(';
 		}
 		if (this.optionals.size > 0) {
 			query += Array.from(this.optionals).join('||');
+			query += Array.from(this.optionals).join('||');
 			if (this.filter.size > 0) {
+				query += ')';
 				query += ')';
 			}
 		}
 
 		return structuredClone(
-			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
-				filter: query
-			})
+			// TODO: How to handle multiple pages
+			(
+				await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
+					filter: query,
+					sort: Array.from(this.sort).join(','),
+					expand: Array.from(this.expands).join(",")
+				})
+			).items
 		);
 	}
 }

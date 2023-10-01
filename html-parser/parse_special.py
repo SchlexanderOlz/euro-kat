@@ -30,7 +30,10 @@ class WarningParser:
 
     @staticmethod
     def join_tags(soup: BeautifulSoup, html_type: str) -> str:
-       return "\n".join([p.get_text(strip=True).replace("\t", "").replace("\n", "") for p in soup.find_all(html_type)])
+        joined: list = [p.get_text(strip=True).replace("\t", "").replace("\n", "") for p in soup.find_all(html_type)]
+        joined.pop()
+        joined.pop()
+        return "\n".join(joined)
 
     @staticmethod 
     def nuts(href: str) -> dict:
