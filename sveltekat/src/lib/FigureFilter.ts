@@ -103,15 +103,36 @@ export class FigurFilterBuilder {
 	}
 
 	sortNote() {
+		this.killMpgNr()
+		this.killName()
 		this.toggleSort('note');
 	}
 
+	killNote() {
+		this.findRemove("+note", this.sort)
+		this.findRemove("-note", this.sort)
+	}
+
 	sortMpgNr() {
+		this.killNote()
+		this.killName()
 		this.toggleSort('mpgNr');
 	}
 
+	killMpgNr() {
+		this.findRemove("+mpgNr", this.sort)
+		this.findRemove("-mpgNr", this.sort)
+	}
+
 	sortName() {
+		this.killMpgNr()
+		this.killNote()
 		this.toggleSort('name');
+	}
+
+	killName() {
+		this.findRemove("+name", this.sort)
+		this.findRemove("-name", this.sort)
 	}
 
 	private toggleSort(sortName: string) {
