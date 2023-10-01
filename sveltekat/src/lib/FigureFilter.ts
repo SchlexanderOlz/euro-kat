@@ -1,4 +1,4 @@
-import type { Collection, ListResult, RecordService } from 'pocketbase';
+import type { Collection, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
 import type { Series, SubSeries, Figure } from './Types';
 
@@ -7,15 +7,13 @@ export class FigurFilterBuilder {
 	figureCollection: RecordService<Figure>;
 	optionals: Set<string>;
 	sort: Set<string>;
-	expands: Set<string>;
-	currentPage: number = 1;
 
 	constructor() {
 		this.figureCollection = connection.collection('Figure');
 		this.optionals = new Set();
 		this.filter = new Set();
-		this.expands = new Set();
 		this.sort = new Set();
+		this.sortName()
 	}
 
 	fake() {
@@ -42,7 +40,6 @@ export class FigurFilterBuilder {
 
 	killQuestionable() {
 		this.findRemove('questionable', this.filter);
-		this.findRemove('questionable', this.filter);
 	}
 
 	sticker() {
@@ -50,7 +47,6 @@ export class FigurFilterBuilder {
 	}
 
 	killSticker() {
-		this.findRemove('sticker', this.filter);
 		this.findRemove('sticker', this.filter);
 	}
 
@@ -101,17 +97,8 @@ export class FigurFilterBuilder {
 	}
 
 	subSeries(name: string) {
-		this.expands.delete("subSeriesId")
-		this.expands.add("subSeriesId")
 		this.findRemove('subSeriesId.name~', this.filter);
 		this.filter.add(`subSeriesId.name~${name}`);
-	}
-
-	series(name: string) {
-		this.expands.delete("subSeriesId.seriesId")
-		this.expands.add("subSeriesId.seriesId")
-		this.findRemove("subSeriesId.seriesId.seriesLetter", this.filter)
-		this.filter.add(`subSeriesId.seriesId.seriesLetter~${name}`)
 	}
 
 	sortNote() {
@@ -153,9 +140,9 @@ export class FigurFilterBuilder {
 		return false;
 	}
 
-	async run(): Promise<ListResult<Figure>> {
+	async run(): Promise<Figure[]> {
 		if (this.filter.size == 0 && this.optionals.size == 0)
-			return await this.figureCollection.getList(this.currentPage, figureInitLoadCount);
+			return await this.figureCollection.getList(1, figureInitLoadCount);
 
 		let query = '';
 		if (this.filter.size > 0) {
@@ -172,10 +159,10 @@ export class FigurFilterBuilder {
 		return structuredClone(
 			// TODO: How to handle multiple pages
 			(
-				await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
+				await this.figureCollection.getList(1, figureInitLoadCount, {
 					filter: query,
 					sort: Array.from(this.sort).join(','),
-					expand: Array.from(this.expands).join(",")
+					expand: "subSeriesId"
 				})
 			).items
 		);
