@@ -1,6 +1,6 @@
 import { getAllPageData } from '$lib/PocketBase';
-import type { PageServerLoad } from './$types';
 import type { FigurePageCleaned } from '$lib/Types';
+import type { PageServerLoad } from './$types';
 
 export const config = {
 	isr: {
@@ -9,7 +9,7 @@ export const config = {
 };
 
 export const load = (async ({params}) => {
-    const res: FigurePageCleaned = await getAllPageData(params.figure)
+    const res: FigurePageCleaned = await getAllPageData(params.subseries)
     return {
         pageData: structuredClone(res),
     };
