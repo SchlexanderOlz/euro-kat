@@ -1,8 +1,6 @@
 <script lang="ts">
 		import type { Figure } from '$lib/PocketBase';
-	import type { FigurePage, FigurePageCleaned } from '$lib/Types';
 	import FigureList from '$lib/components/FigureList.svelte';
-	import FigureListItem from '$lib/components/FigureListItem.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

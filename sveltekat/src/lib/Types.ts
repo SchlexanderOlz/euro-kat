@@ -1,4 +1,5 @@
 export interface Figure {
+	collectionId: string;
 	id: string;
 	created: string;
 	modified: string; // TODO: change DateTime to string
@@ -15,6 +16,7 @@ export interface Figure {
 	subSeries: SubSeries;
 	packageInserts: string[]; // Just images currently
 	year: string;
+	subSeriesId: string;
 	expand: {
 		subSeriesId: SubSeries;
 	}
@@ -48,6 +50,7 @@ export interface Variation {
 }
 
 export interface SubSeriesVariation {
+	collectionId: string;
 	id: string;
 	created: string;
 	update: string;
@@ -56,6 +59,7 @@ export interface SubSeriesVariation {
 	note: string;
 	country: string;
 	expand: any;
+	images: string[];
 }
 
 export interface SubSeries {

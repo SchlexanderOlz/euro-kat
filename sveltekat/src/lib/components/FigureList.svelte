@@ -73,7 +73,7 @@
 				}}
 				bind:value={inputValue}
 				class="input w-full"
-				placeholder="Suche:  'Name/Notiz', '#Mpg Nr.'"
+				placeholder="Suche"
 			/>
 			<button class="btn absolute right-0 variant-ringed ring-opacity-30">Los</button>
 		</div>
@@ -190,7 +190,7 @@
 			}}
 			class="ml-4 md:flex hidden"
 		>
-			Notiz
+			Serie
 			{#if figureBuilder.sort.has("+note")}
 			<AupIcon/>
 	 {:else if figureBuilder.sort.has("-note")}
