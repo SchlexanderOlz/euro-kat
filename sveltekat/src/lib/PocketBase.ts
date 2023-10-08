@@ -7,28 +7,90 @@ import type {
 	Figure,
 	SubSeriesVariation,
 	FigureVariation,
-	Packaging
-} from './Types';
+	Packaging,
+	FigurePage,
+	FigurePageCleaned,
+	WarningZ,
+	WarningZD,
+	Extra,
+	ExtraDetail
+} from './Types.js';
 
-export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation};
-export const domain: string = "ek.krenn.tech:443"
+export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
+export const domain: string = 'ek.krenn.tech:443';
 export const imgdom: string = `https://${domain}/api/files`;
 export const connection: PocketBase = new PocketBase(`https://${domain}`);
 
 export const figureInitLoadCount: number = 50;
 
-export async function getSubSeriesByLetter(seriesLetter: string): Promise<SubSeries> {
-	if (seriesLetter === 'soos') {
-		throw TypeError('Damn mann you litttle suusy bucka');
+const figures = connection.collection('Figure');
+const warnings = connection.collection('Warning');
+const subSeries = connection.collection('SubSeries');
+const subSeriesVar = connection.collection('SubSeriesVariation');
+const figureVar = connection.collection('FigureVariation');
+const extras = connection.collection('Extra');
+
+export async function getWarnings(): Promise<WarningZ[]> {
+	return await warnings.getFullList<WarningZ>({
+		sort: 'numbered',
+		fields: 'id, name, general, numbered'
+	});
+}
+
+export async function getWarningDetail(id: string): Promise<WarningZD> {
+	return await warnings.getOne<WarningZD>(id, { expand: 'types', sort: 'numbered' });
+}
+
+export async function getExtras(): Promise<Extra[]> {
+	return await extras.getFullList<Extra>({ fields: 'id, name, text', sort: '-numbered' });
+}
+
+export async function getExtraDetail(id: string): Promise<ExtraDetail> {
+	return await extras.getOne<ExtraDetail>(id, { expand: 'types' });
+}
+
+export async function getFigurePageData(figureId: string): Promise<Figure> {
+	return await figures.getOne(figureId, { expand: 'subSeriesId' });
+}
+
+export async function getSubSeriesVariations(subSeriesId: string): Promise<SubSeries> {
+	return await subSeries.getOne(subSeriesId, {
+		expand: 'SubSeriesVariation(subSeriesId)'
+	});
+}
+
+export async function getFigureVariation(subSeriesVarId: string): Promise<FigureVariation> {
+	return await subSeriesVar.getOne(subSeriesVarId, {
+		expand: 'FigureVariation(subSeriesVariationId), FigureVariation(subSeriesVariationId).figureId'
+	});
+}
+
+export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
+	const figure: any = await figures.getOne(fid, {
+		expand:
+			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId'
+	});
+
+	const seriesFigures = await figures.getFullList<Figure>({ filter: `subSeriesId="${figure.subSeriesId}"` });
+	const subSeries = figure.expand.subSeriesId;
+	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
+
+	for (let sub of subSeriesVariations) {
+		sub.figvars = sub.expand['FigureVariation(subSeriesVariationId)'];
 	}
+
+	const vals: FigurePageCleaned = {
+		subSeriesFigures: seriesFigures,
+		subser: subSeries,
+		subservars: subSeriesVariations,
+	};
+	console.log(vals)
+
+	return vals;
 }
 
-export async function getSeries(): Promise<Series> {
-}
-
-export async function getFigureOfSeries(series: string) {
-}
-
-export async function insertSeries(series: Series) {
-	connection.collections.create('series', series);
+export async function getCountrys(): Promise<Set<string>> {
+	return new Set(
+		(await subSeriesVar.getFullList<SubSeriesVariation>()).map((value) => value.country)
+	);
 }

@@ -30,7 +30,10 @@ class WarningParser:
 
     @staticmethod
     def join_tags(soup: BeautifulSoup, html_type: str) -> str:
-       return "\n".join([p.get_text(strip=True).replace("\t", "").replace("\n", "") for p in soup.find_all(html_type)])
+        joined: list = [p.get_text(strip=True).replace("\t", "").replace("\n", "") for p in soup.find_all(html_type)]
+        joined.pop()
+        joined.pop()
+        return "\n".join(joined)
 
     @staticmethod 
     def nuts(href: str) -> dict:
@@ -48,7 +51,7 @@ class WarningParser:
             match b.get_text(strip=True).strip():
                 case "Allgemeines:":
                     joined_ps: str = WarningParser.join_tags(soup, "p")
-                    result.update({ "general" : joined_ps })
+                    result.update({ "general" : joined_ps.replace("Allgemeines:", "") })
                     continue
                 case "Adresskopf:":
                     img: BeautifulSoup = b.find_next("img")
@@ -59,10 +62,10 @@ class WarningParser:
                     result.update({ "header" : absolute_path })
                     continue
                 case "Länderkennzeichen A-Seite:":
-                    result.update({ "countryA" : element.get_text(strip=True) })
+                    result.update({ "countryA" : element.get_text(strip=True).replace("Länderkennzeichen A-Seite:", "") })
                     continue
                 case "Länderkennzeichen B-Seite:":
-                    result.update({ "countryB" : element.get_text(strip=True) })
+                    result.update({ "countryB" : element.get_text(strip=True).replace("Länderkennzeichen B-Seite:", "") })
                     continue
                 case "Format:":
                     result.update({ "format" : element.get_text(strip=True).replace("Format:", "")})
@@ -71,6 +74,8 @@ class WarningParser:
                     if "bekannte" in x.lower():
                         result.update({ "variations" : WarningParser.join_tags(element, "p")})
                         continue
+                    if "dank" in x.lower():
+                        result.update({ "thanks" : element.get_text(strip=True)})
                     if "typ" in x.lower():
                         oldTd: BeautifulSoup = element
                         types: list = []

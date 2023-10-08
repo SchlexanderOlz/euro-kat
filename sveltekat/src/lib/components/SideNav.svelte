@@ -1,12 +1,14 @@
 <script lang="ts">
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import MenuIcon from '$lib/icons/MenuIcon.svelte';
-	import { Drawer, drawerStore, type DrawerSettings, LightSwitch } from '@skeletonlabs/skeleton';
+	import { Drawer, type DrawerSettings, LightSwitch, getDrawerStore } from '@skeletonlabs/skeleton';
 	import NavItem from './NavItem.svelte';
 	import { NavItems } from '$lib/NavItems';
 	import { onMount } from 'svelte';
 	import NavBox from './NavBox.svelte';
 	import { page } from '$app/stores';
+
+	const drawerStore = getDrawerStore();
 
 	const drawerSettings: DrawerSettings = {
 		id: 'sideNav',
@@ -36,8 +38,8 @@
 	let curPath = path;
 
 	$: if (path != curPath) {
-		sideClose()
-		curPath = path
+		sideClose();
+		curPath = path;
 	}
 </script>
 

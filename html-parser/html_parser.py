@@ -81,17 +81,18 @@ class InformationExtractor:
             series: str
             name: str 
             mpg_nr: str
+            year: str
 
 
             try:
-                series = cleanup(tds[2].get_text(strip=True))
-                name = cleanup(tds[1].get_text(strip=True))
                 mpg_nr = cleanup(tds[0].get_text(strip=True))
+                name = cleanup(tds[1].get_text(strip=True))
+                series = cleanup(tds[2].get_text(strip=True))
+                year = cleanup(tds[3].get_text(strip=True))
             except IndexError:
                 print("[-] Key was out of bound")
-                continue
             
-            if name == None or "?" in name or "?" in mpg_nr or name == "Figur":
+            if name == None or "?" in name or "?" in mpg_nr or name == "Figur" or mpg_nr == None:
                 continue
 
             questionable: bool = False
@@ -103,9 +104,9 @@ class InformationExtractor:
                 fake = True
 
             series_letter: str
-            match = re.match(r"\D*", mpg_nr)
+            match = re.match(r"\D*", mpg_nr.replace("-", ""))
             if match:
-                series_letter = match.group()
+                series_letter = match.group().upper()
 
             if current_main_series['seriesLetter'] == None:
                 current_main_series['seriesLetter'] = series_letter
@@ -114,17 +115,15 @@ class InformationExtractor:
             element_data: dict = {
                 "mpgNr" : mpg_nr,
                 "name" : name,
-                "year" : cleanup(tds[3].get_text(strip=True)),
                 "fake" : fake,
-                "questionable" : questionable
+                "questionable" : questionable,
+                "year" : year
             }
               
             link: BeautifulSoup = element.find('a')
             absolut_path: str 
             if link:
                 absolut_path = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-            else:
-                print(element_data)
 
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
 

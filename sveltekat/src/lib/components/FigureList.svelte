@@ -1,102 +1,256 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import type { Figure } from '$lib/PocketBase';
 	import FigureListItem from './FigureListItem.svelte';
-	import { ListBox, ListBoxItem, popup } from '@skeletonlabs/skeleton';
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
-
-	import FilterIcon from '$lib/icons/FilterIcon.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	import { figureBuilder } from '$lib/FigureFilter';
+	import CDownIcon from '$lib/icons/CDownIcon.svelte';
+	import CUpIcon from '$lib/icons/CUpIcon.svelte';
+
+	import RangeSlider from 'svelte-range-slider-pips';
+	import type { ListResult } from 'pocketbase';
+	import type { Figure } from '$lib/Types';
+	import ADownIcon from '$lib/icons/ADownIcon.svelte';
+	import AupIcon from '$lib/icons/AUPIcon.svelte';
 
 	export let figures: Figure[];
-
-	const updateSearchParams = (key: string, value: string) => {
-		const searchParams = new URLSearchParams($page.url.searchParams);
-		searchParams.set(key, value);
-		goto(`?${searchParams.toString()}`, { keepFocus: true });
-	};
+	export let pages: number;
 
 	let inputValue = '';
 
-	// QUERY FRIENDLY (max. 1 request/sec to db)
-	//let debounceTimer: NodeJS.Timeout;
-	//async function updateResults() {
-	//  clearTimeout(debounceTimer);
-	//  debounceTimer = setTimeout(async () => {
-	//    updateSearchParams("q", inputValue)
-	//    // db query
-	//    console.log("update");
-	//
-	//  }, 500);
-	//}
+	let debounceTimer: NodeJS.Timeout;
+	async function updateSearch() {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(async () => {
+			if (inputValue[0] == '#') {
+				figureBuilder.mpgnumber(inputValue.substring(1));
+			} else {
+				figureBuilder.mpgnumber(inputValue.substring(1));
+			}
 
-	// QUERY UNFRIENDLY (lots of db requests if user spams keys), but don't need "go" button
-	function updateResults() {
-		updateSearchParams('q', inputValue);
+			figureBuilder.name(inputValue);
+			figureBuilder.note(inputValue);
+
+			await update();
+		}, 500);
 	}
 
 	async function update() {
-		figureBuilder.sticker(); // TODO: for every filter
-    
-		figures = await figureBuilder.run();
+		figureBuilder.currentPage = 1;
+		let res: ListResult<Figure> = structuredClone(await figureBuilder.run());
+		figures = res.items;
+		pages = res.totalPages;
 	}
 
-	const filterOptions: { [filter: string]: () => void } = {
-		Sticker: update
-	};
+	$: loading = false;
 
-	let filterSelect = '';
+	async function loadMore() {
+		loading = true;
+		figureBuilder.currentPage += 1;
+		let res: ListResult<Figure> = structuredClone(await figureBuilder.run());
+		figures = [...figures, ...res.items];
+		loading = false;
+	}
 
-	$: lang = $page.url.searchParams.get('lang') || 'en';
+	let filter = false;
 
-	const popupCombobox: PopupSettings = {
-		event: 'click',
-		target: 'genbox',
-		closeQuery: '.listbox-item',
-		placement: 'bottom'
-	};
+	let yearrange = [2004, 2023];
+	async function updateYear() {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(async () => {
+			figureBuilder.yearBegin(yearrange[0]);
+			figureBuilder.yearEnd(yearrange[1]);
+			update();
+		}, 500);
+	}
 </script>
 
 <div>
-	<div class="flex flex-col sm:flex-row mb-3">
+	<div class="flex flex-col sm:flex-row">
 		<div class="w-full mr-2 relative">
 			<input
+				on:input={() => {
+					updateSearch();
+				}}
 				bind:value={inputValue}
-				on:input={updateResults}
 				class="input w-full"
 				placeholder="Suche"
 			/>
-			<button class="btn absolute right-0 variant-ringed ring-opacity-30" on:click={updateResults}
-				>Los</button
-			>
+			<button class="btn absolute right-0 variant-ringed ring-opacity-30">Los</button>
 		</div>
 
-		<button class="btn variant-filled select-none sm:mt-0 mt-1" use:popup={popupCombobox}>
-			Filter <span class="ml-2 -mr-2"><FilterIcon /></span>
+		<button
+			class="btn variant-filled select-none sm:mt-0 mt-2"
+			on:click={() => {
+				filter = !filter;
+			}}
+		>
+			Filter <span class="ml-2 -mr-2">
+				{#if filter}
+					<CUpIcon styles="h-6 w-auto stroke-2" />
+				{:else}
+					<CDownIcon styles="h-6 w-auto stroke-2" />
+				{/if}
+			</span>
 		</button>
-
-		<div class="card text-xl shadow-xl select-none" data-popup="genbox">
-			<ListBox rounded="rounded-lg">
-				{#each Object.keys(filterOptions) as filter}
-					<ListBoxItem
-						active="variant-ringed"
-						bind:group={filterSelect}
-						name="medium"
-						aria-label={filter}
-						value={filter}
-						on:click={async () => {
-							update();
-						}}>{filter}</ListBoxItem
-					>
-				{/each}
-			</ListBox>
-		</div>
 	</div>
 
-	{#each figures as figure (figure.id)}
-		<FigureListItem {figure} />
-	{/each}
+	{#if filter}
+		<div
+			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
+		>
+			<div
+				class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-fit px-[5%] sm:px-0"
+			>
+				<div class="flex flex-col sm:flex-row items-center">
+					<p class="sm:hidden flex mb-1">Sticker</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.sticker();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Sticker</p>
+				</div>
+				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
+					<p class="sm:hidden flex mb-1">Fake</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.fake();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Fake</p>
+				</div>
+				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
+					<p class="sm:hidden flex mb-1">Fragwürdig</p>
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.questionable();
+							update();
+						}}
+						name="sticker"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 sm:flex hidden">Fragwürdig</p>
+				</div>
+			</div>
+
+			<div class="sm:w-[40%] sm:min-w-[20rem] w-full sm:ml-10 flex-shrink-0 mt-4 sm:mt-0">
+				<p class="ml-2 w-full text-center">Jahre: {yearrange.join('-')}</p>
+				<RangeSlider
+					on:change={updateYear}
+					bind:values={yearrange}
+					min={2004}
+					max={2023}
+					range
+					pips
+					step={1}
+					springValues={{ stiffness: 1, damping: 1 }}
+				/>
+			</div>
+		</div>
+	{/if}
+
+	<div class="w-full h-8 flex items-center relative mt-2">
+		<div class="w-80 ">
+			<button
+			on:click={() => {
+				figureBuilder.sortName();
+				update();
+			}}
+			class="ml-2 text-start flex"
+		>
+			Name
+
+			{#if figureBuilder.sort.has("+name")}
+				 <AupIcon/>
+			{:else if figureBuilder.sort.has("-name")}
+				 <ADownIcon/>
+			{/if}
+		</button>
+		</div>
+		
+		<button
+			on:click={() => {
+				figureBuilder.sortNote();
+				update();
+			}}
+			class="ml-4 md:flex hidden"
+		>
+			Serie
+			{#if figureBuilder.sort.has("+note")}
+			<AupIcon/>
+	 {:else if figureBuilder.sort.has("-note")}
+			<ADownIcon/>
+	 {/if}
+		</button>
+		<button
+			on:click={() => {
+				figureBuilder.sortMpgNr();
+				update();
+			}}
+			class="absolute right-2 flex"
+		>
+			Mpg Nr.
+			{#if figureBuilder.sort.has("+mpgNr")}
+				 <AupIcon/>
+			{:else if figureBuilder.sort.has("-mpgNr")}
+				 <ADownIcon/>
+			{/if}
+		</button>
+	</div>
+
+	{#if figures.length != 0}
+		{#each figures as figure (figure.mpgNr)}
+			<FigureListItem {figure} />
+		{/each}
+		{#if figureBuilder.currentPage < pages}
+			<div class="w-full flex justify-center mt-6">
+				<button on:click={loadMore} disabled={loading} class="btn variant-filled-surface w-40"
+					>Mehr Laden</button
+				>
+			</div>
+		{/if}
+	{:else}
+		<div class="w-full flex justify-center items-center">
+			<p class="mt-8 text-center">Es konnten keine Ergebnisse gefunden werden.</p>
+		</div>
+	{/if}
 </div>
+
+<style>
+	:root {
+		--range-slider: hsl(180, 3.9%, 84.9%);
+		--range-handle-inactive: hsl(31, 82.9%, 65.7%);
+		--range-handle: hsl(31, 82.9%, 65.7%);
+		--range-handle-focus: hsl(31.2, 83.2%, 51%);
+		--range-handle-border: hsl(31, 82.9%, 65.7%);
+		--range-range-inactive: hsl(31, 82.9%, 65.7%);
+		--range-range: hsl(31, 82.9%, 65.7%);
+		--range-float-inactive: hsl(31.2, 83.2%, 51%);
+		--range-float: hsl(31.2, 83.2%, 51%);
+		--range-float-text: hsl(0, 0%, 100%);
+
+		--range-pip: hsl(210, 14.3%, 53.3%);
+		--range-pip-text: hsl(210, 14.3%, 53.3%);
+		--range-pip-active: hsl(180, 25.4%, 24.7%);
+		--range-pip-active-text: hsl(180, 25.4%, 24.7%);
+		--range-pip-hover: hsl(180, 25.4%, 24.7%);
+		--range-pip-hover-text: hsl(180, 25.4%, 24.7%);
+		--range-pip-in-range: hsl(180, 25.4%, 24.7%);
+		--range-pip-in-range-text: hsl(180, 25.4%, 24.7%);
+	}
+</style>

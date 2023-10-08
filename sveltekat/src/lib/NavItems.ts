@@ -16,7 +16,7 @@ export const NavItems: Item[] = [
 	},
 	{
 		title: 'Spezial',
-		references: { Warnhinweiszettel: '/wzh', Zusatzwarnzettel: '/zwz', 'Maxi-Inhalte': '/maxi' }
+		references: { Warnhinweiszettel: '/whz', Zusatzwarnzettel: '/zwz', 'Maxi-Inhalte': '/maxi' }
 	},
 	{
 		title: 'Info',
