@@ -1,5 +1,3 @@
-// https://pocketbase.io/docs/api-records/ <- docs
-
 import PocketBase from 'pocketbase';
 import type {
 	Series,
@@ -8,7 +6,6 @@ import type {
 	SubSeriesVariation,
 	FigureVariation,
 	Packaging,
-	FigurePage,
 	FigurePageCleaned,
 	WarningZ,
 	WarningZD,
@@ -25,9 +22,7 @@ export const figureInitLoadCount: number = 50;
 
 const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
-const subSeries = connection.collection('SubSeries');
 const subSeriesVar = connection.collection('SubSeriesVariation');
-const figureVar = connection.collection('FigureVariation');
 const extras = connection.collection('Extra');
 
 export async function getWarnings(): Promise<WarningZ[]> {
@@ -49,22 +44,6 @@ export async function getExtraDetail(id: string): Promise<ExtraDetail> {
 	return await extras.getOne<ExtraDetail>(id, { expand: 'types' });
 }
 
-export async function getFigurePageData(figureId: string): Promise<Figure> {
-	return await figures.getOne(figureId, { expand: 'subSeriesId' });
-}
-
-export async function getSubSeriesVariations(subSeriesId: string): Promise<SubSeries> {
-	return await subSeries.getOne(subSeriesId, {
-		expand: 'SubSeriesVariation(subSeriesId)'
-	});
-}
-
-export async function getFigureVariation(subSeriesVarId: string): Promise<FigureVariation> {
-	return await subSeriesVar.getOne(subSeriesVarId, {
-		expand: 'FigureVariation(subSeriesVariationId), FigureVariation(subSeriesVariationId).figureId'
-	});
-}
-
 export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 	const figure: any = await figures.getOne(fid, {
 		expand:
@@ -84,7 +63,6 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		subser: subSeries,
 		subservars: subSeriesVariations,
 	};
-	console.log(vals)
 
 	return vals;
 }
