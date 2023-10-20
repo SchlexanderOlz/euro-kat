@@ -3,6 +3,9 @@
 	<meta name="description" content='Alle Seiten von der alten Website, die nicht übernommen worden sind' />
 </svelte:head>
 
-<h2 class="w-full text-center h2 mt-8">Hier kommt man zu der alten Version der Website. Diese enthält Daten welche nicht weiter geändert werden!</h2>
-
-<a href="AZListen/AbisZ.htm">Zu alten Seite</a>
+<div class="w-full flex flex-col items-center">
+	<h2 class="w-full text-center h2 mt-8 px-[10%]">Hier kommt man zu der alten Version der Website. Diese enthält Daten welche nicht weiter geändert werden!</h2>
+	<p class="my-4 text-center text-xl px-[10%]">Es kann sein, dass manche Fotos und Seiten nicht mehr verfügbar sind</p>
+	<a href="AZListen/AbisZ.htm"><button class="btn variant-filled-surface w-52">Zu alten Seite</button></a>
+	
+</div>
