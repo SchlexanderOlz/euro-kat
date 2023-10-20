@@ -34,12 +34,15 @@ export interface Packaging {
 
 export interface FigureVariation {
 	id: string;
+	collectionId: string;
 	created: string;
 	modified: string;
 	packageInserts: string[]; // Not how pictures are retrieved
 	figureId: Figure;
 	subSeriesId: SubSeries;
-	expand: any; 
+	expand: {
+		figureId: Figure;
+	};
 }
 
 export interface Variation {
@@ -61,6 +64,7 @@ export interface SubSeriesVariation {
 	country: string;
 	expand: any;
 	images: string[];
+	figvars: FigureVariation[];
 }
 
 export interface SubSeries {

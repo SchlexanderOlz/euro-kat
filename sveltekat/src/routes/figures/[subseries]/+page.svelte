@@ -17,7 +17,6 @@
 	<meta name="description" content="Figur" />
 </svelte:head>
 
-
 <!-- 		https://www.skeleton.dev/utilities/table-of-contents
 	
 	<div class="absolute top-0 left-0" use:tocCrawler={{ mode: 'generate' }}>
@@ -41,12 +40,8 @@
 		alt="{data.pageData.subser.name} Beipackzettel"
 	/>
 
-	<p>bpz</p>
-	<p>verpackungen</p>
-
-	
-	<h2 id="figuren" class="h2  mb-4 mt-6 text-center">Figuren</h2>
-	<div class="w-fit">
+	<h2 id="figuren" class="h2 mb-4 mt-6 text-center">Figuren</h2>
+	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
 			<div class="flex card my-2 p-2">
 				<div class="w-72 flex justify-center">
@@ -60,36 +55,65 @@
 					<p class="font-normal my-0.5"><span class="font-bold">MPG-Nr:</span> {fig.mpgNr}</p>
 					<p class="font-normal my-0.5"><span class="font-bold">Name:</span> {fig.name}</p>
 					<p class="font-normal my-0.5"><span class="font-bold">Kennung:</span> {fig.identifier}</p>
-					<p class="font-normal my-0.5"><span class="font-bold">Aufkleber:</span> {fig.sticker ? 'Ja' : 'Nein'}</p>
-					<p class="font-normal my-0.5 break-all"><span class="font-bold break-keep">Bemerkung:</span> {fig.note}</p>
-					
-					<!--Beipackzettel?-->
+					<p class="font-normal my-0.5">
+						<span class="font-bold">Aufkleber:</span>
+						{fig.sticker ? 'Ja' : 'Nein'}
+					</p>
+					<p class="font-normal my-0.5 break-all">
+						<span class="font-bold break-keep">Bemerkung:</span>
+						{fig.note}
+					</p>
 
+					<!--Beipackzettel?-->
 				</div>
 			</div>
 		{/each}
 
-		<h2 id="variationen" class="h2  mb-4 mt-6 text-center">Variationen</h2>
-		<div class="card w-full">
+		<h2 id="variationen" class="h2 mb-4 mt-6 text-center">Variationen</h2>
+		<div class="card">
 			<Accordion>
 				{#each data.pageData.subservars as subservar}
 					<AccordionItem>
 						<!--<svelte:fragment slot="lead">(icon)</svelte:fragment>-->
-						<svelte:fragment slot="summary"
-							>
-							<span class="font-bold">Variation {subservar.country} - {subservar.year}</span></svelte:fragment
+						<svelte:fragment slot="summary">
+							<span class="font-bold">Variation {subservar.country} - {subservar.year}</span
+							></svelte:fragment
 						>
 						<svelte:fragment slot="content">
-							<p>{subservar.note}</p>
+							<p class="whitespace-pre-wrap">{subservar.note}</p>
 							{#each subservar.images as img}
-								<img src="{imgdom}/{subservar.collectionId}/{subservar.id}/{img}"/>
+								<img src="{imgdom}/{subservar.collectionId}/{subservar.id}/{img}" alt="Subseries" />
 							{/each}
+							{#if subservar.figvars != undefined}
+								<p class="font-bold">Beipackzettel</p>
+
+								<Accordion>
+									{#each subservar.figvars as figvar}
+										<AccordionItem>
+											<svelte:fragment slot="summary">
+												<span class="font-bold"
+													>{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}</span
+												></svelte:fragment
+											>
+											<svelte:fragment slot="content">
+												<div class="h-auto max-w-[100%] flex flex-wrap">
+													{#each figvar.packageInserts as bpz}
+														<img
+															class="w-auto max-h-32"
+															src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
+															alt="Beipackzettel"
+														/>
+													{/each}
+												</div>
+											</svelte:fragment>
+										</AccordionItem>
+									{/each}
+								</Accordion>
+							{/if}
 						</svelte:fragment>
 					</AccordionItem>
 				{/each}
 			</Accordion>
 		</div>
 	</div>
-	</div>
-
-
+</div>
