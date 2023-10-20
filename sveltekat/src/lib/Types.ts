@@ -6,6 +6,7 @@ export interface Figure {
 	mpgNr: string;
 	fake: boolean;
 	questionable: boolean;
+  isCurrentSeries: boolean;
 	variations: Variation[];
 	name: string;
 	sticker: boolean;
