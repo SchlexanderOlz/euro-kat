@@ -99,10 +99,23 @@
 			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
 		>
 			<div
-				class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-fit px-[5%] sm:px-0"
+				class="flex flex-col items-start justify-between w-fit px-0"
 			>
-				<div class="flex flex-col sm:flex-row items-center">
-					<p class="sm:hidden flex mb-1">Sticker</p>
+			<div class="flex flex-row items-center">
+				<SlideToggle
+					on:change={() => {
+						figureBuilder.sticker(); // TODO:
+						update();
+					}}
+					name="sticker"
+					checked={false}
+					active="bg-primary-500"
+					size="sm"
+					rounded="rounded"
+				/>
+				<p class="ml-2 flex">Aktuelle Serie</p>
+			</div>
+				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
 						on:change={() => {
 							figureBuilder.sticker();
@@ -114,10 +127,9 @@
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 sm:flex hidden">Sticker</p>
+					<p class="ml-2 flex">Sticker</p>
 				</div>
-				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
-					<p class="sm:hidden flex mb-1">Fake</p>
+				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
 						on:change={() => {
 							figureBuilder.fake();
@@ -129,10 +141,9 @@
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 sm:flex hidden">Fake</p>
+					<p class="ml-2 flex">Fake</p>
 				</div>
-				<div class="flex flex-col sm:flex-row items-center sm:mt-2 ml-1 sm:ml-0">
-					<p class="sm:hidden flex mb-1">Fragwürdig</p>
+				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
 						on:change={() => {
 							figureBuilder.questionable();
@@ -144,7 +155,7 @@
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 sm:flex hidden">Fragwürdig</p>
+					<p class="ml-2 flex">Fragwürdig</p>
 				</div>
 			</div>
 
