@@ -24,7 +24,7 @@
 			Verfügung gestellt worden. Angesehen von kleinen "redaktionellen Änderungen (im Text kursiv)"
 			ist er im Original.
 		</p>
-		<a href="https://pnrtscr.com">- Link zum Bericht -</a>
+		<a href="Berichte/Zwerge/Zwerge.htm">- Link zum Bericht -</a>
 	</div>
 
 	<!-- Beispiel 2 -->
@@ -42,7 +42,7 @@
 			vieles im Dunklen.
 		</p>
 		<p>.... es wird weiter dran gearbeitet!</p>
-		<a href="https://pnrtscr.com">- zum Bermes Liste -</a>
+		<a href="Berichte/Bermes/Bermes.htm">- zum Bermes Liste -</a>
 	</div>
 
 	<div>
@@ -62,7 +62,7 @@
 			Erwähnenswert vielleicht noch, dass, obwohl diese Serie ja ebenfalls bereits ein
 			beträchtliches Alter erreicht hat, diese Artikel in größerer Zahl immer noch angeboten werden.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/Happy/Happy.htm">- zum Bericht -</a>
 	</div>
 	<div>
 		<h3>Kleine bunte Fahrzeuge (Nutzfahrzeuge)</h3>
@@ -101,7 +101,7 @@
 			Kontakt:
 			<a href="mailto:bunte-fahrzeuge@online.de">bunte-fahrzeuge@online.de</a>
 		</p>
-		<a href="https://pnrtscr.com">- Download der Excel-Datei (26,5 MB Stand: 15.01.2012)</a>
+		<a href="Berichte/KBF_2012_01_15.xls">- Download der Excel-Datei (26,5 MB Stand: 15.01.2012)</a>
 	</div>
 	<div>
 		<h3>Wind-Racer Spezial</h3>
@@ -113,7 +113,7 @@
 			Im Wind-Racer Spezial werden die bisher erschienen Serien und deren Unterscheidung
 			vorgestellt.
 		</p>
-		<a href="https://pnrtscr.com">- zum Spezial -</a>
+		<a href="Berichte/WRspez/WRspez.htm">- zum Spezial -</a>
 	</div>
 	<div>
 		<h3>Der Musterkoffer 1981</h3>
@@ -127,7 +127,7 @@
 			<span class="font-bold">Hans-Dieter Geiger</span> hat uns die Bilder des Musterkoffers zur Ü-Ei
 			Saison 1981-1982 zur Verfügung gestellt.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/Musterk/Muster1.htm">- zum Bericht -</a>
 	</div>
 	<div>
 		<h3>BPZ Blaudrucke</h3>
@@ -144,7 +144,7 @@
 			eine bisher unbekannte Art von Fälschungen berichtet.
 		</p>
 		<p>"BPZ Blaudrucke nur für Blauäugige?"</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/Blaudruck/Blaudruck.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -165,7 +165,7 @@
 			dass diese Zusammenstellung nicht nur für Fremdfigurensammler von Interesse ist.
 		</p>
 		<p>"Charly" ein Typ mit vielen Geheimnissen.</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/charly/charly.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -180,7 +180,7 @@
 			den Sammler "zum Wahnsinn treiben".
 		</p>
 		<p>Hier eine kleine, und sicher noch nicht komplette, Anregung für alle die ............</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/MagicC/MagicC.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -200,7 +200,7 @@
 			<span class="font-bold">Peter Brinkman</span>stellt uns hier einige seiner Werbeblätter,
 			darunter die Jahrgänge 1976-1980, dankenswerter Weise zur Verfügung.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/DDWerb/DDWerb.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -226,7 +226,7 @@
 			Zuordnung der verschiedenen Varianten, sowie der korrekten Bauform (insbesondere der
 			Kupplungen) vorzunehmen.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/Fantasia/Fantasia.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -241,7 +241,7 @@
 			Verlust für alle Sammler darstellt. Hätte ich von der bevorstehenden Schließung gewusst, hätte
 			ich sicher mehr und bessere Bilder mitgenommen.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bericht -</a>
+		<a href="Berichte/Faro/MusFaro1.htm">- zum Bericht -</a>
 	</div>
 
 	<div>
@@ -260,7 +260,7 @@
 			mit der seltsamen Kennung des "umgedrehten W" von Tommy Campione auf sich? Wer kann
 			Informationen zu den fehlenden Kennungen liefern?
 		</p>
-		<a href="https://pnrtscr.com">- zum Bildbericht -</a>
+		<a href="Berichte/Ranpic/Ranopla.htm">- zum Bildbericht -</a>
 	</div>
 
 	<div>
@@ -274,7 +274,7 @@
 			Im smart-Spezial werden die bisher erschienen vier Serien und deren Unterscheidung
 			vorgestellt.
 		</p>
-		<a href="https://pnrtscr.com">- zum Spezial -</a>
+		<a href="Berichte/smartspez/Smartspez.htm">- zum Spezial -</a>
 	</div>
 
 	<div>
@@ -284,7 +284,7 @@
 			Deutschland erschienen. Zur Unterscheidung der Figuren zwischen den einzelnen Auflagen haben
 			wir diesen Bericht erstellt.
 		</p>
-		<a href="https://pnrtscr.com">- zum Spezial -</a>
+		<a href="Berichte/Blumenz/BZ_1.htm">- zum Spezial -</a>
 	</div>
 
 	<div>
@@ -297,7 +297,7 @@
 			Im Magic Sport 2-Spezial werden die Unterschiede und die tatsächlich im Ei gewesenen
 			Kombinationen aufgezeigt.
 		</p>
-		<a href="https://pnrtscr.com">- zum Spezial -</a>
+		<a href="Berichte/MS2Spez/MS2spez.htm">- zum Spezial -</a>
 	</div>
 
 	<div>
@@ -307,7 +307,7 @@
 			einer Bildserie überrascht.<br /> Es ist mir eine besondere Freude diese Bilder hier zeigen zu
 			dürfen.
 		</p>
-		<a href="https://pnrtscr.com">- zum Bildbericht -</a>
+		<a href="Berichte/MusPic_Sigrid/MusSig1.htm">- zum Bildbericht -</a>
 	</div>
 </div>
 
