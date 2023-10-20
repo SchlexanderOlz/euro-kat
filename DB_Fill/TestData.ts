@@ -25,6 +25,10 @@ function getTypeHeader(path: string): string {
       return "image/jpeg";
     case "jpeg":
       return "image/jpeg";
+    case "Jpg":
+      return "image/jpeg";
+    case "JPEG":
+      return "image/jpeg";
     case "gif":
       return "image/gif";
     default:
@@ -132,6 +136,17 @@ async function add() {
           subVariation.append("country", variation.country);
         if (variation.note) subVariation.append("note", variation.note);
 
+        if (variation.images) {
+          for (const path of variation.images) {
+            if (path.search("want_bpz.jpg") >= 0) continue;
+            try {
+              const data = fs.readFileSync(path);
+              const blob = new Blob([data], { type: getTypeHeader(path) });
+              subVariation.append("images", blob);
+            } catch (Error) {}
+          }
+        }
+
         let packages: FormData[] = [];
         for (const pckgi of variation.pckgi) {
           let formData = new FormData();
@@ -170,8 +185,9 @@ async function add() {
 
       if (sub.figureVariations == null) continue;
       for (const variation of sub.figureVariations) {
+        let figureRef;
         try {
-          var figureRef = await figures.getFirstListItem<RecordModel>(
+          figureRef = await figures.getFirstListItem<RecordModel>(
             `mpgNr="${variation.mpgNr}"`
           );
         } catch (Error) {

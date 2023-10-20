@@ -135,6 +135,10 @@ export class FigurFilterBuilder {
 		this.findRemove("-name", this.sort)
 	}
 
+	currentSeries() {
+		this.toggleBoolConatined("isCurrentSeries")
+	}
+
 	private toggleSort(sortName: string) {
 		for (const sort of this.sort) {
 			if (sort.startsWith('-' + sortName)) {
