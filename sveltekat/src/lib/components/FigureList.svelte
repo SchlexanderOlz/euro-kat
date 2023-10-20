@@ -104,7 +104,7 @@
 			<div class="flex flex-row items-center">
 				<SlideToggle
 					on:change={() => {
-						figureBuilder.sticker(); // TODO:
+						figureBuilder.currentSeries();
 						update();
 					}}
 					name="sticker"
