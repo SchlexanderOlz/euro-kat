@@ -85,29 +85,37 @@
 								<img src="{imgdom}/{subservar.collectionId}/{subservar.id}/{img}" alt="Subseries" />
 							{/each}
 							{#if subservar.figvars != undefined}
-								<p class="font-bold">Beipackzettel</p>
-
 								<Accordion>
-									{#each subservar.figvars as figvar}
-										<AccordionItem>
-											<svelte:fragment slot="summary">
-												<span class="font-bold"
-													>{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}</span
-												></svelte:fragment
-											>
-											<svelte:fragment slot="content">
-												<div class="h-auto max-w-[100%] flex flex-wrap">
-													{#each figvar.packageInserts as bpz}
-														<img
-															class="w-auto max-h-32"
-															src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
-															alt="Beipackzettel"
-														/>
-													{/each}
-												</div>
-											</svelte:fragment>
-										</AccordionItem>
-									{/each}
+									<AccordionItem>
+										<svelte:fragment slot="summary">
+											<span class="font-bold">Beipackzettel</span></svelte:fragment
+										>
+										<svelte:fragment slot="content">
+											<Accordion>
+												{#each subservar.figvars as figvar}
+													<AccordionItem>
+														<svelte:fragment slot="summary">
+															<span class="font-bold"
+																>{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId
+																	.name}</span
+															></svelte:fragment
+														>
+														<svelte:fragment slot="content">
+															<div class="h-auto max-w-[100%] flex flex-wrap">
+																{#each figvar.packageInserts as bpz}
+																	<img
+																		class="w-auto max-h-32"
+																		src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
+																		alt="Beipackzettel"
+																	/>
+																{/each}
+															</div>
+														</svelte:fragment>
+													</AccordionItem>
+												{/each}
+											</Accordion>
+										</svelte:fragment>
+									</AccordionItem>
 								</Accordion>
 							{/if}
 						</svelte:fragment>
