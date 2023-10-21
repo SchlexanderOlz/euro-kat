@@ -53,6 +53,8 @@ async function add() {
   const data = fs.readFileSync("../html-parser/data.json", "utf8");
   let json = JSON.parse(data);
 
+
+  let dbFigures: { [key: string]: string } = {}
   for (let object of json) {
     let seriesData = new FormData();
     seriesData.append("seriesLetter", object.seriesLetter);
@@ -87,7 +89,6 @@ async function add() {
       const subSeriesRecord = await subSeries.create(subSeriesData);
       sub.recordId = subSeriesRecord.id;
 
-      // Inserting figures
       for (const figure of sub.figures) {
         let formData = new FormData();
 
@@ -120,8 +121,16 @@ async function add() {
         await Promise.all(promises || []);
 
         try {
-          await figures.create(formData);
-        } catch (Error) {}
+          let figure = await figures.create(formData);
+          dbFigures[figure.mpgNr] = figure.id
+        } catch (Error) {
+          try {
+            let figureId = await figures.getFirstListItem(`mpnNr=${figure.mpgNr}`)
+            console.log(`Figure ${figure.mpgNr} with id ${figureId} is contained multiple times`)
+          } catch (Error) {
+            console.log(`Figure ${figure.mpgNr} does not exist and could also not be inserted`)
+          }
+        }
       }
     }
   }
@@ -162,16 +171,13 @@ async function add() {
             }
           }
 
-          try {
-            var figureRef = await figures.getFirstListItem(
-              `mpgNr="${pckgi.mpgNr}"`
-            );
-          } catch (Error) {
+          let figureId = dbFigures[pckgi.mpgNr]
+          if (figureId == undefined) {
             console.log("Ressource not found: " + pckgi.mpgNr);
-            continue;
+            continue
           }
 
-          formData.append("figureId", figureRef.id);
+          formData.append("figureId", figureId);
           packages.push(formData);
         }
         subVariation.append("subSeriesId", sub.recordId);
@@ -185,12 +191,8 @@ async function add() {
 
       if (sub.figureVariations == null) continue;
       for (const variation of sub.figureVariations) {
-        let figureRef;
-        try {
-          figureRef = await figures.getFirstListItem<RecordModel>(
-            `mpgNr="${variation.mpgNr}"`
-          );
-        } catch (Error) {
+        let figureId = dbFigures[variation.mpgNr]
+        if (figureId == undefined) {
           console.log("Ressource not found: " + variation.mpgNr);
           continue;
         }
@@ -206,7 +208,7 @@ async function add() {
         formData.append("variation", variation.variation);
         const record = await variations.create(formData);
 
-        await figures.update(figureRef.id, {
+        await figures.update(figureId, {
           "variations+": record.id,
         });
       }
