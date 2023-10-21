@@ -166,39 +166,44 @@ class InformationExtractor:
         soup = BeautifulSoup(html, 'html.parser')
         del html
 
-        figure_tr: ResultSet[BeautifulSoup] = soup.find_all('tr')
+        trs: ResultSet[BeautifulSoup] = soup.find_all('tr')
 
-        values: dict = {}
-        for tr in figure_tr:
-            found_element = tr.find('b', string=lambda text: text and figure_id in text.strip())
-            if found_element:
-                images: list = None
-                images = [element.get('src') for element in tr.find_all('img') if element]
+        figure: dict = {}
+        for tr in trs:
+            tds = tr.find_all("td")
+            for td in tds:
+                if td.get("bgcolor") == "#C0C0C0":
+                    figure["header"] = td.get_text(strip=True)
+                    current = tr.find_next("tr")
+                    if not current: continue
+                    bs = current.find_all("b")
+                    base_pics = [InformationExtractor.__join_paths("../" + img.get("src"), href) for img in current.find_all("img")]
+                    figure["pictures"] = base_pics
+                    try:
+                        [b.get_text(strip=True) for b in bs].index(figure_id)
+                    except ValueError:
+                        continue
+                    try:
+                        current = current.find_next('tr')
+                        figure["identifier"] = current.find_next('td').find_next('td').get_text(strip=True)
+                        current = current.find_next("tr")
+                        figure["aufkleber"] = current.find_next('td').find_next('td').get_text(strip=True) != "keine Aufkleber"
+                        current = current.find_next("tr").find_next("tr")
+                        figure["note"] = cleanup(current.get_text(strip=True))
+                    except AttributeError:
+                        continue
 
-                if len(images) == 0:
-                    InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No Image found for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
+                    while "#C0C0C0" not in [element.get("bgcolor") for element in current.find_all("td")]:
+                        images = [InformationExtractor.__join_paths("../" + img.get("src"), href) for img in current.find_all("img")]
+                        figure["pictures"].extend(images)
+                        current = current.find_next("tr")
+                        if current == None: break
+                    return figure
 
-                b_images: set[str] = set()
-                for image in images:
-                    absolut_path: str = InformationExtractor.__join_paths("../" + image, href)
-                    b_images.add(absolut_path)
-                del images
-
-                aufkleber: bool = cleanup(found_element.find_next('td').find_next('td').find_next('td').find_next('td').get_text(strip=True)) != "keine Aufkleber"
-                identifier: bool = cleanup(found_element.find_next('td').find_next('td').get_text(strip=True))
-                naming_field: BeautifulSoup = found_element.find_next('td').find_next('td').find_next('td').find_next('td').find_next('td').find_next('td')
-                note: str = "" 
-                try:
-                    note = cleanup(naming_field.get_text(strip=True))
-                except AttributeError:
-                    pass
-                values = { "identifier" : identifier, "sticker" : aufkleber, "note" : note, "pictures" : b_images }
-                break
-
-        if values == {}:
+        if figure == {}:
             InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""No values could be found! There could be a potential error in file: {Fore.BLUE}{href}{Style.RESET_ALL} -> In search for {Fore.YELLOW}{figure_id}{Style.RESET_ALL}""")
 
-        return values
+        return figure
 
     @staticmethod
     def parse_variation(href: str) -> List:

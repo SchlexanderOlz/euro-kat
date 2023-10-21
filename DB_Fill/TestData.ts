@@ -1,4 +1,4 @@
-import PocketBase, { RecordModel } from "pocketbase";
+import PocketBase from "pocketbase";
 import type {
   Series,
   SubSeries,
@@ -115,22 +115,18 @@ async function add() {
         if (figure.questionable)
           formData.append("questionable", figure?.questionable);
         if (figure.year) formData.append("year", figure.year);
+        if (figure.header) formData.append("header", figure.header)
 
         formData.append("subSeriesId", subSeriesRecord.id);
 
         await Promise.all(promises || []);
 
         try {
-          let figure = await figures.create(formData);
-          dbFigures[figure.mpgNr] = figure.id
+          const insertedFig = await figures.create(formData);
+          dbFigures[figure.mpgNr] = insertedFig.id
         } catch (Error) {
-          try {
-            let figureId = await figures.getFirstListItem(`mpnNr=${figure.mpgNr}`)
-            console.log(`Figure ${figure.mpgNr} with id ${figureId} is contained multiple times`)
-          } catch (Error) {
             console.log(`Figure ${figure.mpgNr} does not exist and could also not be inserted`)
           }
-        }
       }
     }
   }
