@@ -32,19 +32,12 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
-			<div class="flex card my-2 p-2">
-				<div class="w-72 flex justify-center">
-					{#if fig.pictures.length != 0}
-						<img
-							class="w-max"
-							src="{imgdom}/{fig.collectionId}/{fig.id}/{fig.pictures[0]}"
-							alt={fig.name}
-						/>
-					{:else}
-						<img src="/images/want_fig.jpg" alt="Kein Figuren-Foto verfügbar" />
-					{/if}
-				</div>
-				<div class="ml-4 w-72">
+
+
+
+			<div class="flex flex-col xl:flex-row card my-2 p-2">
+
+				<div class="w-72 pr-2 flex-shrink-0">
 					<p class="font-normal my-0.5"><span class="font-bold">MPG-Nr:</span> {fig.mpgNr}</p>
 					<p class="font-normal my-0.5"><span class="font-bold">Name:</span> {fig.name}</p>
 					<p class="font-normal my-0.5"><span class="font-bold">Kennung:</span> {fig.identifier}</p>
@@ -57,6 +50,17 @@
 						{fig.note}
 					</p>
 				</div>
+
+				<div class="flex flex-wrap xl:justify-start justify-center xl:mt-0 mt-1">
+					{#if fig.pictures.length != 0}
+						{#each fig.pictures as pic}
+							<img class="h-40 w-auto" src="{imgdom}/{fig.collectionId}/{fig.id}/{pic}" alt={fig.name} />
+						{/each}
+					{:else}
+						<img src="/images/want_fig.jpg" alt="Kein Figuren-Foto verfügbar" />
+					{/if}
+				</div>
+				
 			</div>
 		{/each}
 
@@ -148,6 +152,8 @@
 		{/if}
 	</div>
 
-	<p class="mt-8 opacity-50">Erstellt: {new Date(data.pageData.subser.created).toLocaleDateString()}</p>
+	<p class="mt-8 opacity-50">
+		Erstellt: {new Date(data.pageData.subser.created).toLocaleDateString()}
+	</p>
 	<p class="opacity-50">Verändert: {new Date(data.pageData.subser.updated).toLocaleDateString()}</p>
 </div>
