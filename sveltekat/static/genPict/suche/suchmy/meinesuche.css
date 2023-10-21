@@ -1,0 +1,49 @@
+/* Seitenfarbe, normale Schrift, Seitentitel */
+
+body {background-color:#F0EFDD; font-family: Verdana; font-weight: normal; font-size: 10pt; color: #000000;}
+table,tr,td {font-family: Verdana; font-weight: normal; font-size: 10pt; color: #000000;}
+h1 {font-family: Times New Roman; font-weight: normal; font-style:italic; font-size: 24pt; color: #AB8205; margin:12px;}
+
+
+/* Formatierung der angezeigten Treffer */
+
+.grau-url         {font-family: Arial; font-weight: normal; font-size:  8pt; color: #808080;}
+.treffertitel {font-family: Verdana; font-weight: bold; font-size: 10pt; color: #604020;}
+.treffertext   {font-family: Verdana; font-weight: bold; font-size: 10pt; color: #604020;}
+
+ a.braungold:link       {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ a.braungold:visited {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ a.braungold:hover     {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #004080;}
+ a.braungold:active   {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ 
+ 
+/* Links zur naechsten Seite und andere Links */ 
+
+ a.blaettern:link       {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ a.blaettern:visited {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ a.blaettern:hover     {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #004080;}
+ a.blaettern:active   {text-decoration:none; font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+ 
+ a.bgoldeinf:link       {text-decoration:none; font-family: Verdana; font-weight: normal; font-size: 10pt; color: #AF8A1B;}
+ a.bgoldeinf:visited {text-decoration:none; font-family: Verdana; font-weight: normal; font-size: 10pt; color: #AF8A1B;}
+ a.bgoldeinf:hover     {text-decoration:none; font-family: Verdana; font-weight: normal; font-size: 10pt; color: #004080;}
+ a.bgoldeinf:active   {text-decoration:none; font-family: Verdana; font-weight: normal; font-size: 10pt; color: #AF8A1B;} 
+
+ 
+/* Formatierung der Titelzeile */ 
+ 
+.headline   {background-color: #F2F1E6; border-top: solid 1px #ffffff; border-bottom: solid 1px #ffffff; text-align: center; margin-bottom:45px;} 
+.ausgeben   {border: solid 1px #ffffff; width: 70%; padding: 25px;} 
+.ausgeben2 {border: solid 1px #ffffff; width: 1260px; padding: 25px;} 
+
+/* Formatierung des Formulars */ 
+
+.formsuche {background-color: #F2F1E6; border: solid 1px #ffffff; width: 420px; margin-bottom: 35px; padding-top: 14px;} 
+
+ 
+/* Formatierung der Tabellen fuer die haufigsten Suchbegriffe und Visits */ 
+
+.feldnamen {font-family: Verdana; font-weight: bold; font-size: 10pt; color: #AF8A1B;}
+
+
+

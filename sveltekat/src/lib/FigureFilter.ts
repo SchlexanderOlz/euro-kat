@@ -135,6 +135,10 @@ export class FigurFilterBuilder {
 		this.findRemove("-name", this.sort)
 	}
 
+	currentSeries() {
+		this.toggleBoolConatined("isCurrentSeries")
+	}
+
 	private toggleSort(sortName: string) {
 		for (const sort of this.sort) {
 			if (sort.startsWith('-' + sortName)) {
@@ -164,7 +168,7 @@ export class FigurFilterBuilder {
 
 	async run(): Promise<ListResult<Figure>> {
 		if (this.filter.size == 0 && this.optionals.size == 0 && this.sort.size == 0)
-			return await this.figureCollection.getList(1, figureInitLoadCount);
+			return await this.figureCollection.getList(this.currentPage, figureInitLoadCount);
 
 		let query = '';
 		if (this.filter.size > 0) {
@@ -179,9 +183,8 @@ export class FigurFilterBuilder {
 		}
 
 		return structuredClone(
-			// TODO: How to handle multiple pages
-
-			await this.figureCollection.getList(1, figureInitLoadCount, {
+			
+			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
 				filter: query,
 				sort: Array.from(this.sort).join(','),
 				expand: 'subSeriesId'

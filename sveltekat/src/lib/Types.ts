@@ -2,29 +2,30 @@ export interface Figure {
 	collectionId: string;
 	id: string;
 	created: string;
-	modified: string; // TODO: change DateTime to string
+	modified: string;
 	mpgNr: string;
 	fake: boolean;
 	questionable: boolean;
-  isCurrentSeries: boolean;
+	isCurrentSeries: boolean;
 	variations: Variation[];
 	name: string;
 	sticker: boolean;
 	identifier: string;
 	note: string;
-	pictures: string[]; // TODO: Find out how pictures are fetched
+	pictures: string[];
 	figureVariations: FigureVariation[];
 	subSeries: SubSeries;
-	packageInserts: string[]; // Just images currently
+	packageInserts: string[];
 	year: string;
 	subSeriesId: string;
 	expand: {
 		subSeriesId: SubSeries;
-	}
+	};
 }
 
 export interface Packaging {
 	id: string;
+	collectionId: string;
 	created: string;
 	modified: string;
 	images: string[];
@@ -34,12 +35,15 @@ export interface Packaging {
 
 export interface FigureVariation {
 	id: string;
+	collectionId: string;
 	created: string;
 	modified: string;
 	packageInserts: string[]; // Not how pictures are retrieved
 	figureId: Figure;
 	subSeriesId: SubSeries;
-	expand: any; 
+	expand: {
+		figureId: Figure;
+	};
 }
 
 export interface Variation {
@@ -61,10 +65,12 @@ export interface SubSeriesVariation {
 	country: string;
 	expand: any;
 	images: string[];
+	figvars: FigureVariation[];
 }
 
 export interface SubSeries {
 	id: string;
+	collectionId: string;
 	created: string;
 	updated: string;
 	name: string;
@@ -72,8 +78,8 @@ export interface SubSeries {
 	subSeriesVariations: SubSeriesVariation[];
 	packaging: Packaging[];
 	expand: {
-		"SubSeriesVariation(subSeriesId)": SubSeriesVariation[]
-	}
+		'SubSeriesVariation(subSeriesId)': SubSeriesVariation[];
+	};
 }
 
 export interface Series {
@@ -104,7 +110,7 @@ export interface WarningZD {
 	countryB: string;
 	format: string;
 	variations: string;
-	thanks: string
+	thanks: string;
 	types: WarningType[];
 	expand: {
 		types: WarningType[];
@@ -180,7 +186,7 @@ export interface FigurePage {
 }
 
 export interface FigurePageCleaned {
-	subSeriesFigures: Figure[]
+	subSeriesFigures: Figure[];
 	subser: SubSeries;
 	subservars: SubSeriesVariation[];
 }
