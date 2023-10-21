@@ -148,6 +148,6 @@
 		{/if}
 	</div>
 
-	<p class="opacity-50">Erstellt: {data.pageData.subser.created}</p>
-	<p class="opacity-50">Verändert: {data.pageData.subser.updated}</p>
+	<p class="mt-8 opacity-50">Erstellt: {new Date(data.pageData.subser.created).toLocaleDateString()}</p>
+	<p class="opacity-50">Verändert: {new Date(data.pageData.subser.updated).toLocaleDateString()}</p>
 </div>
