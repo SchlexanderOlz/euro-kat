@@ -11,15 +11,15 @@
 	<meta name="description" content="Figur" />
 </svelte:head>
 
-<h2 class="h2 my-4 text-center break-all">{data.pageData.subser.name}</h2>
+<h2 class="h2 my-4 text-center break-all md:px-4 px-2">{data.pageData.subser.name}</h2>
 
-<p class="text-center">{data.pageData.subser.thanks}</p>
+<p class="text-center md:px-4 px-2">{data.pageData.subser.thanks}</p>
 
 <div class="w-full flex flex-col items-center mb-10">
 	{#if data.pageData.subservars[0].images.length != 0}
 		{#each data.pageData.subservars[0].images as imag}
 			<img
-				class="w-max mt-4"
+				class="w-max mt-4 px-4"
 				src="{imgdom}/{data.pageData.subservars[0].collectionId}/{data.pageData.subservars[0]
 					.id}/{imag}"
 				alt="{data.pageData.subser.name} Beipackzettel"
@@ -32,16 +32,21 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
-
-
-
 			<div class="flex flex-col xl:flex-row card my-2 p-2">
-
-				<div class="w-72 pr-2 flex-shrink-0">
-					<p class="font-normal my-0.5"><span class="font-bold">MPG-Nr:</span> {fig.mpgNr}</p>
-					<p class="font-normal my-0.5"><span class="font-bold">Name:</span> {fig.name}</p>
-					<p class="font-normal my-0.5"><span class="font-bold">Kennung:</span> {fig.identifier}</p>
-					<p class="font-normal my-0.5">
+				<div class="xl:w-72 w-auto pr-2">
+					<p class="font-normal my-0.5 break-all">
+						<span class="font-bold">MPG-Nr:</span>
+						{fig.mpgNr}
+					</p>
+					<p class="font-normal my-0.5 break-all">
+						<span class="font-bold">Name:</span>
+						{fig.name}
+					</p>
+					<p class="font-normal my-0.5 break-all">
+						<span class="font-bold">Kennung:</span>
+						{fig.identifier}
+					</p>
+					<p class="font-normal my-0.5 break-all">
 						<span class="font-bold">Aufkleber:</span>
 						{fig.sticker ? 'Ja' : 'Nein'}
 					</p>
@@ -54,13 +59,16 @@
 				<div class="flex flex-wrap xl:justify-start justify-center xl:mt-0 mt-1">
 					{#if fig.pictures.length != 0}
 						{#each fig.pictures as pic}
-							<img class="h-40 w-auto" src="{imgdom}/{fig.collectionId}/{fig.id}/{pic}" alt={fig.name} />
+							<img
+								class="h-40 w-auto"
+								src="{imgdom}/{fig.collectionId}/{fig.id}/{pic}"
+								alt={fig.name}
+							/>
 						{/each}
 					{:else}
 						<img src="/images/want_fig.jpg" alt="Kein Figuren-Foto verfügbar" />
 					{/if}
 				</div>
-				
 			</div>
 		{/each}
 
