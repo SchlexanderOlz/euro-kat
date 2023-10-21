@@ -28,7 +28,10 @@
 		{/each}
 	</div>
 	<svelte:fragment slot="trail">
-		<div class="mr-4">
+		<div class="mr-4 flex flex-row items-center">
+		<a href="https://www.paypal.com/" target="_blank">
+			<button class="btn variant-ghost-primary mr-4">Spenden</button>
+		</a>
 			<div class="sm:flex hidden">
 				<LightSwitch />
 			</div>

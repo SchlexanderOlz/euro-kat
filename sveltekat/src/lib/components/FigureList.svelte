@@ -225,7 +225,7 @@
 	</div>
 
 	{#if figures.length != 0}
-		{#each figures as figure (figure.mpgNr)}
+		{#each figures as figure (figure.id)}
 			<FigureListItem {figure} />
 		{/each}
 		{#if figureBuilder.currentPage < pages}

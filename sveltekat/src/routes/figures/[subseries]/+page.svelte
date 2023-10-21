@@ -147,4 +147,7 @@
 			</div>
 		{/if}
 	</div>
+
+	<p class="opacity-50">Erstellt: {data.pageData.subser.created}</p>
+	<p class="opacity-50">Verändert: {data.pageData.subser.updated}</p>
 </div>
