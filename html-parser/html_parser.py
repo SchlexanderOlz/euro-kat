@@ -87,6 +87,7 @@ class InformationExtractor:
             try:
                 mpg_nr = cleanup(tds[0].get_text(strip=True))
                 name = cleanup(tds[1].get_text(strip=True))
+                maxi = re.match(r"\b[a-zA-Z]{3}\b", name)
                 series = cleanup(tds[2].get_text(strip=True))
                 year = cleanup(tds[3].get_text(strip=True))
             except IndexError:
@@ -117,7 +118,8 @@ class InformationExtractor:
                 "name" : name,
                 "fake" : fake,
                 "questionable" : questionable,
-                "year" : year
+                "year" : year,
+                "maxi" : maxi
             }
               
             link: BeautifulSoup = element.find('a')
@@ -138,7 +140,11 @@ class InformationExtractor:
                         current_main_series = { "seriesLetter" : series_letter, "subSeries" : []}
 
                 current_series = { "name" : series, "figures" : [element_data] }
-                current_series.update(InformationExtractor.get_series_info(absolut_path))
+                series_info = InformationExtractor.get_series_info(absolut_path)
+                if series_info.pop("maxi") == True:
+                    for figure in current_series["figures"]:
+                        figure["maxi"] = True
+                current_series.update(series_info)
                 last_series_name = series
 
         current_main_series['subSeries'].append(current_series)
