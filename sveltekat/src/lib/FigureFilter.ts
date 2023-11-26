@@ -18,11 +18,8 @@ export class FigurFilterBuilder {
 	}
 
 	fake() {
-		this.toggleBoolConatined('fake');
-	}
-
-	killFake() {
-		this.findRemove('fake', this.filter);
+		if (this.findRemove("fake=true", this.filter)) return;
+		this.filter.add("fake=true")
 	}
 
 	private toggleBoolConatined(field: string) {
@@ -36,19 +33,13 @@ export class FigurFilterBuilder {
 	}
 
 	questionable() {
-		this.toggleBoolConatined('questionable');
-	}
-
-	killQuestionable() {
-		this.findRemove('questionable', this.filter);
+		if (this.findRemove("questionable=true", this.filter)) return;
+		this.filter.add("questionable=true")
 	}
 
 	sticker() {
-		this.toggleBoolConatined('sticker');
-	}
-
-	killSticker() {
-		this.findRemove('sticker', this.filter);
+		if (this.findRemove("sticker=true", this.filter)) return;
+		this.filter.add("sticker=true")
 	}
 
 	yearBegin(year: number | undefined) {
@@ -136,8 +127,27 @@ export class FigurFilterBuilder {
 	}
 
 	currentSeries() {
-		this.toggleBoolConatined("isCurrentSeries")
+		if (this.findRemove("created>=", this.filter)) return
+		let date = new Date()
+		date.setFullYear(date.getFullYear() - 1);
+		this.filter.add(`created>="${this.formatDate(date)}"`)
 	}
+
+
+	changed() {
+		if (this.findRemove("updated>=", this.filter)) return
+		let date = new Date()
+		date.setFullYear(date.getMonth() - 2);
+		this.filter.add(`updated>="${this.formatDate(date)}"`)
+	}
+
+	private formatDate(date: Date): string {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+		const day = String(date.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
+  }
+
 
 	private toggleSort(sortName: string) {
 		for (const sort of this.sort) {
@@ -156,7 +166,7 @@ export class FigurFilterBuilder {
 		this.sort.add('+' + sortName);
 	}
 
-	private findRemove(search: string, lookupList: Set<string>) {
+	private findRemove(search: string, lookupList: Set<string>): boolean {
 		for (const element of lookupList.values()) {
 			if (element.startsWith(search)) {
 				lookupList.delete(element);
