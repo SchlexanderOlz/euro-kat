@@ -87,7 +87,7 @@ class InformationExtractor:
             try:
                 mpg_nr = cleanup(tds[0].get_text(strip=True))
                 name = cleanup(tds[1].get_text(strip=True))
-                maxi = re.match(r"\b[a-zA-Z]{3}\b", name)
+                maxi = re.match(r"\b[a-zA-Z]{3}\b", name) is not None
                 series = cleanup(tds[2].get_text(strip=True))
                 year = cleanup(tds[3].get_text(strip=True))
             except IndexError:
@@ -140,12 +140,12 @@ class InformationExtractor:
                         current_main_series = { "seriesLetter" : series_letter, "subSeries" : []}
 
                 current_series = { "name" : series, "figures" : [element_data] }
-                series_info = InformationExtractor.get_series_info(absolut_path)
-                if series_info.pop("maxi") == True:
-                    for figure in current_series["figures"]:
-                        figure["maxi"] = True
-                current_series.update(series_info)
+                current_series.update(InformationExtractor.get_series_info(absolut_path))
                 last_series_name = series
+
+        if "maxi" in current_series["name"].lower():
+                for figure in current_series["figures"]:
+                    figure["maxi"] = True
 
         current_main_series['subSeries'].append(current_series)
         elements.append(current_main_series)
@@ -186,14 +186,14 @@ class InformationExtractor:
                     base_pics = [InformationExtractor.__join_paths("../" + img.get("src"), href) for img in current.find_all("img")]
                     figure["pictures"] = base_pics
                     try:
-                        [b.get_text(strip=True) for b in bs].index(figure_id)
+                        [b.get_text(strip=True).lower() for b in bs].index(figure_id.lower())
                     except ValueError:
                         continue
                     try:
                         current = current.find_next('tr')
                         figure["identifier"] = current.find_next('td').find_next('td').get_text(strip=True)
                         current = current.find_next("tr")
-                        figure["aufkleber"] = current.find_next('td').find_next('td').get_text(strip=True) != "keine Aufkleber"
+                        figure["aufkleber"] = current.find_next('td').find_next('td').get_text(strip=True)
                         current = current.find_next("tr").find_next("tr")
                         figure["note"] = cleanup(current.get_text(strip=True))
                     except AttributeError:
@@ -387,9 +387,12 @@ class InformationExtractor:
         return sub_series
 
 
+    # This function is currently wrong -> Pictures are being parsed wrongly
     @staticmethod
     def get_pi_backside(href: str):
-        html: str = open(href).read()
+        html: str
+        try: html = open(href).read() 
+        except: return
 
         soup: BeautifulSoup = BeautifulSoup(html, 'html.parser')
         
@@ -405,7 +408,7 @@ class InformationExtractor:
             mpg_nr: str = None
             try: 
                 mpg_nr = td.find("b").get_text(strip=True)
-            except AttributeError as e:
+            except AttributeError:
                 continue
 
             myImages: list = []
@@ -447,44 +450,60 @@ class InformationExtractor:
         tr_elements: ResultSet[BeautifulSoup] = soup.find_all('tr')
         del html, soup
 
-        bpz_index: int = 1
         informations: list = []
         for tr in tr_elements:
-            td: BeautifulSoup = tr.find('td')
             try:
-                if int(td.get_text(strip=True)) == bpz_index:
-                    bpz_index += 1
-                    pictures: ResultSet[BeautifulSoup] = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_all('img')
+                td: BeautifulSoup = tr.find('td')
 
-                    images: [dict] = []
+                if not td: continue
+                try: td.attrs["bgcolor"]            
+                except KeyError: continue
+
+                current: BeautifulSoup = tr.find_next('tr')
+                country, year = "", ""
+                try:
+                    country, year = current.get_text(strip=True).split('-')
+                except AttributeError: pass
+
+                country = country.strip()
+                year = year.strip()
+
+                current = current.find_next('tr').find_next('tr').find_next('tr')
+                note: str = current.get_text(strip=True)
+
+                current = current.find_next('tr')
+                bpz_container: BeautifulSoup = current
+                bpz_info: dict = []
+                if bpz_container:
+                    a = bpz_container.find('a')
+                    if a:
+                        bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + a.get("href"), href))
+
+
+                current = current.find_next('td')
+                images = []
+                while current.attrs.get("bgcolor", "") == "":
+                    print("Not same")
+                    pictures: ResultSet[BeautifulSoup] = current.find_all('img')
                     for img in pictures:
                         source: str = img.get('src')
+                        if "Detail.gif" in source: continue
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
                         images.append(absolut_path)
-                    del pictures
+                    current = current.find_next('td')
 
-                    country, year = tr.find_next('tr').get_text(strip=True).split('-')
-                    country = country.strip()
-                    year = year.strip()
-                    note: str = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').get_text(strip=True)
-                    bpz_container: BeautifulSoup = tr.find_next('tr').find_next('tr').find_next('tr').find_next('tr').find_next('tr')
-                    bpz_info: dict = []
-                    if bpz_container:
-                        a = bpz_container.find('a')
-                        if a:
-                            bpz_info = InformationExtractor.get_pi_backside(InformationExtractor.__join_paths("../" + a.get("href"), href))
+                note = cleanup(note)
+                country = cleanup(country)
+                year = cleanup(year)
 
-                    note = cleanup(note)
-                    country = cleanup(country)
-                    year = cleanup(year)
+                if country is None and year is None and note is None:
+                    InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
 
-                    if country is None and year is None and note is None:
-                        InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
-    	            
-                    informations.append({ "country" : country, "year" : year, "note" : note, "images" : images, "pckgi" : bpz_info }) # NOTE -> Add the images variable as a return-type here
-            except ValueError:
-                pass
+                informations.append({ "country" : country, "year" : year, "note" : note, "images" : images, "pckgi" : bpz_info }) 
+            except (ValueError, AttributeError): continue 
+                
         return informations
+
 
     @staticmethod
     def __join_paths(relative_path: str, other_path: str) -> str:
