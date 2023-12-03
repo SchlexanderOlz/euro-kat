@@ -154,28 +154,30 @@ async function add() {
         }
 
         let packages: FormData[] = [];
-        for (const pckgi of variation.pckgi) {
-          let formData = new FormData();
+        if (variation.pckgi) {
+          for (const pckgi of variation.pckgi) {
+            let formData = new FormData();
 
-          for (const path of pckgi.picture) {
-            try {
-              if (path.search("want_bpz.jpg") >= 0) continue;
-              const data = fs.readFileSync(path);
-              const blob = new Blob([data], { type: getTypeHeader(path) });
-              formData.append("packageInserts", blob);
-            } catch (Error) {
-              continue;
+            for (const path of pckgi?.picture) {
+              try {
+                if (path.search("want_bpz.jpg") >= 0) continue;
+                const data = fs.readFileSync(path);
+                const blob = new Blob([data], { type: getTypeHeader(path) });
+                formData.append("packageInserts", blob);
+              } catch (Error) {
+                continue;
+              }
             }
-          }
 
-          let figureId = dbFigures[pckgi.mpgNr]
-          if (figureId == undefined) {
-            console.log("Ressource not found: " + pckgi.mpgNr);
-            continue
-          }
+            let figureId = dbFigures[pckgi.mpgNr]
+            if (figureId == undefined) {
+              console.log("Ressource not found: " + pckgi.mpgNr);
+              continue
+            }
 
-          formData.append("figureId", figureId);
-          packages.push(formData);
+            formData.append("figureId", figureId);
+            packages.push(formData);
+          }
         }
         subVariation.append("subSeriesId", sub.recordId);
         const record = await subSeriesVariations.create(subVariation);
@@ -187,7 +189,7 @@ async function add() {
       }
 
       if (sub.figureVariations == null) continue;
-      for (const variation of sub.figureVariations) {
+      for (const variation of sub?.figureVariations) {
         let figureId = dbFigures[variation.mpgNr]
         if (figureId == undefined) {
           console.log("Ressource not found: " + variation.mpgNr);
@@ -196,7 +198,7 @@ async function add() {
         let formData = new FormData();
 
         if (variation.images) {
-          for (const path of variation.images) {
+          for (const path of variation?.images) {
             const data = fs.readFileSync(path);
             const blob = new Blob([data], { type: getTypeHeader(path) });
             formData.append("images", blob, path.split("\\").pop());
