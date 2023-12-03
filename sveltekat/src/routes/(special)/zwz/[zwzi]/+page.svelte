@@ -5,8 +5,6 @@
 
 	export let data: PageData;
 
-	console.log(data.extraDetail);
-
 	let extra: ExtraDetail = data.extraDetail;
 </script>
 

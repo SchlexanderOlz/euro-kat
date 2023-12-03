@@ -59,7 +59,6 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 	// expand packaging
 	if (subSeries.packaging != undefined) {
 		const cpackaging: string[] = subSeries.packaging;
-		console.log(cpackaging);
 
 		let tpackaging: Packaging[] = [];
 		await Promise.all(
