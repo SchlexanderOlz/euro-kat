@@ -109,7 +109,8 @@ async function add() {
         if (figure.year) formData.append("year", figure?.year);
         if (figure.identifier)
           formData.append("identifier", figure?.identifier);
-        if (figure.sticker) formData.append("sticker", figure?.sticker);
+        if (figure.aufkleber) formData.append("sticker", figure?.sticker);
+        if (figure.maxi) formData.append("maxi", figure?.maxi)
         if (figure.note) formData.append("note", figure?.note);
         if (figure.fake) formData.append("fake", figure?.fake);
         if (figure.questionable)

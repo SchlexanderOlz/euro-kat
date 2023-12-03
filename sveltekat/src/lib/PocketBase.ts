@@ -89,3 +89,7 @@ export async function getCountrys(): Promise<Set<string>> {
 		(await subSeriesVar.getFullList<SubSeriesVariation>()).map((value) => value.country)
 	);
 }
+
+export async function getFigureCount(): Promise<number> {
+	return (await figures.getList(1, 1)).totalItems;
+}

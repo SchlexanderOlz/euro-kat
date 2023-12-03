@@ -87,7 +87,7 @@ class InformationExtractor:
             try:
                 mpg_nr = cleanup(tds[0].get_text(strip=True))
                 name = cleanup(tds[1].get_text(strip=True))
-                maxi = re.match(r"\b[a-zA-Z]{3}\b", name) is not None
+                maxi = re.match(r"\b[a-zA-Z]{3}\b", mpg_nr) is not None
                 series = cleanup(tds[2].get_text(strip=True))
                 year = cleanup(tds[3].get_text(strip=True))
             except IndexError:
@@ -397,29 +397,37 @@ class InformationExtractor:
         soup: BeautifulSoup = BeautifulSoup(html, 'html.parser')
         
         tds: ResultSet[BeautifulSoup] = soup.find_all("td")
-        imgs: ResultSet[BeautifulSoup] = soup.find_all("img")
         
-        img_srces: list[dict[str, bytes]] = []
-        for img in imgs:
-            img_srces.append(img.get("src"))
-
-        resolved_images: list[dict[str, bytes]] = []
+        result: list = []
         for td in tds:
-            mpg_nr: str = None
-            try: 
-                mpg_nr = td.find("b").get_text(strip=True)
-            except AttributeError:
+            mpg = td.find("b")
+            if not mpg: continue
+            mpg = mpg.get_text(strip=True)
+
+            search: BeautifulSoup 
+            try:
+                search = td.find_next("td").find_next("td")
+            except:
                 continue
+            srces: list = []
+            while search:
+                img: BeautifulSoup = search.find("img")
+                if not img: 
+                    if len(srces) == 0: break
+                    result.append({ "mpgNr" : mpg, "picture" : srces })
+                    break
 
-            myImages: list = []
-            for src in img_srces:
-                if src.find(mpg_nr) == -1:
-                    continue
-                myImages.append(InformationExtractor.__join_paths("../" + src, href))
-            if len(myImages) > 0:
-                resolved_images.append({ "mpgNr" : mpg_nr, "picture" : myImages})
-        return resolved_images
+                src: str = InformationExtractor.__join_paths("../" + img.get("src"), href)
+                srces.append(src)
 
+                tmp = search.find_next("td")
+                if not tmp:
+                    if len(srces) == 0: break
+                    result.append({ "mpgNr" : mpg, "picture" : srces })
+                    break
+                search = tmp.find_next("td")
+        return result
+            
 
     @staticmethod
     def get_country_variation_info(href: str) -> List[Dict[str, Union[str, bool, Set[bytes], List[Dict[str, bytes]]]]]:
@@ -483,7 +491,6 @@ class InformationExtractor:
                 current = current.find_next('td')
                 images = []
                 while current.attrs.get("bgcolor", "") == "":
-                    print("Not same")
                     pictures: ResultSet[BeautifulSoup] = current.find_all('img')
                     for img in pictures:
                         source: str = img.get('src')
@@ -491,6 +498,7 @@ class InformationExtractor:
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
                         images.append(absolut_path)
                     current = current.find_next('td')
+                    if not current: break
 
                 note = cleanup(note)
                 country = cleanup(country)
