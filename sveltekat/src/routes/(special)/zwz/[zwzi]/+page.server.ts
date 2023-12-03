@@ -9,8 +9,8 @@ export const config = {
 };
 
 export const load = (async ({ params }) => {
-    let res: ExtraDetail = await getExtraDetail(params.zwzi);
-    return {
-        extraDetail: structuredClone(res)
-    };
+	let res: ExtraDetail = await getExtraDetail(params.zwzi);
+	return {
+		extraDetail: structuredClone(res)
+	};
 }) satisfies PageServerLoad;

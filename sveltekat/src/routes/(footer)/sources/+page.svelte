@@ -1,8 +1,7 @@
 <svelte:head>
 	<title>Euro-Kat | Quellen</title>
-	<meta name="description" content='Quellen für diesen Katalog' />
+	<meta name="description" content="Quellen für diesen Katalog" />
 </svelte:head>
-
 
 <div class="w-full flex flex-col mt-6 px-[10%] cursor-default text-left">
 	<h1 class="h1 mb-5 select-none w-full flex justify-center">Quellen</h1>

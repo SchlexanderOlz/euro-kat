@@ -10,7 +10,7 @@
 
 <svelte:head>
 	<title>Euro-Kat | WHZ - {warn.name}</title>
-	<meta name="description" content="{warn.general}" />
+	<meta name="description" content={warn.general} />
 </svelte:head>
 
 <div class="w-full md:px-[20%] sm:px-[15%] px-[10%] my-8">

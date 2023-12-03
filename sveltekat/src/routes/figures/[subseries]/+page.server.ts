@@ -8,9 +8,10 @@ export const config = {
 	}
 };
 
-export const load = (async ({params}) => {
-    const res: FigurePageCleaned = await getAllPageData(params.subseries)
-    return {
-        pageData: structuredClone(res),
-    };
+export const load = (async ({ params }) => {
+	const res: FigurePageCleaned = await getAllPageData(params.subseries);
+
+	return {
+		pageData: structuredClone(res)
+	};
 }) satisfies PageServerLoad;

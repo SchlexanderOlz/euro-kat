@@ -8,7 +8,7 @@ export const config = {
 };
 
 export const load = (async () => {
-    return {
-        extras: structuredClone(await getExtras())
-    };
+	return {
+		extras: structuredClone(await getExtras())
+	};
 }) satisfies PageServerLoad;

@@ -98,36 +98,20 @@
 		<div
 			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
 		>
-			<div
-				class="flex flex-col items-start justify-between w-fit px-0"
-			>
-			<div class="flex flex-row items-center">
-				<SlideToggle
-					on:change={() => {
-						figureBuilder.currentSeries();
-						update();
-					}}
-					name="sticker"
-					checked={false}
-					active="bg-primary-500"
-					size="sm"
-					rounded="rounded"
-				/>
-				<p class="ml-2 flex">Aktuelle Serie</p>
-			</div>
-				<div class="flex flex-row items-center mt-2 ml-0">
+			<div class="flex flex-col items-start justify-between w-fit px-0">
+				<div class="flex flex-row items-center">
 					<SlideToggle
 						on:change={() => {
-							figureBuilder.sticker();
+							figureBuilder.currentSeries();
 							update();
 						}}
-						name="sticker"
+						name="series"
 						checked={false}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 flex">Sticker</p>
+					<p class="ml-2 flex">Aktuelle Serie</p>
 				</div>
 				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
@@ -135,7 +119,7 @@
 							figureBuilder.fake();
 							update();
 						}}
-						name="sticker"
+						name="fake"
 						checked={false}
 						active="bg-primary-500"
 						size="sm"
@@ -149,13 +133,27 @@
 							figureBuilder.questionable();
 							update();
 						}}
-						name="sticker"
+						name="questionable"
 						checked={false}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
 					/>
 					<p class="ml-2 flex">Fragwürdig</p>
+				</div>
+				<div class="flex flex-row items-center mt-2 ml-0">
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.changed();
+							update();
+						}}
+						name="changed"
+						checked={false}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 flex">Verändert</p>
 				</div>
 			</div>
 
@@ -176,24 +174,24 @@
 	{/if}
 
 	<div class="w-full h-8 flex items-center relative mt-2">
-		<div class="w-80 ">
+		<div class="w-80">
 			<button
-			on:click={() => {
-				figureBuilder.sortName();
-				update();
-			}}
-			class="ml-2 text-start flex"
-		>
-			Name
+				on:click={() => {
+					figureBuilder.sortName();
+					update();
+				}}
+				class="ml-2 text-start flex"
+			>
+				Name
 
-			{#if figureBuilder.sort.has("+name")}
-				 <AupIcon/>
-			{:else if figureBuilder.sort.has("-name")}
-				 <ADownIcon/>
-			{/if}
-		</button>
+				{#if figureBuilder.sort.has('+name')}
+					<AupIcon />
+				{:else if figureBuilder.sort.has('-name')}
+					<ADownIcon />
+				{/if}
+			</button>
 		</div>
-		
+
 		<button
 			on:click={() => {
 				figureBuilder.sortNote();
@@ -202,11 +200,11 @@
 			class="ml-4 md:flex hidden"
 		>
 			Serie
-			{#if figureBuilder.sort.has("+note")}
-			<AupIcon/>
-	 {:else if figureBuilder.sort.has("-note")}
-			<ADownIcon/>
-	 {/if}
+			{#if figureBuilder.sort.has('+note')}
+				<AupIcon />
+			{:else if figureBuilder.sort.has('-note')}
+				<ADownIcon />
+			{/if}
 		</button>
 		<button
 			on:click={() => {
@@ -216,10 +214,10 @@
 			class="absolute right-2 flex"
 		>
 			Mpg Nr.
-			{#if figureBuilder.sort.has("+mpgNr")}
-				 <AupIcon/>
-			{:else if figureBuilder.sort.has("-mpgNr")}
-				 <ADownIcon/>
+			{#if figureBuilder.sort.has('+mpgNr')}
+				<AupIcon />
+			{:else if figureBuilder.sort.has('-mpgNr')}
+				<ADownIcon />
 			{/if}
 		</button>
 	</div>

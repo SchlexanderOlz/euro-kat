@@ -4,6 +4,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	console.log(data.pageData);
 </script>
 
 <svelte:head>
@@ -32,8 +34,9 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
+			<p class="mt-3 ml-1 text-xl font-bold">{fig.header}</p>
 			<div class="flex flex-col xl:flex-row card my-2 p-2">
-				<div class="xl:w-72 w-auto pr-2">
+				<div class="xl:w-72 w-auto pr-2 shrink-0">
 					<p class="font-normal my-0.5 break-all">
 						<span class="font-bold">MPG-Nr:</span>
 						{fig.mpgNr}
@@ -160,8 +163,10 @@
 		{/if}
 	</div>
 
-	<p class="mt-8 opacity-50">
+	<p class="mt-5 opacity-50">
 		Erstellt: {new Date(data.pageData.subser.created).toLocaleDateString()}
 	</p>
-	<p class="opacity-50">Verändert: {new Date(data.pageData.subser.updated).toLocaleDateString()}</p>
+	<p class="opacity-50 -mb-4">
+		Verändert: {new Date(data.pageData.subser.updated).toLocaleDateString()}
+	</p>
 </div>

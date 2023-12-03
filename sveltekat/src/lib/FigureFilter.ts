@@ -1,6 +1,6 @@
-import type { Collection, ListResult, RecordService } from 'pocketbase';
+import type { ListResult, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
-import type { Series, SubSeries, Figure } from './Types';
+import type { Figure } from './Types';
 
 export class FigurFilterBuilder {
 	filter: Set<string>;
@@ -18,8 +18,8 @@ export class FigurFilterBuilder {
 	}
 
 	fake() {
-		if (this.findRemove("fake=true", this.filter)) return;
-		this.filter.add("fake=true")
+		if (this.findRemove('fake=true', this.filter)) return;
+		this.filter.add('fake=true');
 	}
 
 	private toggleBoolConatined(field: string) {
@@ -33,13 +33,13 @@ export class FigurFilterBuilder {
 	}
 
 	questionable() {
-		if (this.findRemove("questionable=true", this.filter)) return;
-		this.filter.add("questionable=true")
+		if (this.findRemove('questionable=true', this.filter)) return;
+		this.filter.add('questionable=true');
 	}
 
 	sticker() {
-		if (this.findRemove("sticker=true", this.filter)) return;
-		this.filter.add("sticker=true")
+		if (this.findRemove('sticker=true', this.filter)) return;
+		this.filter.add('sticker=true');
 	}
 
 	yearBegin(year: number | undefined) {
@@ -94,51 +94,50 @@ export class FigurFilterBuilder {
 	}
 
 	sortNote() {
-		this.killMpgNr()
-		this.killName()
+		this.killMpgNr();
+		this.killName();
 		this.toggleSort('note');
 	}
 
 	killNote() {
-		this.findRemove("+note", this.sort)
-		this.findRemove("-note", this.sort)
+		this.findRemove('+note', this.sort);
+		this.findRemove('-note', this.sort);
 	}
 
 	sortMpgNr() {
-		this.killNote()
-		this.killName()
+		this.killNote();
+		this.killName();
 		this.toggleSort('mpgNr');
 	}
 
 	killMpgNr() {
-		this.findRemove("+mpgNr", this.sort)
-		this.findRemove("-mpgNr", this.sort)
+		this.findRemove('+mpgNr', this.sort);
+		this.findRemove('-mpgNr', this.sort);
 	}
 
 	sortName() {
-		this.killMpgNr()
-		this.killNote()
+		this.killMpgNr();
+		this.killNote();
 		this.toggleSort('name');
 	}
 
 	killName() {
-		this.findRemove("+name", this.sort)
-		this.findRemove("-name", this.sort)
+		this.findRemove('+name', this.sort);
+		this.findRemove('-name', this.sort);
 	}
 
 	currentSeries() {
-		if (this.findRemove("created>=", this.filter)) return
-		let date = new Date()
+		if (this.findRemove('created>=', this.filter)) return;
+		let date = new Date();
 		date.setFullYear(date.getFullYear() - 1);
-		this.filter.add(`created>="${this.formatDate(date)}"`)
+		this.filter.add(`created>="${this.formatDate(date)}"`);
 	}
 
-
 	changed() {
-		if (this.findRemove("updated>=", this.filter)) return
-		let date = new Date()
+		if (this.findRemove('updated>=', this.filter)) return;
+		let date = new Date();
 		date.setFullYear(date.getMonth() - 2);
-		this.filter.add(`updated>="${this.formatDate(date)}"`)
+		this.filter.add(`updated>="${this.formatDate(date)}"`);
 	}
 
 	private formatDate(date: Date): string {
@@ -146,8 +145,7 @@ export class FigurFilterBuilder {
 		const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
 		const day = String(date.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
-  }
-
+	}
 
 	private toggleSort(sortName: string) {
 		for (const sort of this.sort) {
@@ -193,7 +191,6 @@ export class FigurFilterBuilder {
 		}
 
 		return structuredClone(
-			
 			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
 				filter: query,
 				sort: Array.from(this.sort).join(','),

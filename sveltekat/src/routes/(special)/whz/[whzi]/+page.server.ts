@@ -9,9 +9,11 @@ export const config = {
 };
 
 export const load = (async ({ params }) => {
-    let res: WarningZD = await getWarningDetail(params.whzi);
-    res.name = res.numbered ? `Die Warnhinweiszettel Nr. ${res.name.replace(" ","-")}` : `Die ${res.name.replace("WHZ","Warnhinweiszettel")}`
-    return {
-        warningDetail: structuredClone(res)
-    };
+	let res: WarningZD = await getWarningDetail(params.whzi);
+	res.name = res.numbered
+		? `Die Warnhinweiszettel Nr. ${res.name.replace(' ', '-')}`
+		: `Die ${res.name.replace('WHZ', 'Warnhinweiszettel')}`;
+	return {
+		warningDetail: structuredClone(res)
+	};
 }) satisfies PageServerLoad;

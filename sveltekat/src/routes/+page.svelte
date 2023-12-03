@@ -1,6 +1,16 @@
+<script lang="ts">
+	import type { PageData } from './$types';
+	export let data: PageData;
+
+	console.log(data.figureCount);
+</script>
+
 <svelte:head>
 	<title>Euro-Kat | Hauptseite</title>
-	<meta name="description" content='Der Euro-Katalog als die umfangreichste Informationssammlung zu den Ü-Ei-Inhalten der vergangenen Jahre."' />
+	<meta
+		name="description"
+		content="Der Euro-Katalog als die umfangreichste Informationssammlung zu den Ü-Ei-Inhalten der vergangenen Jahre."
+	/>
 </svelte:head>
 
 <div class="w-full flex flex-col items-center mb-8">
@@ -11,9 +21,13 @@
 		<h1 class="h1 md:text-8xl text-5xl h-full flex mt-5 cursor-default text-center">
 			Euro-Katalog
 		</h1>
-		<p class="mt-8 text-2xl text-center">
-			Der <span class="font-bold">Euro-Katalog</span> als die umfangreichste Informationssammlung zu
-			den Ü-Ei-Inhalten der vergangenen Jahre.
+		<p class="text-3xl mt-8">
+			Aktuell über <span class="font-bold">{data.figureCount}</span> Figuren auf
+			<span class="underline decoration-[0.5px] underline-offset-4">euro-kat.de</span>!
+		</p>
+		<p class="mt-4 text-2xl text-center">
+			Der <span class="font-bold">Euro-Katalog</span> dient als die umfangreichste Informationssammlung
+			zu den Ü-Ei-Inhalten der vergangenen Jahre,
 		</p>
 
 		<div class="card p-2 mx-4 mt-8 max-w-[1166px]">

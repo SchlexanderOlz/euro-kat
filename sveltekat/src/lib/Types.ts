@@ -9,6 +9,7 @@ export interface Figure {
 	isCurrentSeries: boolean;
 	variations: Variation[];
 	name: string;
+	header: string;
 	sticker: boolean;
 	identifier: string;
 	note: string;

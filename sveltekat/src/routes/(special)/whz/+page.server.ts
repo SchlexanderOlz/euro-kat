@@ -8,7 +8,7 @@ export const config = {
 };
 
 export const load = (async () => {
-    return {
-        warnings: structuredClone(await getWarnings())
-    };
+	return {
+		warnings: structuredClone(await getWarnings())
+	};
 }) satisfies PageServerLoad;

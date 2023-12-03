@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ListBox, ListBoxItem, popup } from '@skeletonlabs/skeleton';
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
 	import { page } from '$app/stores';
@@ -11,7 +10,6 @@
 	export let item: Item;
 	$: path = $page.url.pathname || '';
 	$: selected = Object.values(item.references).includes(path);
-	
 
 	const popupCombobox: PopupSettings = {
 		event: 'click',
@@ -21,25 +19,27 @@
 	};
 </script>
 
-<button class="btn mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}" use:popup={popupCombobox}>
+<button
+	class="btn mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}"
+	use:popup={popupCombobox}
+>
 	{item.title}<DownIcon />
 </button>
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
 	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
-		<ListBoxItem
-			class=""
-			active="variant-ringed-surface rounded-sm"
-			bind:group={path}
-			name="medium"
-			value={item.references[reference]}
-			on:click={() => {
-				goto(item.references[reference])
-			}}
-		>
-			{reference}</ListBoxItem
-		>
-			
+			<ListBoxItem
+				class=""
+				active="variant-ringed-surface rounded-sm"
+				bind:group={path}
+				name="medium"
+				value={item.references[reference]}
+				on:click={() => {
+					goto(item.references[reference]);
+				}}
+			>
+				{reference}</ListBoxItem
+			>
 		{/each}
 	</ListBox>
 </div>

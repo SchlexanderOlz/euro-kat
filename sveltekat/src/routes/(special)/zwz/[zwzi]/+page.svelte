@@ -12,7 +12,7 @@
 
 <svelte:head>
 	<title>Euro-Kat | ZWZ - {extra.name}</title>
-	<meta name="description" content="{extra.text}" />
+	<meta name="description" content={extra.text} />
 </svelte:head>
 
 <div class="w-full md:px-[20%] sm:px-[15%] px-[10%] my-8">

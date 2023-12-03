@@ -8,7 +8,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	initializeStores()
+	initializeStores();
 </script>
 
 <AppShell>

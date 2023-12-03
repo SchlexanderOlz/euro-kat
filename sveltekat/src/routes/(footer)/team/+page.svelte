@@ -1,6 +1,6 @@
 <svelte:head>
 	<title>Euro-Kat | Team</title>
-	<meta name="description" content='Das Team und alle Helfer' />
+	<meta name="description" content="Das Team und alle Helfer" />
 </svelte:head>
 
 <h1 class="h1 w-full flex justify-center mt-8 cursor-default">Das Team</h1>
@@ -58,7 +58,10 @@
 	</div>
 
 	<div class="card p-2 mt-4">
-		<p class="font-bold underline mb-1.5">Software & Co.™ KG GmbH AG stGes OG GesBR USP OHG e.K. Institution sponsored by ™evon®© - Automation | Evolution in automation GmBH</p>
+		<p class="font-bold underline mb-1.5">
+			Software & Co.™ KG GmbH AG stGes OG GesBR USP OHG e.K. Institution sponsored by ™evon®© -
+			Automation | Evolution in automation GmBH
+		</p>
 		<div class="text-sm">
 			<p class="">
 				Ohne der Software & Co. AG GmbH Institution wäre dieses Projekt nicht möglich gewesen.<br />

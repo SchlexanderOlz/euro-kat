@@ -314,7 +314,7 @@
 <!-- Metadaten (nicht verändern, außer man weiß, was man tut!) -->
 <svelte:head>
 	<title>Euro-Kat | Berichte</title>
-	<meta name="description" content='Berichte & Neuigkeiten' />
+	<meta name="description" content="Berichte & Neuigkeiten" />
 </svelte:head>
 
 <!-- Standard-Bericht Styles (nicht verändern, außer man weiß, was man tut!) -->
