@@ -81,12 +81,15 @@
 				{/each}
 			</div>
 		</div>
+		<a class="w-full flex justify-center mb-4" href="https://www.paypal.com/" target="_blank">
+			<button class="btn variant-ghost-primary w-full mx-5">Spenden</button>
+		</a>
 	</div>
 </Drawer>
 
 <button
 	on:click={sideOpen}
-	class="sm:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
+	class="md:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
 >
 	<MenuIcon />
 </button>

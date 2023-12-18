@@ -19,7 +19,7 @@
 		<h1 class="h1 md:text-8xl text-5xl h-full flex mt-5 cursor-default text-center">
 			Euro-Katalog
 		</h1>
-		<p class="text-3xl mt-8">
+		<p class="text-3xl mt-8 text-center">
 			Aktuell über <span class="font-bold">{data.figureCount}</span> Figuren auf
 			<span class="underline decoration-[0.5px] underline-offset-4">euro-kat.de</span>!
 		</p>
@@ -28,16 +28,16 @@
 			zu den Ü-Ei-Inhalten der vergangenen Jahre,
 		</p>
 
-		<div class="card p-2 mx-4 mt-8 max-w-[1166px]">
+		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px]">
 			<img
 				height="116px"
 				width="101px"
-				class="sm:h-36 sm:w-auto w-40 float-left mr-4"
+				class="w-40 xs:float-left xs:mb-0 mb-2 mr-4 mt-1"
 				alt="helmut"
 				src="images/helmut.jpg"
 			/>
 
-			<p class="sm:ml-4 sm:mt-0 mt-1">
+			<p class="mt-1">
 				Die Sammlerseiten leben von der Unterstützung durch Sammlerinnen und Sammler aus der ganzen
 				Welt. Es ist mir wichtig, mich für jede zugesendete Information, jedes zugesendete Bild zu
 				bedanken indem ich Name und Vorname der Zusenderin/des Zusenders auf der jeweiligen Seite

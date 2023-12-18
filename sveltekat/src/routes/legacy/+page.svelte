@@ -15,6 +15,6 @@
 		Es kann sein, dass manche Fotos und Seiten nicht mehr verfügbar sind
 	</p>
 	<a href="AZListen/AbisZ.htm"
-		><button class="btn variant-filled-surface w-52">Zu alten Seite</button></a
+		><button class="btn variant-filled-surface w-52 mb-8">Zu alten Seite</button></a
 	>
 </div>
