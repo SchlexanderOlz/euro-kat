@@ -34,15 +34,21 @@
 				width="101px"
 				class="w-40 xs:float-left xs:mb-0 mb-2 mr-4 mt-1"
 				alt="helmut"
-				src="images/helmut.jpg"
+				src="images/daniel.jpg"
 			/>
 
 			<p class="mt-1">
-				Die Sammlerseiten leben von der Unterstützung durch Sammlerinnen und Sammler aus der ganzen
-				Welt. Es ist mir wichtig, mich für jede zugesendete Information, jedes zugesendete Bild zu
-				bedanken indem ich Name und Vorname der Zusenderin/des Zusenders auf der jeweiligen Seite
-				angebe. Dieses wende ich jetzt über 10 Jahre an und ist für alle Besucherinnen und Besucher
-				meiner Seiten sichtbar.
+				Herzlich Willkommen beim Euro-Katalog. Auf dieser Seite befindet sich die umfangreichste
+				Informationssammlung zu den Ü-Ei Inhalten. Ich bin Daniel und seit dem Jahr 2017 ist das
+				Sammeln von Ü-Eiern für mich nicht nur zu einem Hobby geworden, sondern hat sich auch zu
+				einer Leidenschaft entwickelt. Da der Euro-Katalog ein sehr wichtiger Bestandteil für
+				Sammler/innen ist, ist es mir eine Ehre, den von Helmut erstellten und sorgfältig geführten
+				Euro-Katalog zu übernehmen. Ich werde mein Bestes geben und diese Homepage mit der gleichen
+				Qualität und Sorgfalt weiterführen. Wie euch wahrscheinlich schon aufgefallen ist, haben
+				sich das Design und der Aufbau der Homepage stark verändert. Mich würde es sehr freuen, wenn
+				ihr mir Verbesserungsvorschläge und Ideen per <a class="underline underline-offset-2" href="mailto:daniel.hrastnik@gmx.at" target="_blank">E-Mail</a> entgegenbringt.
+				Auch Kritik nehme ich gerne entgegen. Ich wünsche euch weiterhin viel Spaß beim Sammeln und
+				Stöbern auf der Homepage!
 			</p>
 		</div>
 

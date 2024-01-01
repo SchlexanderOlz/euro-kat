@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div class="w-full flex flex-col items-center mt-6 px-[10%] cursor-default berichte mb-16">
+<div class="w-full flex flex-col items-center mt-6 md:px-[20%] px-[10%] cursor-default berichte mb-16">
 	<h1 class="h1 mb-5 select-none">Berichte</h1>
 
 	<!-- Berichte -->

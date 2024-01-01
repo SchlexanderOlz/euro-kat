@@ -1,7 +1,5 @@
 {
-	"prettier.documentSelectors": [
-		"**/*.svelte"
-	],
+	"prettier.documentSelectors": ["**/*.svelte"],
 	"tailwindCSS.classAttributes": [
 		"class",
 		"accent",
@@ -107,5 +105,10 @@
 		"track",
 		"width",
 		"zIndex"
-	]
+	],
+	"workbench.colorCustomizations": {
+		"activityBar.background": "#2D2E28",
+		"titleBar.activeBackground": "#3F4038",
+		"titleBar.activeForeground": "#FAFBFA"
+	}
 }

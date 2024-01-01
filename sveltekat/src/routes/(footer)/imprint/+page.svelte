@@ -3,31 +3,19 @@
 	<meta name="description" content='Impressum von Euro-Kat' />
 </svelte:head>
 
-<div class="w-full mt-6 px-[10%] cursor-default text-surface-900-50-token">
+<div class="w-full mt-6 md:px-[20%] px-[10%] cursor-default text-surface-900-50-token flex flex-col items-center">
 	<h1 class="h1 mb-5 select-none w-full flex justify-center">Impressum</h1>
-	<div class="text-left">
+	<div class="w-max text-left mt-3">
 		<p>
 			Betreiber und verantwortlicher im datenschutzrechtlichen Sinne:<br />
-			Helmut J.F.Henze<br />
-			Lüder-Bömermann-Str. 30<br />
-			D-28777 Bremen<br />
-			E-Mail: Sammler@HJFHenze.de<br />
-			<br />
+			Daniel Hrastnik<br />
+			Mela-Spira-Straße 14<br />
+			A-8054 Graz<br />
+			E-Mail: <a class="underline underline-offset-2" href="mailto:daniel.hrastnik@gmx.at" target="_blank">daniel.hrastnik@gmx.at</a><br />
 			<br />
 			Verantwortlich für redaktionelle Beiträge und Datenschutz:<br />
-			Helmut J.F.Henze<br />
-			<br />
-			zugehörige Domain: <br />
+			Daniel Hrastnik
 		</p>
-		<p class="mr-3">
-			Helmut's Sammlerseiten:<br />
-			<span class="font-semibold">www.HJFHenze.de</span><br />
-			Der Euro-Katalog:<br />
-			<span class="font-semibold">www.Euro-Kat.de</span><br />
-			Der Fremdfiguren-Katalog:<br />
-			<span class="font-semibold">www.FF-Kat.de</span><br />
-			Der Sammel-/Kaufmannsbilder-Katalog:<br />
-			<span class="font-semibold">www.Sammelbilder-Katalog.de</span>
-		</p>
+	
 	</div>
 </div>

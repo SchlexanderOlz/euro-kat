@@ -4,27 +4,44 @@
 </svelte:head>
 
 <h1 class="h1 w-full flex justify-center mt-8 cursor-default">Das Team</h1>
-<div class="mx-[10%] my-8 cursor-default">
-	<div class="card p-2 relative">
-		<img class=" float-right ml-2" src="images/helmut.jpg" alt="helmut" />
-		<p class="font-bold underline mb-1.5">Helmut J.F.Henze</p>
+<div class="md:mx-[20%] mx-[10%] my-8 cursor-default">
+	<div class="card p-2">
+		<p class="font-bold underline mb-1.5">Daniel Hrastnik</p>
 		<div class="text-sm">
 			<p class="">
-				Für alle, die mich etwas näher kennen lernen wollen. Ich bin Helmut Henze, geboren 1957 in
-				Bremen. Mittlerweile bin ich im Rentenstatus. 1997 wurde ich (wieder ;-) auf die Inhalte des
-				Überraschungsei aufmerksam. Seither beschäftige ich mich damit, alle irgendwie hierzu
-				verfügbaren Informationen zu diesem Bereich zu sammeln und anderen über meine Katalogseiten
-				zur Verfügung zu stellen. Bereits 1998 habe ich erkannt, dass auch andere Firmen
-				interessante Beigaben zu ihren Produkten legen. Von Ausnahmen abgesehen konzentriere ich
-				mich hier in der Katalogarbeit hauptsächlich auf die Hartplastikfiguren und Puzzle.
+				Ich bin Daniel und seit dem Jahr 2017 ist das
+				Sammeln von Ü-Eiern für mich nicht nur zu einem Hobby geworden, sondern hat sich auch zu
+				einer Leidenschaft entwickelt. Da der Euro-Katalog ein sehr wichtiger Bestandteil für
+				Sammler/innen ist, ist es mir eine Ehre, den von Helmut erstellten und sorgfältig geführten
+				Euro-Katalog zu übernehmen. Ich werde mein Bestes geben und diese Homepage mit der gleichen
+				Qualität und Sorgfalt weiterführen. Wie euch wahrscheinlich schon aufgefallen ist, haben
+				sich das Design und der Aufbau der Homepage stark verändert. Mich würde es sehr freuen, wenn
+				ihr mir Verbesserungsvorschläge und Ideen per <a class="underline underline-offset-2" href="mailto:daniel.hrastnik@gmx.at" target="_blank">E-Mail</a> entgegenbringt.
+				Auch Kritik nehme ich gerne entgegen. Ich wünsche euch weiterhin viel Spaß beim Sammeln und
+				Stöbern auf der Homepage!
 			</p>
-			<p class="mt-4">
-				Mein besonderes Interesse gilt Informationen zu:<br />
-				Ü-Ei Inhalten Deutschland und Italien bzw. seit 2004 EU<br />
-				Fremdfiguren Deutschland,<br />
-				Schwerpunkte: Maraja und Co., Balaban, Rübezahl und Ravensberger<br />
-				PEZ-Spender, "Margarinefiguren" und Sammelbilder der 50er<br />
-				<span class="font-bold italic">Ü-Eier, Fremdfiguren</span>
+		</div>
+	</div>
+
+	<div class="card w-full mt-4 mr-2 p-2">
+		<p class="font-bold underline mb-1.5">Helmut J.F. Henze</p>
+		<div class="text-sm">
+			<p class="">
+				Helmut J.F. Henze hat den Euro-Katalog 2007 gegründet und bis 2023 mit Sorgfalt und Qualität
+				geführt. 1957 geboren in Bremen, hat er sich seit 1997 mit den Inhalten des Überraschungseis
+				beschäftigt. Sein besonderes Interesse gilt Informationen zu Ü-Ei Inhalten Deutschland und
+				Italien bzw. seit 2004 EU, Fremdfiguren Deutschland, PEZ-Spender, "Margarinefiguren" und
+				Sammelbilder der 50er.
+			</p>
+		</div>
+	</div>
+
+	<div class="card p-2 mt-4">
+		<p class="font-bold underline mb-1.5">Software & Co.</p>
+		<div class="text-sm">
+			<p class="">
+				Die Übernahme des Katalogs, die Aufbereitung der Daten und die Umsetzung in die neue Website
+				wurde von Alexander Scholz, Liam Krenn, Andreas Deutsch und Lukas Leitner durchgeführt. Wir bedanken uns für die tolle Zusammenarbeit!
 			</p>
 		</div>
 	</div>
@@ -36,10 +53,10 @@
 				Ein besonderer Dank gilt den vielen unbenannten Sammlerinnen und Sammlern, die anderen und
 				auch mir über ihre Internetseiten oder durch ihre Beiträge in diversen Foren mit News und
 				Informationen rund um unser Sammelgebiet versorgt haben.<br />
-				<span class="font-bold italic">Ü-Eier, Fremdfiguren</span>
 			</p>
 		</div>
 	</div>
+
 	<div class="card w-full mt-4 p-2">
 		<p class="font-bold underline mb-1.5">Der Fehlerteufel</p>
 		<div class="text-sm">
@@ -52,20 +69,6 @@
 				Da er jedoch zu meinem langjährigsten Begleiter gehört, wäre ich für eine kurze Mail mit
 				einer Korrektur dankbar damit ich in aller Stille sein Werk verbessern kann ohne ihn zu
 				verärgern.<br />
-				<span class="font-bold italic">Ü-Eier, Fremdfiguren</span>
-			</p>
-		</div>
-	</div>
-
-	<div class="card p-2 mt-4">
-		<p class="font-bold underline mb-1.5">
-			Software & Co.™ KG GmbH AG stGes OG GesBR USP OHG e.K. Institution sponsored by ™evon®© -
-			Automation | Evolution in automation GmBH
-		</p>
-		<div class="text-sm">
-			<p class="">
-				Ohne der Software & Co. AG GmbH Institution wäre dieses Projekt nicht möglich gewesen.<br />
-				Wenn Sie eine Website brauchen, kontaktieren sie die Software & Co. AG GmbH Institution
 			</p>
 		</div>
 	</div>

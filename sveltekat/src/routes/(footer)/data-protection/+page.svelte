@@ -3,7 +3,7 @@
 	<meta name="description" content='Datenschutzerklärung von Euro-Kat' />
 </svelte:head>
 
-<div class="mx-[10%] cursor-default">
+<div class="md:px-[20%] px-[10%] cursor-default">
 	<h1 class="justify-center w-full flex h1 my-8 break-all text-center">
 		Datenschutzerklärung
 	</h1>

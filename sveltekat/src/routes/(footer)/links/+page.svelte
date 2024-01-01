@@ -6,7 +6,7 @@
 	/>
 </svelte:head>
 
-<div class="w-full flex flex-col px-[10%] cursor-default items-center">
+<div class="w-full flex flex-col md:px-[20%] px-[10%] cursor-default items-center">
 	<h1 class="h1 mb-4 mt-8 w-full flex justify-center">Links</h1>
 	<p class="text-center">
 		Hier findet Ihr Links zu anderen Seiten die ich des Öfteren aufsuche und aus dem einen oder

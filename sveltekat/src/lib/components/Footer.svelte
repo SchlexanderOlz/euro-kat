@@ -16,7 +16,7 @@
 		},
 		{
 			title: 'Email',
-			link: 'mailto:test@gmail.com'
+			link: 'mailto:daniel.hrastnik@gmx.at'
 		},
 		{
 			title: 'Impressum',
