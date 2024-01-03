@@ -123,10 +123,8 @@ class InformationExtractor:
             }
               
             link: BeautifulSoup = element.find('a')
-            absolut_path: str 
-            if link:
-                absolut_path = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
-
+            if not link: continue
+            absolut_path: str = InformationExtractor.__join_paths(link.get('href'), os.path.dirname(path))
             element_data.update(InformationExtractor.get_figure_content(absolut_path, name))
 
  
@@ -395,39 +393,50 @@ class InformationExtractor:
         except: return
 
         soup: BeautifulSoup = BeautifulSoup(html, 'html.parser')
-        
-        tds: ResultSet[BeautifulSoup] = soup.find_all("td")
-        
+        trs: ResultSet[BeautifulSoup] = soup.find_all("tr")
         result: list = []
-        for td in tds:
-            mpg = td.find("b")
-            if not mpg: continue
-            mpg = mpg.get_text(strip=True)
+        for tr in trs:
+            tds: ResultSet[BeautifulSoup] = tr.find_all("td")
 
-            search: BeautifulSoup 
-            try:
-                search = td.find_next("td").find_next("td")
-            except:
-                continue
-            srces: list = []
-            while search:
-                img: BeautifulSoup = search.find("img")
-                if not img: 
-                    if len(srces) == 0: break
-                    result.append({ "mpgNr" : mpg, "picture" : srces })
-                    break
+            for i, td in enumerate(tds):
+                mpg = td.find("b")
+                if not mpg: continue
+                mpg = mpg.get_text(strip=True)
 
-                src: str = InformationExtractor.__join_paths("../" + img.get("src"), href)
-                srces.append(src)
+                if len(tds) > 1 and tds[1].get_text(strip=True) in ['\xa0', '']:
+                    search: BeautifulSoup = tr.find_next("tr")
+                    srces: list = []
+                    while search:
+                        imgs: BeautifulSoup = search.find_all("img")
+                        if len(imgs) == 0: 
+                            break
 
-                tmp = search.find_next("td")
-                if not tmp:
-                    if len(srces) == 0: break
-                    result.append({ "mpgNr" : mpg, "picture" : srces })
-                    break
-                search = tmp.find_next("td")
+                        src: list = [InformationExtractor.__join_paths("../" + img.get("src"), href) for img in imgs]
+                        srces.extend(src)
+
+                        search = search.find_next("tr")
+                    result.append({ "mpgNr" : mpg, "picture" : srces})
+
+
+                ## This part being executed means that the images are aligned vertical
+                search: BeautifulSoup = tr.find_next("tr")
+                srces: list = []
+
+                while search:
+                    img: BeautifulSoup = search.find_all("img")
+                    try:
+                        img = img[i]
+                    except IndexError:
+                        break
+                    if not img: 
+                        break
+                    src: str = InformationExtractor.__join_paths("../" + img.get("src"), href)
+                    srces.append(src)
+                    search = search.find_next("tr")
+
+                result.append({ "mpgNr" : mpg, "picture" : srces})
         return result
-            
+ 
 
     @staticmethod
     def get_country_variation_info(href: str) -> List[Dict[str, Union[str, bool, Set[bytes], List[Dict[str, bytes]]]]]:
@@ -470,8 +479,10 @@ class InformationExtractor:
                 current: BeautifulSoup = tr.find_next('tr')
                 country, year = "", ""
                 try:
-                    country, year = current.get_text(strip=True).split('-')
-                except AttributeError: pass
+                    infos = current.get_text(strip=True).split('-')
+                    country = infos[0]
+                    year = infos[1]
+                except (AttributeError, IndexError): pass
 
                 country = country.strip()
                 year = year.strip()
@@ -490,16 +501,17 @@ class InformationExtractor:
 
                 current = current.find_next('td')
                 images = []
-                while current.attrs.get("bgcolor", "") == "":
+                while current and current.attrs.get("bgcolor", "") == "":
                     pictures: ResultSet[BeautifulSoup] = current.find_all('img')
                     for img in pictures:
                         source: str = img.get('src')
                         if "Detail.gif" in source: continue
                         absolut_path: str = InformationExtractor.__join_paths("../" + source, href)
                         images.append(absolut_path)
-                    current = current.find_next('td')
-                    if not current: break
-
+                    if not current.find_next("td"): 
+                        current = current.find_next("tr")
+                    current = current.find_next("td")
+                    
                 note = cleanup(note)
                 country = cleanup(country)
                 year = cleanup(year)
@@ -508,7 +520,7 @@ class InformationExtractor:
                     InformationExtractor.__display_info(InformationExtractor.MessageType.WARNING, f"""The PackageInsert at {Fore.YELLOW}{href}{Style.RESET_ALL} could not be correct! (No values found)""")
 
                 informations.append({ "country" : country, "year" : year, "note" : note, "images" : images, "pckgi" : bpz_info }) 
-            except (ValueError, AttributeError): continue 
+            except AttributeError: continue 
                 
         return informations
 

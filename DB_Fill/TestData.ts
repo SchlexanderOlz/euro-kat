@@ -351,6 +351,8 @@ function main() {
         dropAll("Variation");
         dropAll("Warning");
         dropAll("WarningType");
+        dropAll("Extra");
+        dropAll("ExtraType");
         return;
       case "--drop-figures":
         dropAll("Series");
@@ -362,6 +364,11 @@ function main() {
         return;
       case "--add":
         add();
+        return;
+      case "--add-all":
+        add();
+        addWarnings();
+        addExtras();
         return;
       case "--add-warnings":
         addWarnings();

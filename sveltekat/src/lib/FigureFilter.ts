@@ -140,6 +140,11 @@ export class FigurFilterBuilder {
 		this.filter.add(`updated>="${this.formatDate(date)}"`);
 	}
 
+	maxi(name: string) {
+		this.findRemove('maxi~', this.filter);
+		this.filter.add(`maxi~${name}`);
+	}
+
 	private formatDate(date: Date): string {
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
