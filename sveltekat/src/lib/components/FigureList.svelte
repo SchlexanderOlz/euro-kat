@@ -54,7 +54,7 @@
 
 	let filter = false;
 
-	let yearrange = [2004, 2023];
+	let yearrange = [2004, new Date().getFullYear()];
 	async function updateYear() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
@@ -164,7 +164,7 @@
 					on:change={updateYear}
 					bind:values={yearrange}
 					min={2004}
-					max={2023}
+					max={new Date().getFullYear()}
 					range
 					pips
 					step={1}
