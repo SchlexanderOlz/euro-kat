@@ -5,14 +5,12 @@
 	import NavItem from './NavItem.svelte';
 	import { NavItems } from '$lib/NavItems';
 	import { onMount } from 'svelte';
-	import NavBox from './NavBox.svelte';
 	import { page } from '$app/stores';
 
 	const drawerStore = getDrawerStore();
 
 	const drawerSettings: DrawerSettings = {
 		id: 'sideNav',
-		// Provide your property overrides:
 		bgDrawer: '',
 		bgBackdrop: 'bg-surface-500/50',
 		width: 'w-[220px]',
@@ -44,12 +42,10 @@
 </script>
 
 <Drawer>
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-
 	<div class="h-full flex flex-col justify-between">
-		<div class="">
+		<div>
 			<div class=" flex h-20 mx-4 pl-2 justify-between items-center">
-				<div class=""><LightSwitch bgLight="bg-surface-50" ring="ring-[1.5px] ring-current" /></div>
+				<div><LightSwitch bgLight="bg-surface-50" ring="ring-[1.5px] ring-current" /></div>
 
 				<button class="cursor-pointer hover:scale-105 duration-150" on:click={sideClose}>
 					<CloseIcon />

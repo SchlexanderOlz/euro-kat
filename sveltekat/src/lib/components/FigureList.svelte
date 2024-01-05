@@ -24,11 +24,12 @@
 			if (inputValue[0] == '#') {
 				figureBuilder.mpgnumber(inputValue.substring(1));
 			} else {
-				figureBuilder.mpgnumber(inputValue.substring(1));
+				figureBuilder.mpgnumber(inputValue.substring(0));
 			}
 
-			figureBuilder.name(inputValue);
 			figureBuilder.note(inputValue);
+			figureBuilder.name(inputValue);
+			figureBuilder.subSeries(inputValue);
 
 			await update();
 		}, 500);

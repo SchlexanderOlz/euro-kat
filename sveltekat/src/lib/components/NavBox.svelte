@@ -29,7 +29,6 @@
 	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
 			<ListBoxItem
-				class=""
 				active="variant-ringed-surface rounded-sm"
 				bind:group={path}
 				name="medium"

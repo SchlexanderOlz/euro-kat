@@ -89,8 +89,8 @@ export class FigurFilterBuilder {
 	}
 
 	subSeries(name: string) {
-		this.findRemove('subSeriesId.name~', this.filter);
-		this.filter.add(`subSeriesId.name~${name}`);
+		this.findRemove('subSeriesId.name~', this.optionals);
+		this.optionals.add(`subSeriesId.name~"${name}"`);
 	}
 
 	sortNote() {

@@ -1,12 +1,10 @@
 <svelte:head>
 	<title>Euro-Kat | Datenschutzerklärung</title>
-	<meta name="description" content='Datenschutzerklärung von Euro-Kat' />
+	<meta name="description" content="Datenschutzerklärung von Euro-Kat" />
 </svelte:head>
 
 <div class="md:px-[20%] px-[10%] cursor-default">
-	<h1 class="justify-center w-full flex h1 my-8 break-all text-center">
-		Datenschutzerklärung
-	</h1>
+	<h1 class="justify-center w-full flex h1 my-8 break-all text-center">Datenschutzerklärung</h1>
 
 	<p>
 		Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen
@@ -95,7 +93,8 @@
 		<br /><br />
 		Weitere Informationen finden Sie in der Datenschutzerklärung von Vercel:
 		<a href="https://vercel.com/legal/privacy-policy">Vercel Datenschutzerklärung</a>
-		und <a href="https://vercel.com/docs/concepts/analytics/privacy-policy"
+		und
+		<a href="https://vercel.com/docs/concepts/analytics/privacy-policy"
 			>Vercel Analytics Privacy and Compliance</a
 		>.
 	</p>

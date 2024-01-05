@@ -14,10 +14,10 @@
 		höchstens mir wichtige Inhaltsangaben zur Orientierung.
 	</p>
 	<div class="flex sm:flex-row flex-col mt-4">
-		<div class="">
+		<div>
 			<p class="text-lg font-bold mb-2">Meine TOP-Info Seiten</p>
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">Max's Ü-Ei-Service <span class="text-sm">von Max Köppl</span></p>
+				<p>Max's Ü-Ei-Service <span class="text-sm">von Max Köppl</span></p>
 				<a target="_blank" rel="noreferrer" href="http://komax38.de/index.html">
 					<img
 						src="images/maxlogo.jpg"
@@ -29,14 +29,14 @@
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">Metallfiguren.de <span class="text-sm">von Manfred Schreiner</span></p>
+				<p>Metallfiguren.de <span class="text-sm">von Manfred Schreiner</span></p>
 				<a target="_blank" rel="noreferrer" href="http://www.metallfiguren.de">
 					<img src="images/b_ms.jpg" width="334" height="62" alt="Banner von Metallfiguren.de" /></a
 				>
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">
+				<p>
 					Aluminiumfolien-Katalog <span class="text-sm">von Roland Pöschel</span>
 				</p>
 				<a target="_blank" href="https://aluminiumfolien-katalog.jimdo.com/">
@@ -50,21 +50,21 @@
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">Julia - Russland</p>
+				<p>Julia - Russland</p>
 				<a target="_blank" rel="noreferrer" href="http://www.jukate.ru/eng/index.htm">
 					<img src="images/Jukate.gif" width="116" height="76" alt="Banner von Julia" /></a
 				>
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">Ilze Papo - Brasilien</p>
+				<p>Ilze Papo - Brasilien</p>
 				<a target="_blank" rel="noreferrer" href="http://www.kinderpapo.com">
 					<img src="images/Ilze_Papo.jpg" width="468" height="55" alt="Banner von Ilze Papo" /></a
 				>
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">
+				<p>
 					Feiler-Verlag <span class="text-sm">(Andre Feiler - Ü-Ei-Universum)</span>
 				</p>
 				<a target="_blank" rel="noreferrer" href="http://www.feiler-verlag.de"
@@ -78,7 +78,7 @@
 			</div>
 
 			<div class="mb-4 card px-2 pb-2 pt-1">
-				<p class="">Ü-Ei-Stammtisch</p>
+				<p>Ü-Ei-Stammtisch</p>
 				<a target="_blank" rel="noreferrer" href="http://www.ue-ei-stammtisch.de"
 					><img
 						src="images/stammtisch.jpg"
@@ -119,7 +119,7 @@
 
 	<div class="mb-8">
 		<h3 class="font-bold text-xl mb-1 w-full">Bannertausch</h3>
-		<div class="">
+		<div>
 			<p class="underline mb-1">Code:</p>
 			<code class="text-sm bg-surface-200-700-token rounded-sm p-0.5 cursor-text">
 				&lta href="http://www.Euro-Kat.de/" target="_blank" &gt&ltimg

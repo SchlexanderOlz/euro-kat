@@ -10,7 +10,9 @@
 <AppBar padding="p-0">
 	<svelte:fragment slot="lead">
 		<a class="flex-shrink-0" href="/">
-			<EkLogo classes="h-14 w-auto m-2 -mr-2 hover:scale-110 duration-150 cursor-pointer flex-shrink-0"/>
+			<EkLogo
+				classes="h-14 w-auto m-2 -mr-2 hover:scale-110 duration-150 cursor-pointer flex-shrink-0"
+			/>
 		</a>
 	</svelte:fragment>
 	<div class="w-max content-center select-none md:flex hidden">
