@@ -117,16 +117,16 @@
 				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
 						on:change={() => {
-							figureBuilder.fake();
+							figureBuilder.maxi();
 							update();
 						}}
-						name="fake"
+						name="maxi"
 						checked={false}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 flex">Fake</p>
+					<p class="ml-2 flex">Maxi</p>
 				</div>
 				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle

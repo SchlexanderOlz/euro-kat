@@ -140,9 +140,9 @@ export class FigurFilterBuilder {
 		this.filter.add(`updated>="${this.formatDate(date)}"`);
 	}
 
-	maxi(name: string) {
-		this.findRemove('maxi~', this.filter);
-		this.filter.add(`maxi~${name}`);
+	maxi() {
+		if (this.findRemove('maxi=true', this.filter)) return;
+		this.filter.add('maxi=true');
 	}
 
 	private formatDate(date: Date): string {
