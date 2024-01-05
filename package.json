@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@vercel/analytics": "^1.1.1",
-    "pocketbase": "^0.16.0",
-    "ts-node": "^10.9.1"
-  }
-}
