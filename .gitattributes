@@ -1,1 +1,1 @@
-sveltekat/static -linguist-detectable
+sveltekat/static/* -linguist-detectable
