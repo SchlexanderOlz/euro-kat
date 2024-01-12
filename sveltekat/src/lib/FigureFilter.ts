@@ -49,10 +49,8 @@ export class FigurFilterBuilder {
 	}
 
 	currentSeries() {
-		if (this.findRemove('created>=', this.required)) return;
-		let date = new Date();
-		date.setFullYear(date.getFullYear() - 1);
-		this.required.add(`created>="${this.formatDate(date)}"`);
+		if (this.findRemove('subSeriesId.seriesId.currentSeries=true', this.required)) return;
+		this.required.add('subSeriesId.seriesId.currentSeries=true');
 	}
 
 	isCurrentTriggered(): boolean {
@@ -296,7 +294,7 @@ export class FigurFilterBuilder {
 			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
 				filter: query,
 				sort: Array.from(this.sort).join(','),
-				expand: 'subSeriesId'
+				expand: 'subSeriesId.seriesId'
 			})
 		);
 	}
