@@ -12,8 +12,8 @@
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
 
-	export let figures: Figure[];
-	export let pages: number;
+	let figures: Figure[];
+	let pages: number;
 
 	let inputValue = '';
 
@@ -63,6 +63,8 @@
 			update();
 		}, 500);
 	}
+
+  update();
 </script>
 
 <div>
@@ -223,7 +225,7 @@
 		</button>
 	</div>
 
-	{#if figures.length != 0}
+	{#if figures && figures.length != 0}
 		{#each figures as figure (figure.id)}
 			<FigureListItem {figure} />
 		{/each}
