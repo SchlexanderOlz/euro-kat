@@ -11,12 +11,18 @@
 	import type { Figure } from '$lib/Types';
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
+	import { onMount } from 'svelte';
 
 	let figures: Figure[];
 	let pages: number;
 
 	let inputValue = '';
 
+  let curser = figureBuilder.isCurrentTriggered();
+  let maxi = figureBuilder.isMaxiTriggered();
+  let questionable = figureBuilder.isQuestionableTriggered();
+  let changed = figureBuilder.isChangedTriggered();
+  
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
 		clearTimeout(debounceTimer);
@@ -54,7 +60,7 @@
 
 	let filter = false;
 
-	let yearrange = [2004, new Date().getFullYear()];
+	let yearrange = [figureBuilder.getYearBegin() || 2004, figureBuilder.getYearEnd() || new Date().getFullYear()];
 	async function updateYear() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
@@ -64,7 +70,9 @@
 		}, 500);
 	}
 
-  update();
+  onMount(async () => {
+    await update();
+  });
 </script>
 
 <div>
@@ -109,8 +117,8 @@
 							update();
 						}}
 						name="series"
-						checked={false}
 						active="bg-primary-500"
+            checked={curser}
 						size="sm"
 						rounded="rounded"
 					/>
@@ -123,7 +131,7 @@
 							update();
 						}}
 						name="maxi"
-						checked={false}
+						checked={maxi}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
@@ -137,7 +145,7 @@
 							update();
 						}}
 						name="questionable"
-						checked={false}
+						checked={questionable}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
@@ -151,7 +159,7 @@
 							update();
 						}}
 						name="changed"
-						checked={false}
+						checked={changed}
 						active="bg-primary-500"
 						size="sm"
 						rounded="rounded"
