@@ -26,7 +26,7 @@
 	</div>
 	<svelte:fragment slot="trail">
 		<div class="mr-4 flex flex-row items-center">
-			<a class="xxs:flex hidden" href="https://www.paypal.com/" target="_blank">
+			<a class="xxs:flex hidden" href="http://paypal.me/Eurokatalog" target="_blank">
 				<button class="btn variant-ghost-primary mr-4">Spenden</button>
 			</a>
 			<div class="md:flex hidden">
