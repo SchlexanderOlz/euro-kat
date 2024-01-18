@@ -54,7 +54,7 @@ export class FigurFilterBuilder {
 	}
 
 	isCurrentTriggered(): boolean {
-		return this.startIsContainedOptional("created>=");
+		return this.startIsContainedRequired("created>=");
 	}
 
 	changed() {
@@ -65,7 +65,7 @@ export class FigurFilterBuilder {
 	}
 
 	isChangedTriggered(): boolean {
-		return this.startIsContainedOptional("updated>=");
+		return this.startIsContainedRequired("updated>=");
 	}
 
 	maxi() {
@@ -74,7 +74,7 @@ export class FigurFilterBuilder {
 	}
 
 	isMaxiTriggered(): boolean {
-		return this.startIsContainedOptional("maxi");
+		return this.startIsContainedRequired("maxi");
 	}
 
 	fake() {
@@ -83,7 +83,7 @@ export class FigurFilterBuilder {
 	}
 
 	isFakeTriggered(): boolean {
-		return this.startIsContainedOptional("fake=");
+		return this.startIsContainedRequired("fake=");
 	}
 
 	questionable() {
