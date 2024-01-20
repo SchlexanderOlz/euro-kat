@@ -36,14 +36,14 @@ export class FigurFilterBuilder {
 
 	private getRequiredFilterValue(start: string): string {
 		for (const elem of this.required) {
-			if (elem.startsWith(start)) return elem.replace(start, '')
+			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1)
 		}
 		return ''
 	}
 
 	private getOptionalFilterValue(start: string): string {
 		for (const elem of this.optional) {
-			if (elem.startsWith(start)) return elem.replace(start, '')
+			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1)
 		}
 		return ''
 	}

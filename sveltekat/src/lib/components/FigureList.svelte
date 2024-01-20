@@ -16,7 +16,7 @@
 	let figures: Figure[];
 	let pages: number;
 
-	let inputValue = '';
+	let inputValue = figureBuilder.getMpgNr();
 
   let curser = figureBuilder.isCurrentTriggered();
   let maxi = figureBuilder.isMaxiTriggered();
