@@ -116,22 +116,4 @@
 			>
 		</div>
 	</div>
-
-	<div class="mb-8">
-		<h3 class="font-bold text-xl mb-1 w-full">Bannertausch</h3>
-		<div>
-			<p class="underline mb-1">Code:</p>
-			<code class="text-sm bg-surface-200-700-token rounded-sm p-0.5 cursor-text">
-				&lta href="http://www.Euro-Kat.de/" target="_blank" &gt&ltimg
-				src="http://www.Euro-Kat.de/ava_ban/b_hjfhenze.gif" alt="Helmut's Sammlerseiten" /&gt&lt/a
-				&gt
-			</code>
-		</div>
-		<div class="mt-4">
-			<p class="underline mb-1">Ergebnis:</p>
-			<a target="_blank" rel="noreferrer" href="http://www.Euro-Kat.de/"
-				><img src="http://www.Euro-Kat.de/ava_ban/b_hjfhenze.gif" alt="Helmut's Sammlerseiten" /></a
-			>
-		</div>
-	</div>
 </div>
