@@ -113,13 +113,21 @@
 														>
 														<svelte:fragment slot="content">
 															<div class="h-auto max-w-[100%] flex flex-wrap">
-																{#each figvar.packageInserts as bpz}
+																{#if figvar.packageInserts.length > 0}
+																	{#each figvar.packageInserts as bpz}
+																		<img
+																			class="w-auto max-h-32"
+																			src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
+																			alt="Beipackzettel"
+																		/>
+																	{/each}
+																{:else}
 																	<img
 																		class="w-auto max-h-32"
-																		src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
-																		alt="Beipackzettel"
+																		src="/images/want_bpz.jpg"
+																		alt="Missing Beipackzettel"
 																	/>
-																{/each}
+																{/if}
 															</div>
 														</svelte:fragment>
 													</AccordionItem>
