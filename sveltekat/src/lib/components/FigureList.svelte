@@ -12,17 +12,20 @@
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
 	import { onMount } from 'svelte';
+	import { filterBool } from '$lib/Stores';
 
 	let figures: Figure[];
 	let pages: number;
 
+	let init_loading = true;
+
 	let inputValue = figureBuilder.getMpgNr();
 
-  let curser = figureBuilder.isCurrentTriggered();
-  let maxi = figureBuilder.isMaxiTriggered();
-  let questionable = figureBuilder.isQuestionableTriggered();
-  let changed = figureBuilder.isChangedTriggered();
-  
+	let curser = figureBuilder.isCurrentTriggered();
+	let maxi = figureBuilder.isMaxiTriggered();
+	let questionable = figureBuilder.isQuestionableTriggered();
+	let changed = figureBuilder.isChangedTriggered();
+
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
 		clearTimeout(debounceTimer);
@@ -58,9 +61,10 @@
 		loading = false;
 	}
 
-	let filter = false;
-
-	let yearrange = [figureBuilder.getYearBegin() || 2004, figureBuilder.getYearEnd() || new Date().getFullYear()];
+	let yearrange = [
+		figureBuilder.getYearBegin() || 2004,
+		figureBuilder.getYearEnd() || new Date().getFullYear()
+	];
 	async function updateYear() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
@@ -70,9 +74,10 @@
 		}, 500);
 	}
 
-  onMount(async () => {
-    await update();
-  });
+	onMount(async () => {
+		await update();
+		init_loading = false;
+	});
 </script>
 
 <div>
@@ -92,11 +97,11 @@
 		<button
 			class="btn variant-filled select-none sm:mt-0 mt-2"
 			on:click={() => {
-				filter = !filter;
+				filterBool.set(!$filterBool);
 			}}
 		>
 			Filter <span class="ml-2 -mr-2">
-				{#if filter}
+				{#if $filterBool}
 					<CUpIcon styles="h-6 w-auto stroke-2" />
 				{:else}
 					<CDownIcon styles="h-6 w-auto stroke-2" />
@@ -105,7 +110,7 @@
 		</button>
 	</div>
 
-	{#if filter}
+	{#if $filterBool}
 		<div
 			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
 		>
@@ -118,7 +123,7 @@
 						}}
 						name="series"
 						active="bg-primary-500"
-            checked={curser}
+						checked={curser}
 						size="sm"
 						rounded="rounded"
 					/>
@@ -244,6 +249,12 @@
 				>
 			</div>
 		{/if}
+	{:else if init_loading}
+		{#each Array(50) as _, index}
+			<div class="card h-8 my-1 p-1">
+				<div class="placeholder animate-pulse h-6 rounded" />
+			</div>
+		{/each}
 	{:else}
 		<div class="w-full flex justify-center items-center">
 			<p class="mt-8 text-center">Es konnten keine Ergebnisse gefunden werden.</p>

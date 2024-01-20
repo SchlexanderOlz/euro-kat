@@ -17,11 +17,11 @@ export class FigurFilterBuilder {
 		this.sortMpgNr();
 	}
 	private startIsContainedRequired(start: string) {
-		return Array.from(this.required).some((elem) => elem.startsWith(start))
+		return Array.from(this.required).some((elem) => elem.startsWith(start));
 	}
 
 	private startIsContainedOptional(start: string) {
-		return Array.from(this.optional).some((elem) => elem.startsWith(start))
+		return Array.from(this.optional).some((elem) => elem.startsWith(start));
 	}
 
 	private toggleBoolConatined(field: string) {
@@ -36,16 +36,16 @@ export class FigurFilterBuilder {
 
 	private getRequiredFilterValue(start: string): string {
 		for (const elem of this.required) {
-			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1)
+			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1);
 		}
-		return ''
+		return '';
 	}
 
 	private getOptionalFilterValue(start: string): string {
 		for (const elem of this.optional) {
-			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1)
+			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1);
 		}
-		return ''
+		return '';
 	}
 
 	currentSeries() {
@@ -54,7 +54,7 @@ export class FigurFilterBuilder {
 	}
 
 	isCurrentTriggered(): boolean {
-		return this.startIsContainedRequired("created>=");
+		return this.startIsContainedRequired('created>=');
 	}
 
 	changed() {
@@ -65,7 +65,7 @@ export class FigurFilterBuilder {
 	}
 
 	isChangedTriggered(): boolean {
-		return this.startIsContainedRequired("updated>=");
+		return this.startIsContainedRequired('updated>=');
 	}
 
 	maxi() {
@@ -74,7 +74,7 @@ export class FigurFilterBuilder {
 	}
 
 	isMaxiTriggered(): boolean {
-		return this.startIsContainedRequired("maxi");
+		return this.startIsContainedRequired('maxi');
 	}
 
 	fake() {
@@ -83,7 +83,7 @@ export class FigurFilterBuilder {
 	}
 
 	isFakeTriggered(): boolean {
-		return this.startIsContainedRequired("fake=");
+		return this.startIsContainedRequired('fake=');
 	}
 
 	questionable() {
@@ -92,7 +92,7 @@ export class FigurFilterBuilder {
 	}
 
 	isQuestionableTriggered(): boolean {
-		return this.startIsContainedRequired("questionable=")
+		return this.startIsContainedRequired('questionable=');
 	}
 
 	sticker() {
@@ -101,7 +101,7 @@ export class FigurFilterBuilder {
 	}
 
 	isStickerTriggered(): boolean {
-		return this.startIsContainedRequired("sticker=")
+		return this.startIsContainedRequired('sticker=');
 	}
 
 	yearBegin(year: number | undefined) {
@@ -110,11 +110,11 @@ export class FigurFilterBuilder {
 	}
 
 	getYearBegin(): number {
-		return Number.parseInt(this.getRequiredFilterValue("year>="))
+		return Number.parseInt(this.getRequiredFilterValue('year>='));
 	}
 
 	getYearEnd(): number {
-		return Number.parseInt(this.getRequiredFilterValue("year<="))
+		return Number.parseInt(this.getRequiredFilterValue('year<='));
 	}
 
 	yearEnd(year: number | undefined) {
@@ -123,7 +123,7 @@ export class FigurFilterBuilder {
 	}
 
 	getYear(): number {
-		return Number.parseInt(this.getRequiredFilterValue("year="))
+		return Number.parseInt(this.getRequiredFilterValue('year='));
 	}
 
 	year(year: number | undefined) {
@@ -138,7 +138,7 @@ export class FigurFilterBuilder {
 	}
 
 	getName(): string {
-		return this.getOptionalFilterValue("name~")
+		return this.getOptionalFilterValue('name~');
 	}
 
 	identifier(id: string) {
@@ -147,7 +147,7 @@ export class FigurFilterBuilder {
 	}
 
 	getIdentifier(): string {
-		return this.getOptionalFilterValue("identifier~")
+		return this.getOptionalFilterValue('identifier~');
 	}
 
 	note(note: string) {
@@ -156,7 +156,7 @@ export class FigurFilterBuilder {
 	}
 
 	getNote(): string {
-		return this.getOptionalFilterValue("note~")
+		return this.getOptionalFilterValue('note~');
 	}
 
 	id(id: string) {
@@ -165,7 +165,7 @@ export class FigurFilterBuilder {
 	}
 
 	getId(): string {
-		return this.getRequiredFilterValue("id=")
+		return this.getRequiredFilterValue('id=');
 	}
 
 	mpgnumber(mpgNr: string | undefined) {
@@ -174,7 +174,7 @@ export class FigurFilterBuilder {
 	}
 
 	getMpgNr(): string {
-		return this.getOptionalFilterValue("mpgNr~")
+		return this.getOptionalFilterValue('mpgNr~');
 	}
 
 	country(country: string) {
@@ -183,7 +183,7 @@ export class FigurFilterBuilder {
 	}
 
 	getCountry(): string {
-		return this.getRequiredFilterValue("country~")
+		return this.getRequiredFilterValue('country~');
 	}
 
 	subSeries(name: string) {
@@ -192,7 +192,7 @@ export class FigurFilterBuilder {
 	}
 
 	getSubSerie(): string {
-		return this.getOptionalFilterValue("subSeriesId.name~")
+		return this.getOptionalFilterValue('subSeriesId.name~');
 	}
 
 	sortNote() {
@@ -202,7 +202,7 @@ export class FigurFilterBuilder {
 	}
 
 	getSortNote(): boolean {
-		return !this.sort.has("-note")
+		return !this.sort.has('-note');
 	}
 
 	killNote() {
@@ -217,7 +217,7 @@ export class FigurFilterBuilder {
 	}
 
 	getSortMpgNr(): boolean {
-		return !this.sort.has("-mpgNr")
+		return !this.sort.has('-mpgNr');
 	}
 
 	killMpgNr() {
@@ -232,7 +232,7 @@ export class FigurFilterBuilder {
 	}
 
 	getSortName(): boolean {
-		return !this.sort.has("-name")
+		return !this.sort.has('-name');
 	}
 
 	killName() {

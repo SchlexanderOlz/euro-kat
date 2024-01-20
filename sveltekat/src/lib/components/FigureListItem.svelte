@@ -5,7 +5,7 @@
 </script>
 
 <a
-	class="card card-hover py-1 px-2 my-1 flex justify-between relative hover:bg-surface-200-700-token"
+	class="card card-hover py-1 px-2 my-1 h-8 flex justify-between relative hover:bg-surface-200-700-token"
 	href="/figures/{figure.id}"
 >
 	<div class="flex">
