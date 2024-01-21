@@ -15,6 +15,7 @@ export class FigurFilterBuilder {
 		this.required = new Set();
 		this.sort = new Set();
 		this.sortMpgNr();
+		this.currentSeries();
 	}
 	private startIsContainedRequired(start: string) {
 		return Array.from(this.required).some((elem) => elem.startsWith(start));
@@ -49,12 +50,12 @@ export class FigurFilterBuilder {
 	}
 
 	currentSeries() {
-		if (this.findRemove('subSeriesId.seriesId.currentSeries=true', this.required)) return;
-		this.required.add('subSeriesId.seriesId.currentSeries=true');
+		if (this.findRemove('subSeriesId.seriesId.currentSeries=true || subSeriesId.currentSeries=true', this.required)) return;
+		this.required.add('subSeriesId.seriesId.currentSeries=true || subSeriesId.currentSeries=true');
 	}
 
 	isCurrentTriggered(): boolean {
-		return this.startIsContainedRequired('created>=');
+		return this.startIsContainedRequired('subSeriesId.seriesId.currentSeries=true || subSeriesId.currentSeries=true');
 	}
 
 	changed() {

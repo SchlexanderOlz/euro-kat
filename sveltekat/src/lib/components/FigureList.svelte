@@ -127,7 +127,7 @@
 						size="sm"
 						rounded="rounded"
 					/>
-					<p class="ml-2 flex">Aktuelle Serie</p>
+					<p class="ml-2 flex">Aktuelle Saison</p>
 				</div>
 				<div class="flex flex-row items-center mt-2 ml-0">
 					<SlideToggle
