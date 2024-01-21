@@ -11,6 +11,12 @@ import type {
 } from "../sveltekat/src/lib/Types.js";
 import fs from "fs";
 import { connection } from "../sveltekat/src/lib/PocketBase.js";
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+
+const email: string = process.env.EMAIL ?? '';
+const password: string = process.env.PASSWORD ?? '';
 
 const pb = new PocketBase("https://ek.krenn.tech/");
 pb.autoCancellation(false);
@@ -39,7 +45,7 @@ function getTypeHeader(path: string): string {
 
 async function add() {
   console.log(
-    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
+    await pb.admins.authWithPassword(email, password)
   );
 
   const figures = pb.collection("Figure");
@@ -217,7 +223,7 @@ async function add() {
 
 async function addExtras() {
   console.log(
-    await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!")
+    await pb.admins.authWithPassword(email, password)
   );
   const data = fs.readFileSync("../html-parser/extras.json", "utf8");
   const json = JSON.parse(data);
@@ -265,7 +271,7 @@ async function addExtras() {
 }
 
 async function addWarnings() {
-  await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!");
+  await pb.admins.authWithPassword(email, password);
   const data = fs.readFileSync("../html-parser/warnings.json", "utf8");
   const json = JSON.parse(data);
   const warnings = pb.collection("Warning");
@@ -327,7 +333,7 @@ async function addWarnings() {
 }
 
 async function dropAll(collectionName: string) {
-  await pb.admins.authWithPassword("admin@admin.admin", "Kennwort1!");
+  await pb.admins.authWithPassword(email, password);
   const collection = pb.collection(collectionName);
   const items = await collection.getFullList();
   for (const item of items) {

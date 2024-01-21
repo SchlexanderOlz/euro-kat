@@ -8,28 +8,7 @@ import base64
 import os
 
 SRCES: list[str] = [
-    "I:/ActEuroKat/JGListen/WEN.htm",
-    "I:/ActEuroKat/JGListen/WDV.htm",
-    "I:/ActEuroKat/JGListen/WFF.htm",
-    "I:/ActEuroKat/JGListen/WC.htm",
-    "I:/ActEuroKat/JGListen/WDC.htm",
-    "I:/ActEuroKat/JGListen/WDE.htm",
-    "I:/ActEuroKat/JGListen/WDV.htm",
-    "I:/ActEuroKat/JGListen/WFS.htm",
-    "I:/ActEuroKat/JGListen/WFT.htm",
-    "I:/ActEuroKat/JGListen/WNV.htm",
-    "I:/ActEuroKat/JGListen/WS.htm",
-    "I:/ActEuroKat/JGListen/WSD.htm",
-    "I:/ActEuroKat/JGListen/WSE.htm",
-    "I:/ActEuroKat/JGListen/WST.htm",
-    "I:/ActEuroKat/JGListen/WTR.htm",
-    "I:/ActEuroKat/JGListen/WTT.htm",
-    "I:/ActEuroKat/JGListen/WUN.htm",
-    "I:/ActEuroKat/JGListen/WVU.htm",
-    "I:/ActEuroKat/JGListen/WVV.htm",
-    "I:/ActEuroKat/JGListen/WVD.htm",
-    "I:/ActEuroKat/aktuell/akt2023.htm",
-    "I:/ActEuroKat/aktuell/akt2024.htm",
+    "I:/ActEuroKat/JGListen/W2S.htm",
     ]
 
 
