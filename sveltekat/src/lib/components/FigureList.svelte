@@ -89,7 +89,7 @@
 				}}
 				bind:value={inputValue}
 				class="input w-full"
-				placeholder="Suche"
+				placeholder="Suche nach #MPG-Nr, Serienname oder Figurname"
 			/>
 			<button class="btn absolute right-0 variant-ringed ring-opacity-30">Los</button>
 		</div>
