@@ -11,8 +11,8 @@ export const NavItems: Item[] = [
 		references: { '': '/figures' }
 	},
 	{
-		title: 'News',
-		references: { '': '/news' }
+		title: 'Berichte',
+		references: { '': '/reports' }
 	},
 	{
 		title: 'Spezial',
