@@ -49,12 +49,20 @@ export class FigurFilterBuilder {
 	}
 
 	currentSeries() {
-		if (this.findRemove('(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)', this.required)) return;
+		if (
+			this.findRemove(
+				'(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)',
+				this.required
+			)
+		)
+			return;
 		this.required.add('(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)');
 	}
 
 	isCurrentTriggered(): boolean {
-		return this.startIsContainedRequired('(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)');
+		return this.startIsContainedRequired(
+			'(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)'
+		);
 	}
 
 	changed() {
@@ -168,9 +176,14 @@ export class FigurFilterBuilder {
 		return this.getRequiredFilterValue('id=');
 	}
 
-	mpgnumber(mpgNr: string | undefined) {
-		this.findRemove('mpgNr~', this.optional);
-		this.optional.add(`mpgNr~"${mpgNr}"`);
+	mpgnumber(mpgNr: string) {
+		this.findRemove('mpgNr', this.optional) ||
+			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
+
+		console.log(mpgNr);
+		let match = /^(?!^[0-9][A-Za-z]$).*((\d|[0-9][A-Z]))$/;
+		if (match.test(mpgNr)) this.optional.add(`mpgNr="${mpgNr}"`);
+		else this.optional.add(`subSeriesId.seriesId.seriesLetter="${mpgNr}"`);
 	}
 
 	getMpgNr(): string {

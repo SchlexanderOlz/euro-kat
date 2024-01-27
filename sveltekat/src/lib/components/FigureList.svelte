@@ -7,7 +7,7 @@
 	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
 	import RangeSlider from 'svelte-range-slider-pips';
-	import type { ListResult } from 'pocketbase';
+	import type { ListResult, ClientResponseError } from 'pocketbase';
 	import type { Figure } from '$lib/Types';
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
@@ -45,8 +45,13 @@
 	}
 
 	async function update() {
+		let res: ListResult<Figure>;
+		try {
+			res = structuredClone(await figureBuilder.run());
+		} catch (error: any) {
+			return;
+		}
 		figureBuilder.currentPage = 1;
-		let res: ListResult<Figure> = structuredClone(await figureBuilder.run());
 		figures = res.items;
 		pages = res.totalPages;
 	}
@@ -84,8 +89,8 @@
 	<div class="flex flex-col sm:flex-row">
 		<div class="w-full mr-2 relative">
 			<input
-				on:input={() => {
-					updateSearch();
+				on:input={async () => {
+					await updateSearch();
 				}}
 				bind:value={inputValue}
 				class="input w-full"
