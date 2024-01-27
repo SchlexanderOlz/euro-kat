@@ -177,7 +177,7 @@ export class FigurFilterBuilder {
 	}
 
 	mpgnumber(mpgNr: string) {
-		this.findRemove('mpgNr', this.optional) ||
+		this.findRemove('mpgNr=', this.optional) ||
 			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
 
 		console.log(mpgNr);
@@ -187,7 +187,10 @@ export class FigurFilterBuilder {
 	}
 
 	getMpgNr(): string {
-		return this.getOptionalFilterValue('mpgNr~');
+		return (
+			this.getOptionalFilterValue('mpgNr=') ||
+			this.getOptionalFilterValue('subSeriesId.seriesId.seriesLetter=')
+		);
 	}
 
 	country(country: string) {

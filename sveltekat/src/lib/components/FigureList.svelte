@@ -19,7 +19,8 @@
 
 	let init_loading = true;
 
-	let inputValue = figureBuilder.getMpgNr();
+	let inputValue = figureBuilder.getName() || '#' + figureBuilder.getMpgNr();
+	if (inputValue === '#') inputValue = '';
 
 	let curser = figureBuilder.isCurrentTriggered();
 	let maxi = figureBuilder.isMaxiTriggered();
