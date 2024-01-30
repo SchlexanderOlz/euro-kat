@@ -85,7 +85,7 @@
 
 <button
 	on:click={sideOpen}
-	class="md:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
+	class="nav:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
 >
 	<MenuIcon />
 </button>

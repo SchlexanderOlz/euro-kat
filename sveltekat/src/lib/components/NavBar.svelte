@@ -15,7 +15,7 @@
 			/>
 		</a>
 	</svelte:fragment>
-	<div class="w-max content-center select-none md:flex hidden">
+	<div class="w-max content-center select-none nav:flex hidden">
 		{#each NavItems as item}
 			{#if Object.keys(item.references).length > 1}
 				<NavBox {item} />
@@ -29,7 +29,7 @@
 			<a class="xxs:flex hidden" href="http://paypal.me/Eurokatalog" target="_blank">
 				<button class="btn variant-ghost-primary mr-4">Spenden</button>
 			</a>
-			<div class="md:flex hidden">
+			<div class="nav:flex hidden">
 				<LightSwitch />
 			</div>
 			<SideNav />
