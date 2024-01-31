@@ -19,6 +19,10 @@ export const NavItems: Item[] = [
 		references: { '': '/reports' }
 	},
 	{
+		title: 'Help',
+		references: { '': '/help' }
+	},
+	{
 		title: 'Spezial',
 		references: { Warnhinweiszettel: '/whz', Zusatzwarnzettel: '/zwz' }
 	},
