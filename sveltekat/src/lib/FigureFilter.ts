@@ -54,9 +54,16 @@ export class FigurFilterBuilder {
 				'(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)',
 				this.required
 			)
+			&&
+			this.killMaxi()
 		)
 			return;
+		this.toggleSort('maxi')
 		this.required.add('(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)');
+	}
+
+	killMaxi(): boolean {
+		return this.findRemove('+maxi', this.sort);
 	}
 
 	isCurrentTriggered(): boolean {
