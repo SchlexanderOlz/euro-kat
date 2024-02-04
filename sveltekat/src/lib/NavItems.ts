@@ -11,7 +11,7 @@ export const NavItems: Item[] = [
 		references: { '': '/figures' }
 	},
 	{
-		title: 'Aktuelle Serie',
+		title: 'Aktuelle Saison',
 		references: { '': '/current-series' }
 	},
 	{
