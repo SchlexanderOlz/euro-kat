@@ -17,4 +17,7 @@
 	<a href="AZListen/AbisZ.htm"
 		><button class="btn variant-filled-surface w-52 mb-8">Zu alten Seite</button></a
 	>
+	<a href="JGListen/K_Menu.htm"
+		><button class="btn variant-filled-surface w-52 mb-8">Zur K-Serie</button></a
+	>
 </div>

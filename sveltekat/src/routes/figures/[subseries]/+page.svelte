@@ -106,10 +106,14 @@
 												{#each subservar.figvars as figvar}
 													<AccordionItem>
 														<svelte:fragment slot="summary">
-															<span class="font-bold"
-																>{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId
-																	.name}</span
-															></svelte:fragment
+															    <span class="font-bold">
+																	{#if figvar.expand.figureId?.mpgNr}
+																		{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
+																	{:else}
+																		Nicht bekannt?
+																	{/if}
+    															</span>
+															</svelte:fragment
 														>
 														<svelte:fragment slot="content">
 															<div class="h-auto max-w-[100%] flex flex-wrap">

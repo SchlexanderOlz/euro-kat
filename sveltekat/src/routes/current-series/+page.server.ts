@@ -13,7 +13,7 @@ export const load = (async () => {
 		await figureBuilder.figureCollection.getFullList({
 			filter: '(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)',
 			expand: 'subSeriesId.seriesId',
-			sort: 'mpgNr'
+			sort: '-maxi,+mpgNr'
 		})
 	);
 	return {
