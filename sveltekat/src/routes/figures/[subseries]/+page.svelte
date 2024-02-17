@@ -11,11 +11,12 @@
 	<meta name="description" content="Figur" />
 </svelte:head>
 
-<h2 class="h2 my-4 text-center break-all md:px-4 px-2">{data.pageData.subser.name}</h2>
+<h2 class="h2 my-4 text-center break-words md:px-4 px-2">{data.pageData.subser.name}</h2>
 
 <p class="text-center md:px-4 px-2">{data.pageData.subser.thanks}</p>
 
 <div class="w-full flex flex-col items-center mb-10">
+  <div class="w-full flex flex-row flex-wrap justify-center">
 	{#if data.pageData.subservars[0].images.length != 0}
 		{#each data.pageData.subservars[0].images as imag}
 			<img
@@ -28,6 +29,7 @@
 	{:else}
 		<img class="mt-4" src="/images/want_bpz.jpg" alt="Kein Beipackzettel-Foto verfügbar" />
 	{/if}
+  </div>
 
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">

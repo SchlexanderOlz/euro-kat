@@ -88,7 +88,7 @@
 
 <div>
 	<div class="flex flex-col sm:flex-row">
-		<div class="w-full mr-2 relative">
+		<div class="w-full mr-2 relative flex">
 			<input
 				on:input={async () => {
 					await updateSearch();
@@ -97,7 +97,7 @@
 				class="input w-full"
 				placeholder="Suche nach #MPG-Nr, Serienname oder Figurname"
 			/>
-			<button class="btn absolute right-0 variant-ringed ring-opacity-30">Los</button>
+			<button class="btn variant-ghost ring-opacity-30">Los</button>
 		</div>
 
 		<button
