@@ -75,7 +75,7 @@
 			</div>
 		{/each}
 
-		<h2 class="h2 mb-4 mt-6 text-center">Variationen</h2>
+		<h2 class="h2 mb-4 mt-6 text-center">Beipackzettelübersicht</h2>
 		<div class="card">
 			<Accordion>
 				{#each data.pageData.subservars as subservar}
