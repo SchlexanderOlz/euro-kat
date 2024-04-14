@@ -19,6 +19,7 @@ export interface Figure {
 	packageInserts: string[];
 	year: string;
 	subSeriesId: string;
+	isMarked: boolean;
 	expand: {
 		subSeriesId: SubSeries;
 	};

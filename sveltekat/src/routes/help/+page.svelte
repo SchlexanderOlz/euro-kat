@@ -27,6 +27,7 @@
         <code class="bg-gray-200 text-gray-700 p-1 rounded">#EN202</code>
         <br>
         Der Filter bietet weitere Funktionen, die durch Klicken auf <code class="bg-gray-200 text-gray-700 p-1 rounded">Filter ^</code> sichtbar werden. Dazu gehören die Suche nach der aktuellen Serie<br> <code class="bg-gray-200 text-gray-700 p-1 rounded">Aktuelle Serie</code>, die Suche nach Maxi-Figuren <code class="bg-gray-200 text-gray-700 p-1 rounded">Maxi</code>, die Suche nach einem Zeitraum über den Slider. Es ist wichtig zu beachten, dass diese Optionen frei miteinander kombinierbar sind.
+        Figuren die jetzt gerade in den Vordergrund gerrückt werden sind <code style="background-color: #8e1a03;" class="text-white p-1 rounded">rot</code> hinterlägt.
     </p>
     <h3 class="h3 w-full mt-4">Berichte:</h3>
 	<p class="mt-8">
