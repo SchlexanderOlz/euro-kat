@@ -10,10 +10,11 @@ import type {
 	WarningZ,
 	WarningZD,
 	Extra,
-	ExtraDetail
+	ExtraDetail,
+	Article
 } from './Types.js';
 
-export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging };
+export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging, Article };
 export const domain: string = 'ek.krenn.tech:443';
 export const imgdom: string = `https://${domain}/api/files`;
 export const connection: PocketBase = new PocketBase(`https://${domain}`);
@@ -24,6 +25,7 @@ const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
 const subSeriesVar = connection.collection('SubSeriesVariation');
 const extras = connection.collection('Extra');
+const articles = connection.collection('Article')
 
 export async function getWarnings(): Promise<WarningZ[]> {
 	return await warnings.getFullList<WarningZ>({
@@ -91,4 +93,9 @@ export async function getCountrys(): Promise<Set<string>> {
 
 export async function getFigureCount(): Promise<number> {
 	return (await figures.getList(1, 1)).totalItems;
+}
+
+export async function getLatestArticle(): Promise<Article> {
+	console.log(articles.getFirstListItem('', {sort: "+created"}))
+	return await articles.getFirstListItem('', {sort: "+created"})
 }

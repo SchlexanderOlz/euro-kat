@@ -191,3 +191,8 @@ export interface FigurePageCleaned {
 	subser: SubSeries;
 	subservars: SubSeriesVariation[];
 }
+
+export interface Article {
+	created: Date,
+	content: string
+}

@@ -1,6 +1,13 @@
 <script lang="ts">
+	import { getLatestArticle, type Article } from '$lib/PocketBase';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
+
+	let article: Article | undefined = undefined;
+	onMount(async () => {
+		article = await getLatestArticle();
+	});
 </script>
 
 <svelte:head>
@@ -46,10 +53,34 @@
 				Euro-Katalog zu übernehmen. Ich werde mein Bestes geben und diese Homepage mit der gleichen
 				Qualität und Sorgfalt weiterführen. Wie euch wahrscheinlich schon aufgefallen ist, haben
 				sich das Design und der Aufbau der Homepage stark verändert. Mich würde es sehr freuen, wenn
-				ihr mir Verbesserungsvorschläge und Ideen per <a class="underline underline-offset-2" href="mailto:daniel.hrastnik@gmx.at" target="_blank">E-Mail</a> entgegenbringt.
-				Auch Kritik nehme ich gerne entgegen. Ich wünsche euch weiterhin viel Spaß beim Sammeln und
-				Stöbern auf der Homepage!
+				ihr mir Verbesserungsvorschläge und Ideen per <a
+					class="underline underline-offset-2"
+					href="mailto:daniel.hrastnik@gmx.at"
+					target="_blank">E-Mail</a
+				> entgegenbringt. Auch Kritik nehme ich gerne entgegen. Ich wünsche euch weiterhin viel Spaß
+				beim Sammeln und Stöbern auf der Homepage!
 			</p>
+		</div>
+
+		<p class="text-5xl text-center h1 mt-5">News</p>
+		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px] w-full">
+			{#if article?.created}
+				<p class="mt-1 left opacity-60">
+					{new Intl.DateTimeFormat('de-DE', {
+						year: 'numeric',
+						month: 'long',
+						day: '2-digit'
+					}).format(new Date(article?.created))}
+				</p>
+			{/if}
+
+			{#if article?.content}
+				{@html article?.content}
+			{:else}
+				<p class="mt-1 text-center opacity-60 text-xl">
+					Dieser Artikel ist Momentan nicht verfügbar
+				</p>
+			{/if}
 		</div>
 
 		<p class="mt-8 text-center">
