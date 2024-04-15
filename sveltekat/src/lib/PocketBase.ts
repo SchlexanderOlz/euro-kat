@@ -53,16 +53,20 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId,variations'
 	});
 
+  if (figure.subSeriesId == "") {
+    //return figure
+  }
+
 	const seriesFigures = await figures.getFullList<Figure>({
 		filter: `subSeriesId="${figure.subSeriesId}"`
 	});
 
 	let subSeries = figure.expand.subSeriesId;
 
-	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
+	let subSeriesVariations = subSeries?.expand['SubSeriesVariation(subSeriesId)'];
 
 	// expand packaging
-	if (subSeries.packaging != undefined) {
+	if (subSeries?.packaging != undefined) {
 		const cpackaging: string[] = subSeries.packaging;
 
 		let tpackaging: Packaging[] = [];
@@ -75,8 +79,10 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		subSeries.packaging = tpackaging;
 	}
 
-	for (let sub of subSeriesVariations) {
-		sub.figvars = sub.expand['FigureVariation(subSeriesVariationId)'];
+	if (subSeriesVariations != undefined) {
+		for (let sub of subSeriesVariations) {
+			sub.figvars = sub.expand['FigureVariation(subSeriesVariationId)'];
+		}
 	}
 
 	let variations: Variation[] = [];
@@ -91,8 +97,12 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		subSeriesFigures: seriesFigures,
 		subser: subSeries,
 		subservars: subSeriesVariations,
-		variations: variations
+		variations: variations,
 	};
+
+  if (figure.subSeriesId == "") {
+    vals.subSeriesFigures = [figure]
+  }
 
 	return vals;
 }
