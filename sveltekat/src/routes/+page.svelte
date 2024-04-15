@@ -25,7 +25,7 @@
 		</p>
 		<p class="mt-4 text-2xl text-center">
 			Der <span class="font-bold">Euro-Katalog</span> dient als die umfangreichste Informationssammlung
-			zu den Ü-Ei-Inhalten der vergangenen Jahre,
+			zu den Ü-Ei-Inhalten der vergangenen Jahre
 		</p>
 
 		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px]">
