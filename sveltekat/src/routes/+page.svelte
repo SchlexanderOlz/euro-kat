@@ -68,7 +68,9 @@
 			{/if}
 
 			{#if data.article?.content}
-				{@html data.article?.content}
+        <div class="latest-article">
+          {@html data.article?.content}
+        </div>
 			{:else}
 				<p class="mt-1 text-center opacity-60 text-xl">
 					Dieser Artikel ist Momentan nicht verfügbar
@@ -84,3 +86,21 @@
 		</p>
 	</div>
 </div>
+
+<style>
+  :global(.latest-article > h1) {
+    @apply h1;
+  }
+
+  :global(.latest-article > h2) {
+    @apply h2;
+  }
+
+  :global(.latest-article > h3) {
+    @apply h3;
+  }
+
+  :global(.latest-article > h4) {
+    @apply h4;
+  }
+</style>
