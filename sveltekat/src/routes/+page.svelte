@@ -89,18 +89,18 @@
 
 <style>
   :global(.latest-article > h1) {
-    @apply h1;
+    @apply h1 mb-2;
   }
 
   :global(.latest-article > h2) {
-    @apply h2;
+    @apply h2 mb-2;
   }
 
   :global(.latest-article > h3) {
-    @apply h3;
+    @apply h3 mb-2;
   }
 
   :global(.latest-article > h4) {
-    @apply h4;
+    @apply h4 mb-2;
   }
 </style>
