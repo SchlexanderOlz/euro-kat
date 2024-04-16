@@ -11,7 +11,8 @@ import type {
 	WarningZD,
 	Extra,
 	ExtraDetail,
-	Article
+	Article,
+	Variation
 } from './Types.js';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging, Article };
@@ -25,7 +26,7 @@ const figures = connection.collection('Figure');
 const warnings = connection.collection('Warning');
 const subSeriesVar = connection.collection('SubSeriesVariation');
 const extras = connection.collection('Extra');
-const articles = connection.collection('Article')
+const articles = connection.collection('Article');
 
 export async function getWarnings(): Promise<WarningZ[]> {
 	return await warnings.getFullList<WarningZ>({
@@ -49,13 +50,15 @@ export async function getExtraDetail(id: string): Promise<ExtraDetail> {
 export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 	const figure: any = await figures.getOne(fid, {
 		expand:
-			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId'
+			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId,variations'
 	});
 
 	const seriesFigures = await figures.getFullList<Figure>({
 		filter: `subSeriesId="${figure.subSeriesId}"`
 	});
+
 	let subSeries = figure.expand.subSeriesId;
+
 	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
 
 	// expand packaging
@@ -76,10 +79,19 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		sub.figvars = sub.expand['FigureVariation(subSeriesVariationId)'];
 	}
 
+	let variations: Variation[] = [];
+	// manual expand because pocketbase is shit -_-
+	if (figure.variations != undefined && figure.variations.length != 0) {
+		variations = await connection.collection('Variation').getFullList<Variation>({
+			filter: figure.variations.map((id: any) => `id="${id}"`).join('||')
+		});
+	}
+
 	const vals: FigurePageCleaned = {
 		subSeriesFigures: seriesFigures,
 		subser: subSeries,
-		subservars: subSeriesVariations
+		subservars: subSeriesVariations,
+		variations: variations
 	};
 
 	return vals;
@@ -96,6 +108,5 @@ export async function getFigureCount(): Promise<number> {
 }
 
 export async function getLatestArticle(): Promise<Article> {
-	console.log(articles.getFirstListItem('', {sort: "+created"}))
-	return await articles.getFirstListItem('', {sort: "+created"})
+	return await articles.getFirstListItem('', { sort: '+created' });
 }

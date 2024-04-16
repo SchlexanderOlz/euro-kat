@@ -1,13 +1,6 @@
 <script lang="ts">
-	import { getLatestArticle, type Article } from '$lib/PocketBase';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
-
-	let article: Article | undefined = undefined;
-	onMount(async () => {
-		article = await getLatestArticle();
-	});
 </script>
 
 <svelte:head>
@@ -64,18 +57,18 @@
 
 		<p class="text-5xl text-center h1 mt-5">News</p>
 		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px] w-full">
-			{#if article?.created}
+			{#if data.article?.created}
 				<p class="mt-1 left opacity-60">
 					{new Intl.DateTimeFormat('de-DE', {
 						year: 'numeric',
 						month: 'long',
 						day: '2-digit'
-					}).format(new Date(article?.created))}
+					}).format(new Date(data.article?.created))}
 				</p>
 			{/if}
 
-			{#if article?.content}
-				{@html article?.content}
+			{#if data.article?.content}
+				{@html data.article?.content}
 			{:else}
 				<p class="mt-1 text-center opacity-60 text-xl">
 					Dieser Artikel ist Momentan nicht verfügbar

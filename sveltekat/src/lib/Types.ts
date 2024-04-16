@@ -52,6 +52,7 @@ export interface FigureVariation {
 
 export interface Variation {
 	id: string;
+  collectionId: string;
 	created: string;
 	modified: string;
 	variation: string;
@@ -193,6 +194,7 @@ export interface FigurePageCleaned {
 	subSeriesFigures: Figure[];
 	subser: SubSeries;
 	subservars: SubSeriesVariation[];
+  variations: Variation[];
 }
 
 export interface Article {

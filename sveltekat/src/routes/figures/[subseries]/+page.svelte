@@ -4,6 +4,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	console.log(data.pageData);
 </script>
 
 <svelte:head>
@@ -16,20 +18,20 @@
 <p class="text-center md:px-4 px-2">{data.pageData.subser.thanks}</p>
 
 <div class="w-full flex flex-col items-center mb-10">
-  <div class="w-full flex flex-row flex-wrap justify-center">
-	{#if data.pageData.subservars[0].images.length != 0}
-		{#each data.pageData.subservars[0].images as imag}
-			<img
-				class="w-max mt-4 px-4"
-				src="{imgdom}/{data.pageData.subservars[0].collectionId}/{data.pageData.subservars[0]
-					.id}/{imag}"
-				alt="{data.pageData.subser.name} Beipackzettel"
-			/>
-		{/each}
-	{:else}
-		<img class="mt-4" src="/images/want_bpz.jpg" alt="Kein Beipackzettel-Foto verfügbar" />
-	{/if}
-  </div>
+	<div class="w-full flex flex-row flex-wrap justify-center">
+		{#if data.pageData.subservars[0].images.length != 0}
+			{#each data.pageData.subservars[0].images as imag}
+				<img
+					class="w-max mt-4 px-4"
+					src="{imgdom}/{data.pageData.subservars[0].collectionId}/{data.pageData.subservars[0]
+						.id}/{imag}"
+					alt="{data.pageData.subser.name} Beipackzettel"
+				/>
+			{/each}
+		{:else}
+			<img class="mt-4" src="/images/want_bpz.jpg" alt="Kein Beipackzettel-Foto verfügbar" />
+		{/if}
+	</div>
 
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
@@ -75,6 +77,27 @@
 			</div>
 		{/each}
 
+		{#if data.pageData.variations.length != 0}
+			<h2 class="h2 mb-4 mt-6 text-center">Variationen</h2>
+			<div class="flex flex-wrap w-full justify-center">
+				{#each data.pageData.variations as variation}
+					{#if variation.variation != '' && variation.variation != 'undefined' && variation.images.length != 0}
+						<div class="card p-2 m-1 w-fit">
+							{#if variation.variation != '' && variation.variation != null && variation.variation != 'undefined'}
+								<p class="font-bold mb-1">{variation.variation}</p>
+							{/if}
+							{#each variation.images as image}
+								<img
+									src="{imgdom}/{variation.collectionId}/{variation.id}/{image}"
+									alt="Variation"
+								/>
+							{/each}
+						</div>
+					{/if}
+				{/each}
+			</div>
+		{/if}
+
 		<h2 class="h2 mb-4 mt-6 text-center">Beipackzettelübersicht</h2>
 		<div class="card">
 			<Accordion>
@@ -108,15 +131,14 @@
 												{#each subservar.figvars as figvar}
 													<AccordionItem>
 														<svelte:fragment slot="summary">
-															    <span class="font-bold">
-																	{#if figvar.expand.figureId?.mpgNr}
-																		{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
-																	{:else}
-																		Nicht bekannt?
-																	{/if}
-    															</span>
-															</svelte:fragment
-														>
+															<span class="font-bold">
+																{#if figvar.expand.figureId?.mpgNr}
+																	{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
+																{:else}
+																	Nicht bekannt?
+																{/if}
+															</span>
+														</svelte:fragment>
 														<svelte:fragment slot="content">
 															<div class="h-auto max-w-[100%] flex flex-wrap">
 																{#if figvar.packageInserts.length > 0}
