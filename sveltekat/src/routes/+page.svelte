@@ -25,7 +25,7 @@
 		</p>
 		<p class="mt-4 text-2xl text-center">
 			Der <span class="font-bold">Euro-Katalog</span> dient als die umfangreichste Informationssammlung
-			zu den Ü-Ei-Inhalten der vergangenen Jahre,
+			zu den Ü-Ei-Inhalten der vergangenen Jahre
 		</p>
 
 		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px]">
@@ -68,7 +68,9 @@
 			{/if}
 
 			{#if data.article?.content}
-				{@html data.article?.content}
+        <div class="latest-article">
+          {@html data.article?.content}
+        </div>
 			{:else}
 				<p class="mt-1 text-center opacity-60 text-xl">
 					Dieser Artikel ist Momentan nicht verfügbar
@@ -84,3 +86,21 @@
 		</p>
 	</div>
 </div>
+
+<style>
+  :global(.latest-article > h1) {
+    @apply h1 mb-2;
+  }
+
+  :global(.latest-article > h2) {
+    @apply h2 mb-2;
+  }
+
+  :global(.latest-article > h3) {
+    @apply h3 mb-2;
+  }
+
+  :global(.latest-article > h4) {
+    @apply h4 mb-2;
+  }
+</style>

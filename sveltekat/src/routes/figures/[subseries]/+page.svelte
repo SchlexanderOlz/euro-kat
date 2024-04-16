@@ -13,13 +13,15 @@
 	<meta name="description" content="Figur" />
 </svelte:head>
 
-<h2 class="h2 my-4 text-center break-words md:px-4 px-2">{data.pageData.subser.name}</h2>
+<h2 class="h2 my-4 text-center break-words md:px-4 px-2">
+	{data.pageData.subser?.name || data.pageData.subSeriesFigures[0].name}
+</h2>
 
-<p class="text-center md:px-4 px-2">{data.pageData.subser.thanks}</p>
+<p class="text-center md:px-4 px-2">{data.pageData.subser?.thanks}</p>
 
 <div class="w-full flex flex-col items-center mb-10">
 	<div class="w-full flex flex-row flex-wrap justify-center">
-		{#if data.pageData.subservars[0].images.length != 0}
+		{#if data.pageData.subservars != undefined && data.pageData.subservars[0].images.length != 0}
 			{#each data.pageData.subservars[0].images as imag}
 				<img
 					class="w-max mt-4 px-4"
@@ -77,7 +79,7 @@
 			</div>
 		{/each}
 
-		{#if data.pageData.variations.length != 0}
+		{#if data.pageData.variations != undefined && data.pageData.variations.length != 0}
 			<h2 class="h2 mb-4 mt-6 text-center">Variationen</h2>
 			<div class="flex flex-wrap w-full justify-center">
 				{#each data.pageData.variations as variation}
@@ -101,77 +103,79 @@
 		<h2 class="h2 mb-4 mt-6 text-center">Beipackzettelübersicht</h2>
 		<div class="card">
 			<Accordion>
-				{#each data.pageData.subservars as subservar}
-					<AccordionItem>
-						<svelte:fragment slot="summary">
-							<span class="font-bold">Variation {subservar.country} - {subservar.year}</span
-							></svelte:fragment
-						>
-						<svelte:fragment slot="content">
-							<p class="whitespace-pre-wrap">{subservar.note}</p>
+				{#if data.pageData.subservars != undefined && data.pageData.subservars.length != 0}
+					{#each data.pageData.subservars as subservar}
+						<AccordionItem>
+							<svelte:fragment slot="summary">
+								<span class="font-bold">Variation {subservar.country} - {subservar.year}</span
+								></svelte:fragment
+							>
+							<svelte:fragment slot="content">
+								<p class="whitespace-pre-wrap">{subservar.note}</p>
 
-							{#if subservar.images.length != 0}
-								{#each subservar.images as img}
-									<img
-										src="{imgdom}/{subservar.collectionId}/{subservar.id}/{img}"
-										alt="Subseries"
-									/>
-								{/each}
-							{:else}
-								<img src="/images/want_bpz.jpg" alt="Kein Beipackzettel-Foto verfügbar" />
-							{/if}
-							{#if subservar.figvars != undefined}
-								<Accordion>
-									<AccordionItem>
-										<svelte:fragment slot="summary">
-											<span class="font-bold">Beipackzettel</span></svelte:fragment
-										>
-										<svelte:fragment slot="content">
-											<Accordion>
-												{#each subservar.figvars as figvar}
-													<AccordionItem>
-														<svelte:fragment slot="summary">
-															<span class="font-bold">
-																{#if figvar.expand.figureId?.mpgNr}
-																	{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
-																{:else}
-																	Nicht bekannt?
-																{/if}
-															</span>
-														</svelte:fragment>
-														<svelte:fragment slot="content">
-															<div class="h-auto max-w-[100%] flex flex-wrap">
-																{#if figvar.packageInserts.length > 0}
-																	{#each figvar.packageInserts as bpz}
+								{#if subservar.images.length != 0}
+									{#each subservar.images as img}
+										<img
+											src="{imgdom}/{subservar.collectionId}/{subservar.id}/{img}"
+											alt="Subseries"
+										/>
+									{/each}
+								{:else}
+									<img src="/images/want_bpz.jpg" alt="Kein Beipackzettel-Foto verfügbar" />
+								{/if}
+								{#if subservar.figvars != undefined}
+									<Accordion>
+										<AccordionItem>
+											<svelte:fragment slot="summary">
+												<span class="font-bold">Beipackzettel</span></svelte:fragment
+											>
+											<svelte:fragment slot="content">
+												<Accordion>
+													{#each subservar.figvars as figvar}
+														<AccordionItem>
+															<svelte:fragment slot="summary">
+																<span class="font-bold">
+																	{#if figvar.expand.figureId?.mpgNr}
+																		{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
+																	{:else}
+																		Nicht bekannt?
+																	{/if}
+																</span>
+															</svelte:fragment>
+															<svelte:fragment slot="content">
+																<div class="h-auto max-w-[100%] flex flex-wrap">
+																	{#if figvar.packageInserts.length > 0}
+																		{#each figvar.packageInserts as bpz}
+																			<img
+																				class="w-auto max-h-32"
+																				src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
+																				alt="Beipackzettel"
+																			/>
+																		{/each}
+																	{:else}
 																		<img
 																			class="w-auto max-h-32"
-																			src="{imgdom}/{figvar.collectionId}/{figvar.id}/{bpz}"
-																			alt="Beipackzettel"
+																			src="/images/want_bpz.jpg"
+																			alt="Missing Beipackzettel"
 																		/>
-																	{/each}
-																{:else}
-																	<img
-																		class="w-auto max-h-32"
-																		src="/images/want_bpz.jpg"
-																		alt="Missing Beipackzettel"
-																	/>
-																{/if}
-															</div>
-														</svelte:fragment>
-													</AccordionItem>
-												{/each}
-											</Accordion>
-										</svelte:fragment>
-									</AccordionItem>
-								</Accordion>
-							{/if}
-						</svelte:fragment>
-					</AccordionItem>
-				{/each}
+																	{/if}
+																</div>
+															</svelte:fragment>
+														</AccordionItem>
+													{/each}
+												</Accordion>
+											</svelte:fragment>
+										</AccordionItem>
+									</Accordion>
+								{/if}
+							</svelte:fragment>
+						</AccordionItem>
+					{/each}
+				{/if}
 			</Accordion>
 		</div>
 
-		{#if data.pageData.subser.packaging.length != 0}
+		{#if data.pageData.subser != undefined && data.pageData.subser.packaging.length != 0}
 			<h2 class="h2 mb-4 mt-6 text-center">Verpackungen</h2>
 			<div class="card">
 				<Accordion>
@@ -198,9 +202,9 @@
 	</div>
 
 	<p class="mt-5 opacity-50">
-		Erstellt: {new Date(data.pageData.subser.created).toLocaleDateString()}
+		Erstellt: {new Date(data.pageData.subser?.created).toLocaleDateString()}
 	</p>
 	<p class="opacity-50 -mb-4">
-		Verändert: {new Date(data.pageData.subser.updated).toLocaleDateString()}
+		Verändert: {new Date(data.pageData.subser?.updated).toLocaleDateString()}
 	</p>
 </div>
