@@ -2,10 +2,13 @@
 	import type { Figure } from '$lib/Types';
 
 	export let figure: Figure;
+	console.log(figure)
+	let color = figure.expand.countryColor ? figure.expand.countryColor.color : "";
+	if (figure.isMarked) color = "#8e1a03";
 </script>
 
 <a
-	style={figure.isMarked ? `background-color: #8e1a03;` : ""}
+	style={`background-color: ${color};`}
 	class="card card-hover py-1 px-2 my-1 h-min flex justify-between relative hover:bg-surface-200-700-token"
 	href="/figures/{figure.id}"
 >

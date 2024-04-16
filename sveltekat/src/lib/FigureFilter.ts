@@ -317,7 +317,7 @@ export class FigurFilterBuilder {
 			await this.figureCollection.getList(this.currentPage, figureInitLoadCount, {
 				filter: query,
 				sort: Array.from(this.sort).join(','),
-				expand: 'subSeriesId.seriesId'
+				expand: 'subSeriesId.seriesId,countryColor'
 			})
 		);
 	}
