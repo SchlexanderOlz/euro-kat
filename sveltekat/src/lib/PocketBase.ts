@@ -118,5 +118,5 @@ export async function getFigureCount(): Promise<number> {
 }
 
 export async function getLatestArticle(): Promise<Article> {
-	return await articles.getFirstListItem('', { sort: '+created' });
+	return await articles.getFirstListItem('', { sort: '-created' });
 }
