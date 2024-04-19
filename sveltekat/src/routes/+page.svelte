@@ -68,9 +68,9 @@
 			{/if}
 
 			{#if data.article?.content}
-        <div class="latest-article">
-          {@html data.article?.content}
-        </div>
+				<div class="latest-article">
+					{@html data.article?.content}
+				</div>
 			{:else}
 				<p class="mt-1 text-center opacity-60 text-xl">
 					Dieser Artikel ist Momentan nicht verfügbar
@@ -88,19 +88,22 @@
 </div>
 
 <style>
-  :global(.latest-article > h1) {
-    @apply h1 mb-2;
-  }
+	:global(.latest-article > p) {
+		display: flex;
+	}
+	:global(.latest-article > h1) {
+		@apply h1 mb-2;
+	}
 
-  :global(.latest-article > h2) {
-    @apply h2 mb-2;
-  }
+	:global(.latest-article > h2) {
+		@apply h2 mb-2;
+	}
 
-  :global(.latest-article > h3) {
-    @apply h3 mb-2;
-  }
+	:global(.latest-article > h3) {
+		@apply h3 mb-2;
+	}
 
-  :global(.latest-article > h4) {
-    @apply h4 mb-2;
-  }
+	:global(.latest-article > h4) {
+		@apply h4 mb-2;
+	}
 </style>
