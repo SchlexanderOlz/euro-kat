@@ -12,7 +12,7 @@ export const load = (async () => {
 	let figures: Figure[] = structuredClone(
 		await figureBuilder.figureCollection.getFullList({
 			filter: '(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)',
-			expand: 'subSeriesId.seriesId',
+			expand: 'subSeriesId.seriesId,countryColor',
 			sort: '-maxi,+mpgNr'
 		})
 	);
