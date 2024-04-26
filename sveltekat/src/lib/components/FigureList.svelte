@@ -209,15 +209,14 @@
 	{/if}
 
 	<div class="w-full h-8 flex items-center relative mt-2">
-		<div class="w-80 md:flex hidden mr-4">
-			<button
+		<button
 				on:click={() => {
 					figureBuilder.sortName();
 					update();
 				}}
-				class="ml-2 text-start "
+				class="text-start mx-2 md:flex hidden w-80"
 			>
-				Name
+				<span class="mr-1">Name</span>
 
 				{#if figureBuilder.sort.has('+name')}
 					<AupIcon />
@@ -225,7 +224,6 @@
 					<ADownIcon />
 				{/if}
 			</button>
-		</div>
 
 		<button
 			on:click={() => {
@@ -234,7 +232,7 @@
 			}}
 			class="flex ml-2"
 		>
-			Serie
+      <span class="mr-1">Serie</span>
 			{#if figureBuilder.sort.has('+note')}
 				<AupIcon />
 			{:else if figureBuilder.sort.has('-note')}
@@ -248,7 +246,7 @@
 			}}
 			class="absolute right-2 flex"
 		>
-			Mpg Nr.
+      <span class="mr-1">Mpg Nr.</span>
 			{#if figureBuilder.sort.has('+mpgNr')}
 				<AupIcon />
 			{:else if figureBuilder.sort.has('-mpgNr')}
