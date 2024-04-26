@@ -8,11 +8,12 @@
 
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { ListResult, ClientResponseError } from 'pocketbase';
-	import type { Figure } from '$lib/Types';
+	import type { CountryColor, Figure } from '$lib/Types';
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
 	import { onMount } from 'svelte';
 	import { filterBool } from '$lib/Stores';
+	import { getColors } from '$lib/PocketBase';
 
 	let figures: Figure[];
 	let pages: number;
@@ -80,10 +81,15 @@
 		}, 500);
 	}
 
+  let colors: CountryColor[] = []
+
 	onMount(async () => {
 		await update();
 		init_loading = false;
+    colors = await getColors();
 	});
+
+
 </script>
 
 <div>
@@ -118,7 +124,7 @@
 
 	{#if $filterBool}
 		<div
-			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex sm:flex-row flex-col sm:items-center"
+			class="card ring-surface-400 bg-surface-100 p-2 rounded-sm w-full mt-2 flex nav:flex-row flex-col nav:items-center"
 		>
 			<div class="flex flex-col items-start justify-between w-fit px-0">
 				<div class="flex flex-row items-center">
@@ -179,7 +185,7 @@
 				</div>
 			</div>
 
-			<div class="sm:w-[40%] sm:min-w-[20rem] w-full sm:ml-10 flex-shrink-0 mt-4 sm:mt-0">
+			<div class="nav:w-[40%] nav:min-w-[20rem] flex-grow w-full nav:ml-10 flex-shrink-0 mt-4 nav:mt-0">
 				<p class="ml-2 w-full text-center">Jahre: {yearrange.join('-')}</p>
 				<RangeSlider
 					on:change={updateYear}
@@ -192,17 +198,24 @@
 					springValues={{ stiffness: 1, damping: 1 }}
 				/>
 			</div>
+      <div class="nav:ml-4 nav:w-max w-full flex flex-col space-y-1.5">
+        {#each colors as color}
+           <p style={`background-color: ${color.color}35;`} class="w-full rounded pl-1 pr-4">{color.country}</p>
+        {/each}
+      </div>
 		</div>
+    
+    
 	{/if}
 
 	<div class="w-full h-8 flex items-center relative mt-2">
-		<div class="w-80">
+		<div class="w-80 md:flex hidden mr-4">
 			<button
 				on:click={() => {
 					figureBuilder.sortName();
 					update();
 				}}
-				class="ml-2 text-start flex"
+				class="ml-2 text-start "
 			>
 				Name
 
@@ -219,7 +232,7 @@
 				figureBuilder.sortNote();
 				update();
 			}}
-			class="ml-4 md:flex hidden"
+			class="flex ml-2"
 		>
 			Serie
 			{#if figureBuilder.sort.has('+note')}

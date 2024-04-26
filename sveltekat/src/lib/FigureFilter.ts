@@ -187,7 +187,6 @@ export class FigurFilterBuilder {
 		this.findRemove('mpgNr=', this.optional) ||
 			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
 
-		console.log(mpgNr);
 		let match = /^(?!^[0-9][A-Za-z]$).*((\d|[0-9][A-Z]))$/;
 		if (match.test(mpgNr)) this.optional.add(`mpgNr="${mpgNr}"`);
 		else this.optional.add(`subSeriesId.seriesId.seriesLetter="${mpgNr}"`);

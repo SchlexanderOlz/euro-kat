@@ -22,8 +22,13 @@ export interface Figure {
 	isMarked: boolean;
 	expand: {
 		subSeriesId: SubSeries;
-		countryColor?: { country: string; color: string; };
+		countryColor?: CountryColor;
 	};
+}
+
+export interface CountryColor {
+  country: string;
+  color: string;
 }
 
 

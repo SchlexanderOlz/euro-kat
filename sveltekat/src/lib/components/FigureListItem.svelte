@@ -2,17 +2,16 @@
 	import type { Figure } from '$lib/Types';
 
 	export let figure: Figure;
-	console.log(figure);
-	let color = figure.expand.countryColor ? figure.expand.countryColor.color : '';
+	let color = figure.expand.countryColor?.color || '';
 	if (figure.isMarked) color = '#8e1a03';
 </script>
 
 <a
-	style={`background-color: ${color};`}
-	class="card card-hover py-1 px-2 my-1 h-min flex justify-between relative hover:bg-surface-200-700-token"
+	style={`background-color: ${color}35;`}
+	class="card card-hover py-1 px-2 my-1 h-min flex  justify-between relative hover:bg-surface-200-700-token"
 	href="/figures/{figure.id}"
 >
-	<div class="flex">
+	<div class="flex max-h-32">
 		<p
 			class="sm:w-80 w-full sm:mr-0 mr-2 overflow-hidden sm:flex-shrink-0 break-all md:flex hidden"
 		>

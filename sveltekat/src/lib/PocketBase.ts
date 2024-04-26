@@ -12,7 +12,8 @@ import type {
 	Extra,
 	ExtraDetail,
 	Article,
-	Variation
+	Variation,
+  CountryColor
 } from './Types.js';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging, Article };
@@ -27,6 +28,7 @@ const warnings = connection.collection('Warning');
 const subSeriesVar = connection.collection('SubSeriesVariation');
 const extras = connection.collection('Extra');
 const articles = connection.collection('Article');
+const country_colors = connection.collection('CountryColors');
 
 export async function getWarnings(): Promise<WarningZ[]> {
 	return await warnings.getFullList<WarningZ>({
@@ -50,7 +52,7 @@ export async function getExtraDetail(id: string): Promise<ExtraDetail> {
 export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 	const figure: any = await figures.getOne(fid, {
 		expand:
-			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId,variations'
+			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId,variations,countryColor'
 	});
 
   if (figure.subSeriesId == "") {
@@ -93,11 +95,14 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		});
 	}
 
+  let color = "";
+
+
 	const vals: FigurePageCleaned = {
 		subSeriesFigures: seriesFigures,
 		subser: subSeries,
 		subservars: subSeriesVariations,
-		variations: variations,
+		variations: variations
 	};
 
   if (figure.subSeriesId == "") {
@@ -105,6 +110,10 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
   }
 
 	return vals;
+}
+
+export async function getColors(): Promise<CountryColor[]> {
+    return (await country_colors.getFullList())
 }
 
 export async function getCountrys(): Promise<Set<string>> {
