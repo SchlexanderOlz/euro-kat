@@ -262,6 +262,15 @@ export class FigurFilterBuilder {
 		this.findRemove('-name', this.sort);
 	}
 
+	mine() {
+		if (this.findRemove('FigureVariation_via_figureId.habIch?=true', this.required)) return;
+		this.required.add('FigureVariation_via_figureId.habIch?=true');
+	}
+
+	isMineTriggered() {
+		return this.startIsContainedRequired('FigureVariation_via_figureId.habIch?=');
+	}
+
 	private formatDate(date: Date): string {
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based

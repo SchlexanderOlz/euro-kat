@@ -36,7 +36,7 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
-			<p class="mt-3 ml-1 text-xl font-bold">{fig.header}</p>
+			<p class="mt-3 ml-1 text-xl font-bold"> {fig.header}</p>
 			<div class="flex flex-col xl:flex-row card my-2 p-2">
 				<div class="xl:w-72 w-auto pr-2 shrink-0">
 					<p class="font-normal my-0.5 break-all">
@@ -134,6 +134,9 @@
 															<svelte:fragment slot="summary">
 																<span class="font-bold">
 																	{#if figvar.expand.figureId?.mpgNr}
+																		{#if figvar.habIch}
+																			<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Red_x.svg" class="w-6 h-6 inline-block" alt="Red X">
+																		{/if}
 																		{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
 																	{:else}
 																		Nicht bekannt?

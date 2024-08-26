@@ -27,6 +27,7 @@
 	let maxi = figureBuilder.isMaxiTriggered();
 	let questionable = figureBuilder.isQuestionableTriggered();
 	let changed = figureBuilder.isChangedTriggered();
+	let mine = figureBuilder.isMineTriggered();
 
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
@@ -182,6 +183,20 @@
 						rounded="rounded"
 					/>
 					<p class="ml-2 flex">Verändert</p>
+				</div>
+				<div class="flex flex-row items-center mt-2 ml-0">
+					<SlideToggle
+						on:change={() => {
+							figureBuilder.mine();
+							update();
+						}}
+						name="mine"
+						checked={mine}
+						active="bg-primary-500"
+						size="sm"
+						rounded="rounded"
+					/>
+					<p class="ml-2 flex">Daniel's Figuren</p>
 				</div>
 			</div>
 

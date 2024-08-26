@@ -50,6 +50,7 @@ export interface FigureVariation {
 	packageInserts: string[]; // Not how pictures are retrieved
 	figureId: Figure;
 	subSeriesId: SubSeries;
+	habIch: boolean;
 	expand: {
 		figureId: Figure;
 	};
