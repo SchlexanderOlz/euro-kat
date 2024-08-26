@@ -67,13 +67,9 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 
 	let subSeries = figure.expand.subSeriesId;
 
-<<<<<<< Updated upstream
-	let subSeriesVariations = subSeries?.expand['SubSeriesVariation(subSeriesId)'];
-=======
   
 
-	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
->>>>>>> Stashed changes
+	let subSeriesVariations = subSeries?.expand['SubSeriesVariation(subSeriesId)'];
 
 	// expand packaging
 	if (subSeries?.packaging != undefined) {
