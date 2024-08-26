@@ -49,11 +49,11 @@
   }
 
   :global(.cl-socialButtonsBlockButton:hover) {
-    @apply bg-surface-600;
+    @apply bg-surface-300-600-token;
   }
 
   :global(.cl-dividerLine) {
-    @apply bg-surface-600;
+    @apply bg-surface-600-300-token;
   }
 
   :global(.cl-dividerText) {
