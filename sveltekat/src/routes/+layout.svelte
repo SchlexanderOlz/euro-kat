@@ -26,3 +26,60 @@
 		<Footer />
 	</svelte:fragment>
 </AppShell>
+
+<style>
+  :global(.cl-internal-b3fm6y) {
+    display: none;
+  }
+
+  :global(.cl-card) {
+    @apply card;
+  }
+
+  :global(.cl-headerTitle) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-headerSubtitle) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-socialButtonsBlockButton) {
+    @apply text-surface-800-100-token border-2 border-surface-300-600-token;
+  }
+
+  :global(.cl-socialButtonsBlockButton:hover) {
+    @apply bg-surface-600;
+  }
+
+  :global(.cl-dividerLine) {
+    @apply bg-surface-600;
+  }
+
+  :global(.cl-dividerText) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-formFieldLabel) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-formFieldInput) {
+    @apply  input text-surface-800-100-token;;
+  }
+
+  :global(.cl-formFieldInfoText ) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-formFieldInputShowPasswordButton) {
+    @apply text-surface-800-100-token;
+  }
+
+  :global(.cl-footerActionText) {
+    @apply text-surface-800-100-token;
+  }
+  :global(.cl-footerActionText + a) {
+    @apply text-surface-800-100-token underline underline-offset-1;
+  }
+</style> 

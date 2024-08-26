@@ -5,6 +5,12 @@
 	import NavItem from './NavItem.svelte';
 	import SideNav from './SideNav.svelte';
 	import EkLogo from '$lib/icons/EKLogo.svelte';
+
+  
+    import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte'
+    import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte'
+    import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte'
+
 </script>
 
 <AppBar padding="p-0">
@@ -32,7 +38,18 @@
 			<div class="nav:flex hidden">
 				<LightSwitch />
 			</div>
+      <SignedIn>
+        <SignOutButton signOutCallback={() => {
+          window.location.href = '/'
+        }} class="nav:mr-0 nav:ml-4 ml-0 mr-4 btn variant-ghost-secondary">Ausloggen</SignOutButton>
+    </SignedIn>
+    <SignedOut>
+      <a href="/sign-in">
+        <button class="btn variant-ghost-primary nav:mr-0 nav:ml-4 ml-0 mr-4">Einloggen</button>
+      </a>
+    </SignedOut>
 			<SideNav />
+      
 		</div>
 	</svelte:fragment>
 </AppBar>

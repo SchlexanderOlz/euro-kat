@@ -63,9 +63,17 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		filter: `subSeriesId="${figure.subSeriesId}"`
 	});
 
+  
+
 	let subSeries = figure.expand.subSeriesId;
 
+<<<<<<< Updated upstream
 	let subSeriesVariations = subSeries?.expand['SubSeriesVariation(subSeriesId)'];
+=======
+  
+
+	let subSeriesVariations = subSeries.expand['SubSeriesVariation(subSeriesId)'];
+>>>>>>> Stashed changes
 
 	// expand packaging
 	if (subSeries?.packaging != undefined) {
