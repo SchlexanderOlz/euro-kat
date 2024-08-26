@@ -6,11 +6,9 @@
 	import SideNav from './SideNav.svelte';
 	import EkLogo from '$lib/icons/EKLogo.svelte';
 
-  
-    import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte'
-    import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte'
-    import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte'
-
+	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
+	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 </script>
 
 <AppBar padding="p-0">
@@ -21,7 +19,7 @@
 			/>
 		</a>
 	</svelte:fragment>
-	<div class="w-max content-center select-none nav:flex hidden">
+	<div class="w-max content-center select-none lg:flex hidden">
 		{#each NavItems as item}
 			{#if Object.keys(item.references).length > 1}
 				<NavBox {item} />
@@ -35,21 +33,24 @@
 			<a class="xxs:flex hidden" href="http://paypal.me/Eurokatalog" target="_blank">
 				<button class="btn variant-ghost-primary mr-4">Spenden</button>
 			</a>
-			<div class="nav:flex hidden">
+			<SignedIn>
+				<SignOutButton
+					signOutCallback={() => {
+						window.location.href = '/';
+					}}
+					class="mr-4 btn variant-ghost-secondary sm:flex hidden">Ausloggen</SignOutButton
+				>
+			</SignedIn>
+			<SignedOut>
+				<a href="/sign-in">
+					<button class="btn variant-ghost-primary mr-4 sm:flex hidden">Einloggen</button>
+				</a>
+			</SignedOut>
+			<div class="lg:flex hidden">
 				<LightSwitch />
 			</div>
-      <SignedIn>
-        <SignOutButton signOutCallback={() => {
-          window.location.href = '/'
-        }} class="nav:mr-0 nav:ml-4 ml-0 mr-4 btn variant-ghost-secondary">Ausloggen</SignOutButton>
-    </SignedIn>
-    <SignedOut>
-      <a href="/sign-in">
-        <button class="btn variant-ghost-primary nav:mr-0 nav:ml-4 ml-0 mr-4">Einloggen</button>
-      </a>
-    </SignedOut>
+
 			<SideNav />
-      
 		</div>
 	</svelte:fragment>
 </AppBar>

@@ -6,6 +6,9 @@
 	import { NavItems } from '$lib/NavItems';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
+	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 
 	const drawerStore = getDrawerStore();
 
@@ -77,15 +80,34 @@
 				{/each}
 			</div>
 		</div>
-		<a class="w-full flex justify-center mb-4" href="https://www.paypal.com/" target="_blank">
-			<button class="btn variant-ghost-primary w-full mx-5">Spenden</button>
-		</a>
+		<div class="w-full px-5">
+			<SignedIn>
+				<SignOutButton
+					signOutCallback={() => {
+						window.location.href = '/';
+					}}
+					class="btn variant-ghost-secondary w-full">Ausloggen</SignOutButton
+				>
+			</SignedIn>
+			<SignedOut>
+				<a href="/sign-in">
+					<button class="btn variant-ghost-primary w-full">Einloggen</button>
+				</a>
+			</SignedOut>
+			<a
+				class="w-full flex justify-center mb-4 mt-2"
+				href="https://www.paypal.com/"
+				target="_blank"
+			>
+				<button class="btn variant-ghost-primary w-full">Spenden</button>
+			</a>
+		</div>
 	</div>
 </Drawer>
 
 <button
 	on:click={sideOpen}
-	class="nav:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
+	class="lg:hidden flex cursor-pointer justify-center items-center hover:scale-105 duration-150"
 >
 	<MenuIcon />
 </button>
