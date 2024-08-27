@@ -10,7 +10,7 @@ export const config = {
 
 export const load = (async (event) => {
 	const res: FigurePageCleaned = await getAllPageData(event.params.subseries);
-  const categories = await (await event.fetch('/my-categories')).json();
+  const categories = await (await event.fetch('/api/my-categories')).json();
 
 	return {
 		pageData: structuredClone(res),

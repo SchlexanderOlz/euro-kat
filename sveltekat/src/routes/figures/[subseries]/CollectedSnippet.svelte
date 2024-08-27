@@ -14,7 +14,6 @@
 		let response = await (await fetch('/api/my-figures/' + figure.id)).json();
 		mappedData = response.mappedData;
 		sortedCategories = response.sortedCategories;
-		console.log(sortedCategories);
 	}
 
 	onMount(async () => {
@@ -22,7 +21,6 @@
 	});
 
 	async function increaseCount(category_id: string) {
-		console.log(figure.id);
 		const res = await fetch('/api/my-figures/' + figure.id, {
 			method: 'POST',
 			headers: {

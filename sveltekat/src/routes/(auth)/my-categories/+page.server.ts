@@ -1,13 +1,12 @@
 import { pbdata } from '$lib/server/PocketBase';
-import {type  Category } from '$lib/Types';
+import { type Category } from '$lib/Types';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
-    console.log(event.locals.pb_user);
-  
-    const categories = await pbdata.collection('category').getFullList<Category>({ filter: 'user="' + event.locals.pb_user.id + '"'})
-    
-    return {
-        categories: structuredClone(categories)
-    };
+	const response = structuredClone(await (await event.fetch('/api/my-categories')).json());
+
+	return {
+		categories: response.categories,
+		categoryFigureCount: response.categoryFigureCount
+	};
 }) satisfies PageServerLoad;

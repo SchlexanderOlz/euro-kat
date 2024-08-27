@@ -9,7 +9,7 @@
 	let name = $modalStore[0]?.meta?.category?.name || '';
 
 	async function submitForm() {
-		const res = await fetch('/my-categories', {
+		const res = await fetch('/api/my-categories', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -19,7 +19,7 @@
 
 		if (res.status === 200) {
 			modalStore.close();
-			$categories = await (await fetch('/my-categories')).json();
+			$categories = await (await fetch('/api/my-categories')).json();
 
 			return;
 		} else {
@@ -32,7 +32,7 @@
 	}
 
 	async function deleteCategory() {
-		const res = await fetch('/my-categories', {
+		const res = await fetch('/api/my-categories', {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
@@ -41,7 +41,7 @@
 		});
 
 		if (res.status === 200) {
-			$categories = await (await fetch('/my-categories')).json();
+			$categories = await (await fetch('/api/my-categories')).json();
 			modalStore.close();
 			return;
 		} else {

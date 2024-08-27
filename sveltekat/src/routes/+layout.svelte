@@ -16,17 +16,6 @@
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	initializeStores();
-
-  let test = false;
-
-  $: if( test && window.Clerk?.user) {
-    console.log(window.Clerk?.user);
-  }
-
-  onMount(() => {
-    test = true
-  })
-
 </script>
 
 <Modal />

@@ -23,7 +23,6 @@ export const handle: Handle = sequence(
         sub: string;
       }>('clerk_id="' + userId + '"', {});
 		} catch (e) {
-			console.log('user ' + userId + ' does not exist');
 			pb_user = await pbdata.collection('user').create<{
         id: string;
         sub: string;
