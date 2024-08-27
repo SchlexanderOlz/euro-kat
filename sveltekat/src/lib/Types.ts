@@ -209,7 +209,7 @@ export interface Article {
 }
 
 export interface Category {
-  id: string;
+  id: string | null;
   user: string;
   name: string;
   color: string;

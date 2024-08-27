@@ -67,11 +67,7 @@
           <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
           <div class=" w-full h-full grow space-y-1 mb-1">
               <p class="font-bold">Gesammelt:</p>
-              
               <CollectedSnippet figure={fig} />
-              
-              <!-- Collected -->
-
           </div>
 				</div>
 
