@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { categories } from '$lib/Stores';
+	import { categories, categoryFigureCount } from '$lib/Stores';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { Trash2, X } from 'lucide-svelte';
 
@@ -19,7 +19,9 @@
 
 		if (res.status === 200) {
 			modalStore.close();
-			$categories = await (await fetch('/api/my-categories')).json();
+			const response = await fetch('/api/my-categories').then((res) => res.json());
+			$categories = response.categories;
+			$categoryFigureCount = response.categoryFigureCount;
 
 			return;
 		} else {
@@ -41,7 +43,9 @@
 		});
 
 		if (res.status === 200) {
-			$categories = await (await fetch('/api/my-categories')).json();
+			const response = await fetch('/api/my-categories').then((res) => res.json());
+			$categories = response.categories;
+			$categoryFigureCount = response.categoryFigureCount;
 			modalStore.close();
 			return;
 		} else {

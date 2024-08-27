@@ -5,3 +5,4 @@ import {type Category } from './Types';
 export const filterBool = writable(false);
 
 export const categories = writable<Category[]>([]);
+export const categoryFigureCount = writable<{[id: string]: number}>({});

@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import CategoryModal from './CategoryModal.svelte';
-	import { categories } from '$lib/Stores';
+	import { categories, categoryFigureCount } from '$lib/Stores';
 	import { Edit } from 'lucide-svelte';
 	import { type Category } from '$lib/Types';
 	import { onMount } from 'svelte';
@@ -10,14 +10,14 @@
 	export let data: PageData;
 
 	$categories = data.categories;
-	let categoryFigureCount = data.categoryFigureCount;
+	$categoryFigureCount = data.categoryFigureCount;
 
 	const modalStore = getModalStore();
 
 	onMount(async () => {
 		const response = await fetch('/api/my-categories').then((res) => res.json());
 		$categories = response.categories;
-		categoryFigureCount = response.categoryFigureCount;
+		$categoryFigureCount = response.categoryFigureCount;
 	});
 
 	function openModal(category: Category | null = null) {
@@ -41,7 +41,7 @@
 			<div class="card w-full max-w-96 p-1 pl-2 my-1 relative flex justify-between">
 				<p>Unkategorisiert</p>
 				<div class="flex">
-					<p class="mr-2 opacity-85">{categoryFigureCount['undefined']}</p>
+					<p class="mr-2 opacity-85">{$categoryFigureCount['undefined']}</p>
 					<button class="btn variant-ghost-warning h-6 w-6 p-1 invisible"> </button>
 				</div>
 			</div>
@@ -52,7 +52,7 @@
 			>
 				<p>{category.name}</p>
 				<div class="flex">
-					<p class="mr-2 opacity-85">{categoryFigureCount[category.id || '']}</p>
+					<p class="mr-2 opacity-85">{$categoryFigureCount[category.id || '']}</p>
 					<button
 						on:click={() => {
 							openModal(category);
