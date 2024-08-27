@@ -8,10 +8,12 @@ export const config = {
 	}
 };
 
-export const load = (async ({ params }) => {
-	const res: FigurePageCleaned = await getAllPageData(params.subseries);
+export const load = (async (event) => {
+	const res: FigurePageCleaned = await getAllPageData(event.params.subseries);
+  const categories = await (await event.fetch('/my-categories')).json();
 
 	return {
-		pageData: structuredClone(res)
+		pageData: structuredClone(res),
+    categories: categories
 	};
 }) satisfies PageServerLoad;
