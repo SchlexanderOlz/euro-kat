@@ -3,7 +3,7 @@
 // and what to do when importing types
 declare namespace App {
 	interface Locals {
-    session: {
+    auth: {
       userId: string;
       claims: {
         azp: string;

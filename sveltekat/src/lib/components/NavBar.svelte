@@ -9,6 +9,7 @@
 	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
 	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
+	import { Sparkles } from 'lucide-svelte';
 </script>
 
 <AppBar padding="p-0">
@@ -30,8 +31,8 @@
 	</div>
 	<svelte:fragment slot="trail">
 		<div class="mr-4 flex flex-row items-center">
-			<a class="xxs:flex hidden" href="http://paypal.me/Eurokatalog" target="_blank">
-				<button class="btn variant-ghost-primary mr-4">Spenden</button>
+			<a class="xxs:flex hidden" href="/premium">
+				<button class="btn variant-ghost-primary mr-4">Premium <Sparkles class="ml-2"/></button>
 			</a>
 			<SignedIn>
 				<SignOutButton
