@@ -8,7 +8,7 @@ export type Item = {
 export const NavItems: Item[] = [
 	{
 		title: 'Figuren',
-		references: { "Alle Figuren": '/figures', "Aktuelle Saison": '/current-series' }
+		references: { 'Alle Figuren': '/figures', 'Aktuelle Saison': '/current-series' }
 	},
 	{
 		title: 'Berichte',
@@ -22,8 +22,8 @@ export const NavItems: Item[] = [
 		title: 'Weiteres',
 		references: { Hilfe: '/help', Info: '/info', Legacy: '/legacy' }
 	},
-  {
-    title: 'Deine Kategorien',
-    references: { '': '/my-categories' }
-  }
+	{
+		title: 'Meine Sammlung',
+		references: { 'Meine Figuren': '/my-figures', 'Meine Kategorien': '/my-categories' }
+	}
 ];
