@@ -2,7 +2,24 @@
 // for information about these interfaces
 // and what to do when importing types
 declare namespace App {
-	// interface Locals {}
+	interface Locals {
+    session: {
+      userId: string;
+      claims: {
+        azp: string;
+        exp: number;
+        iat: number;
+        iss: string;
+        nbf: number;
+        sid: string;
+        sub: string;
+      }
+    },
+    pb_user: {
+      id: string;
+      sub: string;
+    }
+  }
 	// interface PageData {}
 	// interface Error {}
 	// interface Platform {}

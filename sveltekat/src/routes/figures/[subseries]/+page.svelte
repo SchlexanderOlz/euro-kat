@@ -2,8 +2,13 @@
 	import { imgdom } from '$lib/PocketBase';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
+	import { Minus, Plus } from 'lucide-svelte';
+	import { categories } from '$lib/Stores';
+	import CollectedSnippet from './CollectedSnippet.svelte';
 
 	export let data: PageData;
+
+  $categories = data.categories
 </script>
 
 <svelte:head>
@@ -22,7 +27,7 @@
 		{#if data.pageData.subservars != undefined && data.pageData.subservars[0].images.length != 0}
 			{#each data.pageData.subservars[0].images as imag}
 				<img
-					class="w-max mt-4 px-4"
+					class="w-max mt-4 px-4 "
 					src="{imgdom}/{data.pageData.subservars[0].collectionId}/{data.pageData.subservars[0]
 						.id}/{imag}"
 					alt="{data.pageData.subser.name} Beipackzettel"
@@ -36,9 +41,9 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
-			<p class="mt-3 ml-1 text-xl font-bold"> {fig.header}</p>
+			<p class="mt-3 ml-1 text-xl font-bold "> {fig.header}</p>
 			<div class="flex flex-col xl:flex-row card my-2 p-2">
-				<div class="xl:w-72 w-auto pr-2 shrink-0">
+				<div class="xl:w-72 w-auto pr-2 shrink-0 flex flex-col ">
 					<p class="font-normal my-0.5 break-all">
 						<span class="font-bold">MPG-Nr:</span>
 						{fig.mpgNr}
@@ -59,6 +64,15 @@
 						<span class="font-bold break-keep">Bemerkung:</span>
 						{fig.note}
 					</p>
+          <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
+          <div class=" w-full h-full grow space-y-1 mb-1">
+              <p class="font-bold">Gesammelt:</p>
+              
+              <CollectedSnippet figure={fig} />
+              
+              <!-- Collected -->
+
+          </div>
 				</div>
 
 				<div class="flex flex-wrap xl:justify-start justify-center xl:mt-0 mt-1">

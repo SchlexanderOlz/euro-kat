@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
+	import { AppShell, initializeStores, Modal } from '@skeletonlabs/skeleton';
 
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
@@ -9,14 +9,27 @@
 
   import { dev } from '$app/environment';
   import { inject } from '@vercel/analytics';
+	import { onMount } from 'svelte';
  
   inject({ mode: dev ? 'development' : 'production' });
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	initializeStores();  
+	initializeStores();
+
+  let test = false;
+
+  $: if( test && window.Clerk?.user) {
+    console.log(window.Clerk?.user);
+  }
+
+  onMount(() => {
+    test = true
+  })
+
 </script>
 
+<Modal />
 <AppShell>
 	<svelte:fragment slot="header">
 		<NavBar />

@@ -207,3 +207,18 @@ export interface Article {
 	created: Date,
 	content: string
 }
+
+export interface Category {
+  id: string;
+  user: string;
+  name: string;
+  color: string;
+}
+
+export interface FigureData {
+  id: string;
+  user: string;
+  figure_id: string;
+  category: string;
+  count: number;
+}
