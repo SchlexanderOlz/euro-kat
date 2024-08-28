@@ -2,20 +2,31 @@ import type { ListResult, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
 import type { Figure } from './Types';
 
-export class FigurFilterBuilder {
+export default class FigurFilterBuilder {
 	required: Set<string>;
 	figureCollection: RecordService<Figure>;
 	optional: Set<string>;
 	sort: Set<string>;
 	currentPage: number = 1;
+	user_id: string;
+	private static instance: FigurFilterBuilder
 
-	constructor() {
+	private constructor(user_id: string) {
 		this.figureCollection = connection.collection('Figure');
+		this.user_id = user_id;
 		this.optional = new Set();
 		this.required = new Set();
 		this.sort = new Set();
 		this.sortMpgNr();
 	}
+
+	public static getInstance(user_id?: string): FigurFilterBuilder {
+		if (!FigurFilterBuilder.instance && user_id) {
+			FigurFilterBuilder.instance = new FigurFilterBuilder(user_id!)
+		}
+		return FigurFilterBuilder.instance
+	}
+
 	private startIsContainedRequired(start: string) {
 		return Array.from(this.required).some((elem) => elem.startsWith(start));
 	}
@@ -36,14 +47,14 @@ export class FigurFilterBuilder {
 
 	private getRequiredFilterValue(start: string): string {
 		for (const elem of this.required) {
-			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1);
+			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll('\'', '');
 		}
 		return '';
 	}
 
 	private getOptionalFilterValue(start: string): string {
 		for (const elem of this.optional) {
-			if (elem.startsWith(start)) return elem.replace(start, '').slice(1, -1);
+			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll('\'', '');
 		}
 		return '';
 	}
@@ -76,7 +87,7 @@ export class FigurFilterBuilder {
 		if (this.findRemove('updated>=', this.required)) return;
 		let date = new Date();
 		date.setMonth(date.getMonth() - 1);
-		this.required.add(`updated>="${this.formatDate(date)}"`);
+		this.required.add(`updated>='${this.formatDate(date)}'`);
 	}
 
 	isChangedTriggered(): boolean {
@@ -121,7 +132,7 @@ export class FigurFilterBuilder {
 
 	yearBegin(year: number | undefined) {
 		this.findRemove('year>=', this.required);
-		this.required.add(`year>='${year}'`);
+		this.required.add(`year>=${year}`);
 	}
 
 	getYearBegin(): number {
@@ -134,7 +145,7 @@ export class FigurFilterBuilder {
 
 	yearEnd(year: number | undefined) {
 		this.findRemove('year<=', this.required);
-		this.required.add(`year<='${year}'`);
+		this.required.add(`year<=${year}`);
 	}
 
 	getYear(): number {
@@ -144,12 +155,12 @@ export class FigurFilterBuilder {
 	year(year: number | undefined) {
 		this.findRemove('year=', this.required);
 		if (year == undefined) return;
-		this.required.add(`year="${year}"`);
+		this.required.add(`year='${year}'`);
 	}
 
 	name(name: string) {
 		this.findRemove('name~', this.optional);
-		this.optional.add(`name~"${name}"`);
+		this.optional.add(`name~'${name}'`);
 	}
 
 	getName(): string {
@@ -158,7 +169,7 @@ export class FigurFilterBuilder {
 
 	identifier(id: string) {
 		this.findRemove('identifier~', this.optional);
-		this.optional.add(`identifier~"${id}"`);
+		this.optional.add(`identifier~'${id}'`);
 	}
 
 	getIdentifier(): string {
@@ -167,7 +178,7 @@ export class FigurFilterBuilder {
 
 	note(note: string) {
 		this.findRemove('note~', this.optional);
-		this.optional.add(`note~"${note}"`);
+		this.optional.add(`note~'${note}'`);
 	}
 
 	getNote(): string {
@@ -176,7 +187,7 @@ export class FigurFilterBuilder {
 
 	id(id: string) {
 		this.findRemove('id=', this.required);
-		this.required.add(`id="${id}"`);
+		this.required.add(`id='${id}'`);
 	}
 
 	getId(): string {
@@ -188,8 +199,8 @@ export class FigurFilterBuilder {
 			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
 
 		let match = /^(?!^[0-9][A-Za-z]$).*((\d|[0-9][A-Z]))$/;
-		if (match.test(mpgNr)) this.optional.add(`mpgNr="${mpgNr}"`);
-		else this.optional.add(`subSeriesId.seriesId.seriesLetter="${mpgNr}"`);
+		if (match.test(mpgNr)) this.optional.add(`mpgNr='${mpgNr}'`);
+		else this.optional.add(`subSeriesId.seriesId.seriesLetter='${mpgNr}'`);
 	}
 
 	getMpgNr(): string {
@@ -201,7 +212,7 @@ export class FigurFilterBuilder {
 
 	country(country: string) {
 		this.findRemove('country=', this.required);
-		this.required.add(`country="${country}"`);
+		this.required.add(`country='${country}'`);
 	}
 
 	getCountry(): string {
@@ -210,7 +221,7 @@ export class FigurFilterBuilder {
 
 	subSeries(name: string) {
 		this.findRemove('subSeriesId.name~', this.optional);
-		this.optional.add(`subSeriesId.name~"${name}"`);
+		this.optional.add(`subSeriesId.name~'${name}'`);
 	}
 
 	getSubSerie(): string {
@@ -265,6 +276,11 @@ export class FigurFilterBuilder {
 	mine() {
 		if (this.findRemove('FigureVariation_via_figureId.habIch?=true', this.required)) return;
 		this.required.add('FigureVariation_via_figureId.habIch?=true');
+	}
+
+	myFigures() {
+		if (this.findRemove('collection_via_figure_id.user_id?=', this.required)) return;
+		this.required.add(`collection_via_figure_id.user_id?='${this.user_id}'`)
 	}
 
 	isMineTriggered() {
@@ -330,5 +346,3 @@ export class FigurFilterBuilder {
 		);
 	}
 }
-
-export let figureBuilder = new FigurFilterBuilder();
