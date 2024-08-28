@@ -2,7 +2,7 @@
 	import FigureListItem from './FigureListItem.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	import FigureBuilder from '$lib/FigureFilter';
+	import figureBuilder from '$lib/FigureFilter';
 	import CDownIcon from '$lib/icons/CDownIcon.svelte';
 	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
@@ -19,32 +19,31 @@
 	let pages: number;
 
 	let init_loading = true;
-	let figureBuilder = FigureBuilder.getInstance("5yand3ub6991lqv")
 
-	let inputValue = figureBuilder.getName() || '#' + figureBuilder.getMpgNr();
+	let inputValue = figureBuilder.name || '#' + figureBuilder.mpgNr;
 	if (inputValue === '#') inputValue = '';
 
-	figureBuilder.sortMpgNr();
+	figureBuilder.sortByMpgNr();
 
-	let curser = figureBuilder.isCurrentTriggered();
-	let maxi = figureBuilder.isMaxiTriggered();
-	let questionable = figureBuilder.isQuestionableTriggered();
-	let changed = figureBuilder.isChangedTriggered();
-	let mine = figureBuilder.isMineTriggered();
+	let curser = figureBuilder.isCurrentTriggered;
+	let maxi = figureBuilder.isMaxiTriggered;
+	let questionable = figureBuilder.isQuestionableTriggered;
+	let changed = figureBuilder.isChangedTriggered;
+	let mine = figureBuilder.isMineTriggered;
 
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
 			if (inputValue[0] == '#') {
-				figureBuilder.mpgnumber(inputValue.substring(1));
+				figureBuilder.byMpgNr(inputValue.substring(1));
 			} else {
-				figureBuilder.mpgnumber(inputValue.substring(0));
+				figureBuilder.byMpgNr(inputValue.substring(0));
 			}
 
-			figureBuilder.note(inputValue);
-			figureBuilder.name(inputValue);
-			figureBuilder.subSeries(inputValue);
+			figureBuilder.byNote(inputValue);
+			figureBuilder.byName(inputValue);
+			figureBuilder.bySubSeries(inputValue);
 
 			await update();
 		}, 500);
@@ -73,14 +72,14 @@
 	}
 
 	let yearrange = [
-		figureBuilder.getYearBegin() || 2004,
-		figureBuilder.getYearEnd() || new Date().getFullYear()
+		figureBuilder.yearBegin || 2004,
+		figureBuilder.yearEnd || new Date().getFullYear()
 	];
 	async function updateYear() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
-			figureBuilder.yearBegin(yearrange[0]);
-			figureBuilder.yearEnd(yearrange[1]);
+			figureBuilder.byYearBegin(yearrange[0]);
+			figureBuilder.byYearEnd(yearrange[1]);
 			update();
 		}, 500);
 	}
@@ -229,7 +228,7 @@
 	<div class="w-full h-8 flex items-center relative mt-2">
 		<button
 				on:click={() => {
-					figureBuilder.sortName();
+					figureBuilder.sortByName();
 					update();
 				}}
 				class="text-start mx-2 md:flex hidden w-80"
@@ -245,7 +244,7 @@
 
 		<button
 			on:click={() => {
-				figureBuilder.sortNote();
+				figureBuilder.sortByNote();
 				update();
 			}}
 			class="flex ml-2"
@@ -259,7 +258,7 @@
 		</button>
 		<button
 			on:click={() => {
-				figureBuilder.sortMpgNr();
+				figureBuilder.sortByMpgNr();
 				update();
 			}}
 			class="absolute right-2 flex"

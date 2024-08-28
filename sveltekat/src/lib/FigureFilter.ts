@@ -4,28 +4,20 @@ import type { Figure } from './Types';
 import { userId } from './Stores';
 import { get } from 'svelte/store';
 
-export default class FigurFilterBuilder {
+export class FigurFilterBuilder {
 	required: Set<string>;
 	figureCollection: RecordService<Figure>;
 	optional: Set<string>;
 	sort: Set<string>;
 	currentPage: number = 1;
 	user_id?: string;
-	private static instance: FigurFilterBuilder
 
-	private constructor(user_id?: string) {
+	constructor() {
 		this.figureCollection = connection.collection('Figure');
 		this.optional = new Set();
 		this.required = new Set();
 		this.sort = new Set();
-		this.sortMpgNr();
-	}
-
-	public static getInstance(user_id?: string): FigurFilterBuilder {
-		if (!FigurFilterBuilder.instance && user_id) {
-			FigurFilterBuilder.instance = new FigurFilterBuilder(user_id)
-		}
-		return FigurFilterBuilder.instance
+		this.sortByMpgNr();
 	}
 
 	private startIsContainedRequired(start: string) {
@@ -48,14 +40,14 @@ export default class FigurFilterBuilder {
 
 	private getRequiredFilterValue(start: string): string {
 		for (const elem of this.required) {
-			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll('\'', '');
+			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll("'", '');
 		}
 		return '';
 	}
 
 	private getOptionalFilterValue(start: string): string {
 		for (const elem of this.optional) {
-			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll('\'', '');
+			if (elem.startsWith(start)) return elem.replace(start, '').replaceAll("'", '');
 		}
 		return '';
 	}
@@ -65,12 +57,11 @@ export default class FigurFilterBuilder {
 			this.findRemove(
 				'(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)',
 				this.required
-			)
-			&&
+			) &&
 			this.killMaxi()
 		)
 			return;
-		this.toggleSort('maxi')
+		this.toggleSort('maxi');
 		this.required.add('(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)');
 	}
 
@@ -78,7 +69,7 @@ export default class FigurFilterBuilder {
 		return this.findRemove('+maxi', this.sort);
 	}
 
-	isCurrentTriggered(): boolean {
+	public get isCurrentTriggered(): boolean {
 		return this.startIsContainedRequired(
 			'(subSeriesId.seriesId.currentSeries=true||subSeriesId.currentSeries=true)'
 		);
@@ -91,17 +82,17 @@ export default class FigurFilterBuilder {
 		this.required.add(`updated>='${this.formatDate(date)}'`);
 	}
 
-	isChangedTriggered(): boolean {
+	public get isChangedTriggered(): boolean {
 		return this.startIsContainedRequired('updated>=');
 	}
 
 	maxi() {
-		if (this.findRemove('maxi=true', this.required)) return;
-		this.required.add('maxi=true');
+		if (this.findRemove('(maxi=true', this.required)) return;
+		this.required.add(`(maxi=true||subSeriesId.name~'maxi')`);
 	}
 
-	isMaxiTriggered(): boolean {
-		return this.startIsContainedRequired('maxi');
+	public get isMaxiTriggered(): boolean {
+		return this.startIsContainedRequired('(maxi=true');
 	}
 
 	fake() {
@@ -118,7 +109,7 @@ export default class FigurFilterBuilder {
 		this.required.add('questionable=true');
 	}
 
-	isQuestionableTriggered(): boolean {
+	public get isQuestionableTriggered(): boolean {
 		return this.startIsContainedRequired('questionable=');
 	}
 
@@ -127,75 +118,75 @@ export default class FigurFilterBuilder {
 		this.required.add('sticker=true');
 	}
 
-	isStickerTriggered(): boolean {
+	public get isStickerTriggered(): boolean {
 		return this.startIsContainedRequired('sticker=');
 	}
 
-	yearBegin(year: number | undefined) {
+	byYearBegin(year: number | undefined) {
 		this.findRemove('year>=', this.required);
 		this.required.add(`year>=${year}`);
 	}
 
-	getYearBegin(): number {
+	public get yearBegin(): number {
 		return Number.parseInt(this.getRequiredFilterValue('year>='));
 	}
 
-	getYearEnd(): number {
+	public get yearEnd(): number {
 		return Number.parseInt(this.getRequiredFilterValue('year<='));
 	}
 
-	yearEnd(year: number | undefined) {
+	byYearEnd(year: number | undefined) {
 		this.findRemove('year<=', this.required);
 		this.required.add(`year<=${year}`);
 	}
 
-	getYear(): number {
+	public get year(): number {
 		return Number.parseInt(this.getRequiredFilterValue('year='));
 	}
 
-	year(year: number | undefined) {
+	byYear(year: number | undefined) {
 		this.findRemove('year=', this.required);
 		if (year == undefined) return;
 		this.required.add(`year='${year}'`);
 	}
 
-	name(name: string) {
+	byName(name: string) {
 		this.findRemove('name~', this.optional);
 		this.optional.add(`name~'${name}'`);
 	}
 
-	getName(): string {
+	public get name(): string {
 		return this.getOptionalFilterValue('name~');
 	}
 
-	identifier(id: string) {
+	byIdentifier(id: string) {
 		this.findRemove('identifier~', this.optional);
 		this.optional.add(`identifier~'${id}'`);
 	}
 
-	getIdentifier(): string {
+	public get identifier(): string {
 		return this.getOptionalFilterValue('identifier~');
 	}
 
-	note(note: string) {
+	byNote(note: string) {
 		this.findRemove('note~', this.optional);
 		this.optional.add(`note~'${note}'`);
 	}
 
-	getNote(): string {
+	public get note(): string {
 		return this.getOptionalFilterValue('note~');
 	}
 
-	id(id: string) {
+	byId(id: string) {
 		this.findRemove('id=', this.required);
 		this.required.add(`id='${id}'`);
 	}
 
-	getId(): string {
+	public get id(): string {
 		return this.getRequiredFilterValue('id=');
 	}
 
-	mpgnumber(mpgNr: string) {
+	byMpgNr(mpgNr: string) {
 		this.findRemove('mpgNr=', this.optional) ||
 			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
 
@@ -204,38 +195,38 @@ export default class FigurFilterBuilder {
 		else this.optional.add(`subSeriesId.seriesId.seriesLetter='${mpgNr}'`);
 	}
 
-	getMpgNr(): string {
+	public get mpgNr(): string {
 		return (
 			this.getOptionalFilterValue('mpgNr=') ||
 			this.getOptionalFilterValue('subSeriesId.seriesId.seriesLetter=')
 		);
 	}
 
-	country(country: string) {
+	byCountry(country: string) {
 		this.findRemove('country=', this.required);
 		this.required.add(`country='${country}'`);
 	}
 
-	getCountry(): string {
+	public get country(): string {
 		return this.getRequiredFilterValue('country~');
 	}
 
-	subSeries(name: string) {
+	bySubSeries(name: string) {
 		this.findRemove('subSeriesId.name~', this.optional);
 		this.optional.add(`subSeriesId.name~'${name}'`);
 	}
 
-	getSubSerie(): string {
+	public get SubSerie(): string {
 		return this.getOptionalFilterValue('subSeriesId.name~');
 	}
 
-	sortNote() {
+	sortByNote() {
 		this.killMpgNr();
 		this.killName();
 		this.toggleSort('note');
 	}
 
-	getSortNote(): boolean {
+	public get sortNote(): boolean {
 		return !this.sort.has('-note');
 	}
 
@@ -244,13 +235,13 @@ export default class FigurFilterBuilder {
 		this.findRemove('-note', this.sort);
 	}
 
-	sortMpgNr() {
+	sortByMpgNr() {
 		this.killNote();
 		this.killName();
 		this.toggleSort('mpgNr');
 	}
 
-	getSortMpgNr(): boolean {
+	public get sortMpgNr(): boolean {
 		return !this.sort.has('-mpgNr');
 	}
 
@@ -259,13 +250,13 @@ export default class FigurFilterBuilder {
 		this.findRemove('-mpgNr', this.sort);
 	}
 
-	sortName() {
+	sortByName() {
 		this.killMpgNr();
 		this.killNote();
 		this.toggleSort('name');
 	}
 
-	getSortName(): boolean {
+	public get sortName(): boolean {
 		return !this.sort.has('-name');
 	}
 
@@ -280,17 +271,27 @@ export default class FigurFilterBuilder {
 	}
 
 	myFigures() {
-		if (!this.user_id) return;
+		if (!get(userId)) return;
 		if (this.findRemove('collection_via_figure_id.user_id?=', this.required)) return;
-		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`)
+		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`);
 	}
 
-	isMyFiguresTriggered() {
-		return this.startIsContainedRequired(`collection_via_figure_id.user_id?=`)
+	wishes() {
+		if (!get(userId)) return;
+		if (this.findRemove('wishes_via_figure_id.user_id?=', this.required)) return;
+		this.required.add(`wishes_via_figure_id.user_id?='${"5yand3ub6991lqv"}'`);
 	}
 
-	isMineTriggered() {
+	public get isMyFiguresTriggered() {
+		return this.startIsContainedRequired(`collection_via_figure_id.user_id?=`);
+	}
+
+	public get isMineTriggered() {
 		return this.startIsContainedRequired('FigureVariation_via_figureId.habIch?=');
+	}
+
+	public get isWishesTriggered() {
+		return this.startIsContainedRequired('wishes_via_figure_id.user_id?=');
 	}
 
 	private formatDate(date: Date): string {
@@ -352,3 +353,5 @@ export default class FigurFilterBuilder {
 		);
 	}
 }
+const figureBuiler = new FigurFilterBuilder();
+export default figureBuiler;
