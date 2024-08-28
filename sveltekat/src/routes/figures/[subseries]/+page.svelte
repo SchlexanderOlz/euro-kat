@@ -3,13 +3,28 @@
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
 	import { Minus, Plus, Sparkles } from 'lucide-svelte';
-	import { categories, subscription } from '$lib/Stores';
+	import { categories, history, subscription } from '$lib/Stores';
 	import CollectedSnippet from './CollectedSnippet.svelte';
 	import Wishlist from './Wishlist.svelte';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
   $categories = data.categories
+
+  onMount(() => {
+    const figure = data.pageData.subSeriesFigures.find(fig => fig.id === data.figureId)
+    if (figure) {
+      if ($history.figures.find(fig => fig.id === figure.id) === undefined) {
+        $history.figures.push(structuredClone(figure))
+          if ($history.figures.length > 16) {
+            $history.figures.shift()
+          }
+      }
+      history.set($history)  
+    }
+  })
+  
 </script>
 
 <svelte:head>

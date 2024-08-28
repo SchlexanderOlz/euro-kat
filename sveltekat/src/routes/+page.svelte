@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { history, subscription } from '$lib/Stores';
+	import FigureListItem from '$lib/components/FigureListItem.svelte';
+	import { Sparkles } from 'lucide-svelte';
 	export let data: PageData;
 </script>
 
@@ -55,7 +58,27 @@
 			</p>
 		</div>
 
-		<p class="text-5xl text-center h1 mt-5">News</p>
+		<p class=" text-center h2 mt-5 mb-3">Weiterstöbern...</p>
+    {#if $subscription === 'premium'}
+       {#each $history?.figures || [] as figure}
+         <FigureListItem {figure} />
+       {:else}
+         <p>Du hast keine Figuren in letzter Zeit angesehen.</p>
+       {/each}
+       {#if $history?.figures.length > 3}
+       <a href="/history" class="w-full md:max-w-[40.5rem] max-w-[19.5rem]">
+         <button class="btn w-full md:max-w-[40.5rem] max-w-[19.5rem] variant-ghost-surface mt-1 h-8">Mehr laden</button>
+       </a>
+       {/if}
+    {:else}
+    <a href="/premium">
+      <button class="btn variant-ghost-primary  w-full h-10 mt-2 max-w-[90%] mx-2 px-6 break-all">
+        Premium-Feature <Sparkles class="ml-2 shrink-0"/>
+      </button>
+    </a>
+    {/if}
+
+		<p class="text-5xl text-center h1 mt-8">News</p>
 		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px] w-full">
 			{#if data.article?.created}
 				<p class="mt-1 left opacity-60">

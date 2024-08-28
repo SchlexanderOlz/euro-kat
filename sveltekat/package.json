@@ -48,6 +48,7 @@
 		"clerk-sveltekit": "https://pkg.pr.new/wobsoriano/clerk-sveltekit@69e0893",
 		"lucide-svelte": "^0.436.0",
 		"pocketbase": "0.16.0",
-		"stripe": "^16.8.0"
+		"stripe": "^16.8.0",
+		"svelte-persisted-store": "^0.11.0"
 	}
 }

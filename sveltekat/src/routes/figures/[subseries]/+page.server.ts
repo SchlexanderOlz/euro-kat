@@ -20,6 +20,7 @@ export const load = (async (event) => {
 
 	return {
 		pageData: structuredClone(res),
-    categories: categories
+    categories: categories,
+    figureId: event.params.subseries
 	};
 }) satisfies PageServerLoad;

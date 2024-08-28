@@ -8,7 +8,7 @@ export type Item = {
 export const NavItems: Item[] = [
 	{
 		title: 'Figuren',
-		references: { 'Alle Figuren': '/figures', 'Aktuelle Saison': '/current-series' }
+		references: { '': '/figures' }
 	},
 	{
 		title: 'Berichte',
@@ -20,7 +20,12 @@ export const NavItems: Item[] = [
 	},
 	{
 		title: 'Weiteres',
-		references: { Hilfe: '/help', Info: '/info', Legacy: '/legacy' }
+		references: {
+			'Aktuelle Saison': '/current-series',
+			Hilfe: '/help',
+			Info: '/info',
+			Legacy: '/legacy'
+		}
 	}
 ];
 
@@ -31,6 +36,7 @@ export const PremiumItems: Item[] = [
 			'Meine Figuren': '/my-figures',
 			'Meine Kategorien': '/my-categories',
 			'Meine Wunschliste': '/my-wishlist',
+      Verlauf: '/history',
 			Verwalten: '/manage-sub'
 		}
 	}
