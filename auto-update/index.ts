@@ -31,11 +31,11 @@ let users = await userConnection.collection("user").getFullList({
 });
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.zoho.eu",
+  host: process.env.EMAIL_HOST,
   port: 587,
   secure: false,
   auth: {
-    user: "noreply@rayrodbay.systems",
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
   tls: false,
@@ -51,7 +51,7 @@ await new Promise((resolve, reject) => {
 });
 
 const info = await transporter.sendMail({
-  from: '"Euro-Katalog" <noreply@rayrodbay.systems>',
+  from: `"Euro-Katalog" <${process.env.EMAIL_USER}>`,
   to: users.map((user) => user.email).join(", "),
   subject: "Neue Figuren verfügbar!",
   html:
