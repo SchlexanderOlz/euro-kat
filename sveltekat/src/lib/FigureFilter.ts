@@ -285,6 +285,10 @@ export default class FigurFilterBuilder {
 		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`)
 	}
 
+	isMyFiguresTriggered() {
+		return this.startIsContainedRequired(`collection_via_figure_id.user_id?=`)
+	}
+
 	isMineTriggered() {
 		return this.startIsContainedRequired('FigureVariation_via_figureId.habIch?=');
 	}
