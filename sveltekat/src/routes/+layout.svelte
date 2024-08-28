@@ -45,16 +45,36 @@
     display: none;
   }
 
+  :global(.cl-button) {
+    @apply btn variant-soft-surface;
+  }
+
+  :global(.cl-formButtonPrimary) {
+    @apply btn variant-filled-primary ;
+  }
+
+  :global(.cl-formButtonPrimary:hover) {
+    @apply btn variant-ghost-primary  ;
+  }
+
   :global(.cl-card) {
-    @apply card;
+    @apply card rounded-b-none z-0;
   }
 
   :global(.cl-headerTitle) {
-    @apply text-surface-800-100-token;
+    @apply text-surface-800-100-token text-3xl ;
+  }
+
+  :global(.cl-footerAction) {
+    @apply card w-full rounded-t-none ;
+  }
+
+  :global(.cl-internal-1dauvpw) {
+    @apply hidden;
   }
 
   :global(.cl-headerSubtitle) {
-    @apply text-surface-800-100-token;
+    @apply text-surface-800-100-token text-xl mt-1;
   }
 
   :global(.cl-socialButtonsBlockButton) {
@@ -86,7 +106,7 @@
   }
 
   :global(.cl-formFieldInputShowPasswordButton) {
-    @apply text-surface-800-100-token;
+    @apply text-surface-800-100-token mr-0;
   }
 
   :global(.cl-footerActionText) {

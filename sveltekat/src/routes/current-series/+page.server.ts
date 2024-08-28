@@ -1,4 +1,4 @@
-import { figureBuilder } from '$lib/FigureFilter';
+import figureBuilder from '$lib/FigureFilter';
 import type { Figure } from '$lib/PocketBase';
 import type { PageServerLoad } from './$types';
 

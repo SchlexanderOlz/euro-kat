@@ -3,6 +3,10 @@ import { type FigureData, type Category } from '$lib/Types';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	let categories = await adminConnection.collection('category').getFullList<Category>({ filter: 'user_id="' + event.locals.pb_user.id + '"' });
 
   let categoryFigureCount: {[id: string]: number} = {}
@@ -26,6 +30,10 @@ export const GET: RequestHandler = async (event) => {
 
 
 export const POST: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	const data = await event.request.json();
 	try {
 		if (data.id) {
@@ -49,6 +57,10 @@ export const POST: RequestHandler = async (event) => {
 };
 
 export const DELETE: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	const data = await event.request.json();
 	const category_id = data.id;
 
