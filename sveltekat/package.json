@@ -43,6 +43,7 @@
 	"type": "module",
 	"dependencies": {
 		"@vercel/analytics": "^1.1.1",
-		"pocketbase": "0.16.0"
+		"pocketbase": "0.16.0",
+		"stripe": "^16.8.0"
 	}
 }
