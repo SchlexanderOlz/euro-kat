@@ -42,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.2",
 		"@vercel/analytics": "^1.1.1",
 		"pocketbase": "0.16.0",
 		"stripe": "^16.8.0"
