@@ -10,6 +10,17 @@
   import { dev } from '$app/environment';
   import { inject } from '@vercel/analytics';
 	import { onMount } from 'svelte';
+	import { subscription, userId } from '$lib/Stores';
+	import { page } from '$app/stores';
+
+  export let data;
+
+  // update on navigation
+  $: if ($page.url.href) {
+    $subscription = data.subscription;
+    $userId = data.userId;
+  }
+  
  
   inject({ mode: dev ? 'development' : 'production' });
 

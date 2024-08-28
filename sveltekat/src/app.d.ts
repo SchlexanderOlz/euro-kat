@@ -18,7 +18,10 @@ declare namespace App {
     pb_user: {
       id: string;
       sub: string;
-    }
+      email: string;
+      stripe_id: string;
+      clerk_id: string;
+    } | null
   }
 	// interface PageData {}
 	// interface Error {}

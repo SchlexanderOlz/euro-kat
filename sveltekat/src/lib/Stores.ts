@@ -6,3 +6,6 @@ export const filterBool = writable(false);
 
 export const categories = writable<Category[]>([]);
 export const categoryFigureCount = writable<{[id: string]: number}>({});
+
+export const subscription = writable<string | null>(null)
+export const userId = writable<string | null>(null)

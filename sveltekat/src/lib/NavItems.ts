@@ -22,8 +22,11 @@ export const NavItems: Item[] = [
 		title: 'Weiteres',
 		references: { Hilfe: '/help', Info: '/info', Legacy: '/legacy' }
 	},
-	{
-		title: 'Meine Sammlung',
-		references: { 'Meine Figuren': '/my-figures', 'Meine Kategorien': '/my-categories' }
-	}
 ];
+
+export const PremiumItems: Item[] = [
+  {
+  	title: 'Premium',
+  	references: { 'Meine Figuren': '/my-figures', 'Meine Kategorien': '/my-categories', 'Verwalten': '/manage-sub' }
+  }
+]

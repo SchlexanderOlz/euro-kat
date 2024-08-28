@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AppBar, LightSwitch } from '@skeletonlabs/skeleton';
 	import NavBox from './NavBox.svelte';
-	import { NavItems, type Item } from '$lib/NavItems';
+	import { NavItems, PremiumItems, type Item } from '$lib/NavItems';
 	import NavItem from './NavItem.svelte';
 	import SideNav from './SideNav.svelte';
 	import EkLogo from '$lib/icons/EKLogo.svelte';
@@ -12,6 +12,7 @@
 	import ClerkLoaded from 'clerk-sveltekit/client/ClerkLoaded.svelte';
 	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 	import { Sparkles } from 'lucide-svelte';
+	import { subscription } from '$lib/Stores';
 </script>
 
 <AppBar padding="p-0">
@@ -30,13 +31,26 @@
 				<NavItem title={item.title} link={item.references['']} />
 			{/if}
 		{/each}
+    {#if $subscription === 'premium'}
+    {#each PremiumItems as item}
+    {#if Object.keys(item.references).length > 1}
+      <NavBox {item} />
+    {:else}
+      <NavItem title={item.title} link={item.references['']} />
+    {/if}
+  {/each}
+    {/if}
 	</div>
 	<svelte:fragment slot="trail">
 		<div class="mr-4 flex flex-row items-center">
-			<a class="xxs:flex hidden" href="/premium">
+      {#if $subscription !== 'premium'}
+      <a class="xxs:flex hidden" href="/premium">
 				<button class="btn variant-ghost-primary mr-4">Premium <Sparkles class="ml-2" /></button>
 			</a>
+        {/if}
+			
 			<ClerkLoaded>
+        
 				<SignedIn>
 					<SignOutButton redirectUrl="/" class="mr-4 btn variant-ghost-secondary sm:flex hidden"
 						>Ausloggen</SignOutButton
