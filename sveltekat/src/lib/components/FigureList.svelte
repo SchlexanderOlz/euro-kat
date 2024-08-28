@@ -2,7 +2,7 @@
 	import FigureListItem from './FigureListItem.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	import { figureBuilder } from '$lib/FigureFilter';
+	import FigureBuilder from '$lib/FigureFilter';
 	import CDownIcon from '$lib/icons/CDownIcon.svelte';
 	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
@@ -19,9 +19,12 @@
 	let pages: number;
 
 	let init_loading = true;
+	let figureBuilder = FigureBuilder.getInstance("5yand3ub6991lqv")
 
 	let inputValue = figureBuilder.getName() || '#' + figureBuilder.getMpgNr();
 	if (inputValue === '#') inputValue = '';
+
+	figureBuilder.sortMpgNr();
 
 	let curser = figureBuilder.isCurrentTriggered();
 	let maxi = figureBuilder.isMaxiTriggered();
