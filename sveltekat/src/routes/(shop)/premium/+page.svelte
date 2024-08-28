@@ -7,6 +7,7 @@
 import ClerkLoading from 'clerk-sveltekit/client/ClerkLoading.svelte';
 import ClerkLoaded from 'clerk-sveltekit/client/ClerkLoaded.svelte';
 import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
+	import { PUBLIC_STRIPE_PREMIUM_LINK } from '$env/static/public';
 
 </script>
 
@@ -14,29 +15,37 @@ import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 	<div class="card w-full max-w-max p-2 px-3 md:text-lg text-sm">
 		<h1 class="h2">Premium</h1>
 		<p class="mt-3 mb-4">Für alle Sammler das perfekte Paket:</p>
-		<div class="flex my-3 items-center">
+		<div class="flex my-4 items-center">
 			<Check class="stroke-success-600 stroke-[3] shrink-0" />
-			<p class="ml-2">Trage ein, welche Figuren du bereits hast!</p>
+			<p class="ml-2 max-w-96 opacity-80">Trage ein, welche Figuren du bereits hast!</p>
 		</div>
-		<div class="flex my-3 items-center">
+		<div class="flex my-4 items-center">
 			<Check class="stroke-success-600 stroke-[3] shrink-0" />
-			<p class="ml-2">Eigene Kategorien!</p>
+			<p class="ml-2 max-w-96 opacity-80">Eigene Kategorien!</p>
 		</div>
-		<div class="flex my-3 items-center">
+    <div class="flex my-4 items-center">
 			<Check class="stroke-success-600 stroke-[3] shrink-0" />
-			<p class="ml-2">Sortieren deiner vorhandenen Figuren!</p>
+			<p class="ml-2 max-w-96 opacity-80">Eigene Wunschliste!</p>
 		</div>
-		<div class="flex my-3 items-center">
+		<div class="flex my-4 items-center">
 			<Check class="stroke-success-600 stroke-[3] shrink-0" />
-			<p class="ml-2">Markiere deine Figuren mit Farben!</p>
+			<p class="ml-2 max-w-96 opacity-80">Sortieren deiner vorhandenen Figuren und deiner Wunschliste!</p>
 		</div>
-		<div class="flex my-3">
+		<div class="flex my-4 items-center">
 			<Check class="stroke-success-600 stroke-[3] shrink-0" />
-			<p class="ml-2">Nie mehr den Überblick verlieren!</p>
+			<p class="ml-2 max-w-96 opacity-80">Markiere deine Figuren mit Farben!</p>
 		</div>
-		<div class="flex my-3">
+		<div class="flex my-4 items-center">
+			<Check class="stroke-success-600 stroke-[3] shrink-0" />
+			<p class="ml-2 max-w-96 opacity-80">E-Mail Benachrichtigungen bei neuen Figuren!</p>
+		</div>
+    <div class="flex my-4 items-center">
+			<Check class="stroke-success-600 stroke-[3] shrink-0" />
+			<p class="ml-2 max-w-96 opacity-80">Nie mehr den Überblick verlieren!</p>
+		</div>
+		<div class="flex my-4 items-center">
 			<ThumbsUp class="stroke-warning-600 stroke-[2] shrink-0" />
-			<p class="ml-2">Mehr Vorteile in Arbeit!</p>
+			<p class="ml-2 max-w-96 opacity-80">Mehr Vorteile in Arbeit!</p>
 		</div>
 
 		<div class="w-full mb-1">
@@ -58,7 +67,7 @@ import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
         
       <SignedIn let:user>
         <a
-        href="https://buy.stripe.com/test_aEU5lbcA7729gBG8ww?prefilled_email={user?.emailAddresses[0]}"
+        href="{PUBLIC_STRIPE_PREMIUM_LINK}?prefilled_email={user?.emailAddresses[0]}"
         target="_blank"
       >
         <button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"

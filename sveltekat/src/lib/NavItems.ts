@@ -21,12 +21,17 @@ export const NavItems: Item[] = [
 	{
 		title: 'Weiteres',
 		references: { Hilfe: '/help', Info: '/info', Legacy: '/legacy' }
-	},
+	}
 ];
 
 export const PremiumItems: Item[] = [
-  {
-  	title: 'Premium',
-  	references: { 'Meine Figuren': '/my-figures', 'Meine Kategorien': '/my-categories', 'Verwalten': '/manage-sub' }
-  }
-]
+	{
+		title: 'Premium',
+		references: {
+			'Meine Figuren': '/my-figures',
+			'Meine Kategorien': '/my-categories',
+			'Meine Wunschliste': '/my-wishlist',
+			Verwalten: '/manage-sub'
+		}
+	}
+];

@@ -15,6 +15,9 @@
 	import { filterBool } from '$lib/Stores';
 	import { getColors } from '$lib/PocketBase';
 
+  export let wishlistMode = false;
+  export let collectionMode = false;
+
 	let figures: Figure[];
 	let pages: number;
 
@@ -87,7 +90,13 @@
   let colors: CountryColor[] = []
 
 	onMount(async () => {
+    if (figureBuilder.isWishesTriggered != wishlistMode) {
+      figureBuilder.wishes()
+    }
+    console.log(figureBuilder.isWishesTriggered);
+
 		await update();
+
 		init_loading = false;
     colors = await getColors();
 	});

@@ -1,4 +1,4 @@
-import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
+import { PREMIUM_PRICE_ID, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
 import { pbdata } from '$lib/server/PocketBase';
 import type { RequestHandler } from './$types';
 import { Stripe } from 'stripe';
@@ -35,7 +35,7 @@ export const POST: RequestHandler = async (ev) => {
         const customer = await stripe.customers.retrieve(customerId);
 
         const priceId = session?.line_items?.data[0]?.price?.id;
-        const plan = priceId == 'price_1PsVcMF2IFQpSgvXYo8UYUnx' ? 'premium' : 'none'
+        const plan = priceId == PREMIUM_PRICE_ID ? 'premium' : 'none'
 
         if (plan == 'none') break;
 
