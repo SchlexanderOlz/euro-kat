@@ -8,6 +8,8 @@
 
 	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
+	import ClerkLoading from 'clerk-sveltekit/client/ClerkLoading.svelte';
+	import ClerkLoaded from 'clerk-sveltekit/client/ClerkLoaded.svelte';
 	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 	import { Sparkles } from 'lucide-svelte';
 </script>
@@ -32,21 +34,24 @@
 	<svelte:fragment slot="trail">
 		<div class="mr-4 flex flex-row items-center">
 			<a class="xxs:flex hidden" href="/premium">
-				<button class="btn variant-ghost-primary mr-4">Premium <Sparkles class="ml-2"/></button>
+				<button class="btn variant-ghost-primary mr-4">Premium <Sparkles class="ml-2" /></button>
 			</a>
-			<SignedIn>
-				<SignOutButton
-					signOutCallback={() => {
-						window.location.href = '/';
-					}}
-					class="mr-4 btn variant-ghost-secondary sm:flex hidden">Ausloggen</SignOutButton
-				>
-			</SignedIn>
-			<SignedOut>
-				<a href="/sign-in">
-					<button class="btn variant-ghost-primary mr-4 sm:flex hidden">Einloggen</button>
-				</a>
-			</SignedOut>
+			<ClerkLoaded>
+				<SignedIn>
+					<SignOutButton redirectUrl="/" class="mr-4 btn variant-ghost-secondary sm:flex hidden"
+						>Ausloggen</SignOutButton
+					>
+				</SignedIn>
+				<SignedOut>
+					<a href="/sign-in">
+						<button class="btn variant-ghost-secondary mr-4 sm:flex hidden">Einloggen</button>
+					</a>
+				</SignedOut>
+			</ClerkLoaded>
+
+			<ClerkLoading>
+				<button class="btn variant-ghost-secondary mr-4 sm:flex hidden">Ladet</button>
+			</ClerkLoading>
 			<div class="lg:flex hidden">
 				<LightSwitch />
 			</div>

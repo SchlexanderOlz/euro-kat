@@ -1,19 +1,19 @@
-import { pbdata } from '$lib/server/PocketBase';
+import { adminConnection } from '$lib/server/PocketBase';
 import { Category, FigureData } from '$lib/Types';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
-	const figureCollected = await pbdata.collection('Figure').getFullList<FigureData>({
-		filter: 'user="' + event.locals.pb_user.id + '" && figure_id="' + event.params.id + '"',
-		expand: 'category',
+	const figureCollected = await adminConnection.collection('collection').getFullList<FigureData>({
+		filter: 'user_id="' + event.locals.pb_user.id + '" && figure_id="' + event.params.id + '"',
+		expand: 'category_id',
 		sort: '-count'
 	});
 
 	let map: { [string: string]: any } = {};
 
 	for (let figure of figureCollected) {
-		if (figure.category != '') {
-			map[figure.category] = figure;
+		if (figure.category_id != '') {
+			map[figure.category_id] = figure;
 		} else {
 			map['undefined'] = figure;
 		}
@@ -22,21 +22,21 @@ export const GET: RequestHandler = async (event) => {
 	let sortedCategories: Category[] = []; //figureCollected.map((figure) => figure.expand.category)
 
 	figureCollected.forEach((figureRow) => {
-		if (figureRow.category != '') {
-			sortedCategories.push(figureRow.expand.category);
+		if (figureRow.category_id != '') {
+			sortedCategories.push(figureRow.expand.category_id);
 		} else {
 			sortedCategories.push({
 				id: null,
-				user: event.locals.pb_user.id,
+				user_id: event.locals.pb_user.id,
 				name: 'Uncategorized',
 				color: '#000000'
 			});
 		}
 	});
 
-	const allCategories = await pbdata
+	const allCategories = await adminConnection
 		.collection('category')
-		.getFullList<Category>({ filter: 'user="' + event.locals.pb_user.id + '"' });
+		.getFullList<Category>({ filter: 'user_id="' + event.locals.pb_user.id + '"' });
 	const allCatIds = allCategories.map((category) => category.id);
 	const allUsedIds = sortedCategories.map((category) => category.id);
 	const unusedIds = allCatIds.filter((x) => !allUsedIds.includes(x));
@@ -53,7 +53,7 @@ export const GET: RequestHandler = async (event) => {
 			? category
 			: {
 					id: null,
-					user: event.locals.pb_user.id,
+					user_id: event.locals.pb_user.id,
 					name: 'Uncategorized',
 					color: '#000000',
 					count: map['undefined'] ? map['undefined'].count : 0
@@ -75,31 +75,31 @@ export const POST: RequestHandler = async (event) => {
 	const change_by = data.count;
 
 	let filter =
-		"user='" +
+		"user_id='" +
 		event.locals.pb_user.id +
 		"' && figure_id='" +
 		figure_id +
 		"' && " +
-		'category=' +
+		'category_id=' +
 		(category_id ? "'" + category_id + "'" : null);
 
 	try {
-		const figureCollected = await pbdata
-			.collection('figure')
+		const figureCollected = await adminConnection
+			.collection('collection')
 			.getFirstListItem<FigureData>(filter, {});
 
 		if (change_by < 0 && figureCollected.count + change_by < 0) {
 			return new Response('Cannot have negative figure count', { status: 400 });
 		}
 
-		await pbdata.collection('figure').update(figureCollected.id, {
+		await adminConnection.collection('collection').update(figureCollected.id, {
 			count: figureCollected.count + change_by
 		});
 	} catch (e) {
-		await pbdata.collection('figure').create<FigureData>({
-			user: event.locals.pb_user.id,
+		await adminConnection.collection('collection').create<FigureData>({
+			user_id: event.locals.pb_user.id,
 			figure_id: figure_id,
-			category: category_id,
+			category_id: category_id,
 			count: change_by
 		});
 	}

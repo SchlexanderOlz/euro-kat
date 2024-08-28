@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Check, ThumbsUp } from 'lucide-svelte';
-	import type { PageData } from '../create-checkout-session/premium/$types';
 	import { browser } from '$app/environment';
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
 	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 
-	export let data: PageData;
+import ClerkLoading from 'clerk-sveltekit/client/ClerkLoading.svelte';
+import ClerkLoaded from 'clerk-sveltekit/client/ClerkLoaded.svelte';
+import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
+
 </script>
 
 <div class="w-full h-full flex items-center justify-center px-[5%]">
@@ -45,24 +47,31 @@
 			</p>
 		</div>
 
-    <SignedOut>
-      <a href="/sign-in">
-				<button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
-					>Jetzt Premium holen!</button
-				>
-			</a>
-    </SignedOut>
-			
-    <SignedIn let:user>
-      <a
-      href="https://buy.stripe.com/test_aEU5lbcA7729gBG8ww?prefilled_email={user?.emailAddresses[0]}"
-      target="_blank"
-    >
-      <button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
-        >Jetzt Premium holen!</button
+    <ClerkLoaded>
+      <SignedOut>
+        <a href="/sign-in">
+          <button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
+            >Jetzt Premium holen!</button
+          >
+        </a>
+      </SignedOut>
+        
+      <SignedIn let:user>
+        <a
+        href="https://buy.stripe.com/test_aEU5lbcA7729gBG8ww?prefilled_email={user?.emailAddresses[0]}"
+        target="_blank"
       >
-    </a>
-    </SignedIn>
+        <button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
+          >Jetzt Premium holen!</button
+        >
+      </a>
+      </SignedIn>
+    </ClerkLoaded>
+    <ClerkLoading>
+      <button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
+          >Ladet</button
+        >
+    </ClerkLoading>
 			
 	</div>
 </div>

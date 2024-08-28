@@ -1,5 +1,3 @@
-import { pbdata } from '$lib/server/PocketBase';
-import { type Category } from '$lib/Types';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {

@@ -210,15 +210,15 @@ export interface Article {
 
 export interface Category {
   id: string | null;
-  user: string;
+  user_id: string;
   name: string;
   color: string;
 }
 
 export interface FigureData {
   id: string;
-  user: string;
+  user_id: string;
   figure_id: string;
-  category: string;
+  category_id: string;
   count: number;
 }
