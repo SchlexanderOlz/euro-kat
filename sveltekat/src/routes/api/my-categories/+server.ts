@@ -22,8 +22,9 @@ export const GET: RequestHandler = async (event) => {
     filter: 'user_id="' + event.locals.pb_user.id + '" && category_id =' + null
   })).totalPages;
 
-  categories.push({id: null, user_id: event.locals.pb_user.id, name: 'Uncategorized', color: '#000000'});
+  categories = [...[{id: null, user_id: event.locals.pb_user.id, name: 'Uncategorized', color: '#000000'}], ...categories]; ;
   const orderedCategories = categories.sort((a, b) => { return categoryFigureCount[b.id || 'undefined'] - categoryFigureCount[a.id || 'undefined'] });
+
   
 	return new Response(JSON.stringify(structuredClone({categories: orderedCategories, categoryFigureCount: categoryFigureCount})), { status: 200 });
 };

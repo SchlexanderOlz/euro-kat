@@ -13,7 +13,7 @@
 	async function fetchCollectionData() {
 		let response = await (await fetch('/api/my-figures/' + figure.id)).json();
 		mappedData = response.mappedData;
-		sortedCategories = response.sortedCategories;
+		sortedCategories = (await (await fetch('/api/my-categories')).json()).categories;
 	}
 
 	onMount(async () => {
@@ -46,7 +46,7 @@
 	}
 </script>
 
-{#each sortedCategories.slice(0, 3) as category}
+{#each sortedCategories.slice(0, 1) as category}
 	{#if category.id === null}
 		<div class="card variant-filled-surface px-1 py-0.5 flex justify-between">
 			<p class="overflow-hidden">Unkategorisiert</p>
@@ -65,9 +65,12 @@
 			</div>
 		</div>
 	{/if}
+{:else}
+	<div class="card variant-filled-surface px-1 py-0.5 flex justify-between h-7" />
+	<div class="card variant-filled-surface px-1 py-0.5 flex justify-between h-6" />
 {/each}
 {#if expand}
-	{#each sortedCategories.slice(3) as category}
+	{#each sortedCategories.slice(1) as category}
 		{#if category.id === null}
 			<div class="card variant-filled-surface px-1 py-0.5 flex justify-between">
 				<p class="overflow-hidden">Unkategorisiert</p>
