@@ -10,10 +10,10 @@ export default class FigurFilterBuilder {
 	optional: Set<string>;
 	sort: Set<string>;
 	currentPage: number = 1;
-	user_id: string;
+	user_id?: string;
 	private static instance: FigurFilterBuilder
 
-	private constructor(user_id: string) {
+	private constructor(user_id?: string) {
 		this.figureCollection = connection.collection('Figure');
 		this.optional = new Set();
 		this.required = new Set();
@@ -23,7 +23,7 @@ export default class FigurFilterBuilder {
 
 	public static getInstance(user_id?: string): FigurFilterBuilder {
 		if (!FigurFilterBuilder.instance && user_id) {
-			FigurFilterBuilder.instance = new FigurFilterBuilder(user_id!)
+			FigurFilterBuilder.instance = new FigurFilterBuilder(user_id)
 		}
 		return FigurFilterBuilder.instance
 	}
@@ -280,6 +280,7 @@ export default class FigurFilterBuilder {
 	}
 
 	myFigures() {
+		if (!this.user_id) return;
 		if (this.findRemove('collection_via_figure_id.user_id?=', this.required)) return;
 		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`)
 	}
