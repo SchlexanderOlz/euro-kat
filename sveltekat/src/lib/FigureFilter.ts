@@ -360,5 +360,5 @@ export class FigurFilterBuilder {
 		);
 	}
 }
-const figureBuiler = new FigurFilterBuilder();
-export default figureBuiler;
+const figureBuilder = new FigurFilterBuilder();
+export default figureBuilder;

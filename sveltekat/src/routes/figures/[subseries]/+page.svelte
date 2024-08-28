@@ -2,9 +2,10 @@
 	import { imgdom } from '$lib/PocketBase';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
-	import { Minus, Plus } from 'lucide-svelte';
-	import { categories } from '$lib/Stores';
+	import { Minus, Plus, Sparkles } from 'lucide-svelte';
+	import { categories, subscription } from '$lib/Stores';
 	import CollectedSnippet from './CollectedSnippet.svelte';
+	import Wishlist from './Wishlist.svelte';
 
 	export let data: PageData;
 
@@ -65,9 +66,30 @@
 						{fig.note}
 					</p>
           <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
+          <div class=" w-full flex grow  justify-between items-center">
+            <p class="font-bold">Wunschliste?</p>
+              {#if $subscription === 'premium'}
+               <Wishlist figure={fig}/>
+              {:else}
+              <a href="/premium">
+                <button class="btn variant-ghost-primary  p-0.5 flex justify-center items-center h-8 w-8 mr-1">
+                  <Sparkles class=""/>
+                </button>
+              </a>
+              {/if}
+        </div>
+        <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
           <div class=" w-full h-full grow space-y-1 mb-1">
               <p class="font-bold">Gesammelt:</p>
+              {#if $subscription === 'premium'}
               <CollectedSnippet figure={fig} />
+              {:else}
+              <a href="/premium">
+                <button class="btn variant-ghost-primary  w-full h-10 mt-2">
+                  Premium <Sparkles class="ml-2"/>
+                </button>
+              </a>
+              {/if}
           </div>
 				</div>
 

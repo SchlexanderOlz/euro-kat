@@ -3,6 +3,10 @@ import { type FigureData, type Category } from '$lib/Types';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	let categories = await adminConnection.collection('category').getFullList<Category>({ filter: 'user_id="' + event.locals.pb_user.id + '"' });
 
   let categoryFigureCount: {[id: string]: number} = {}
@@ -18,14 +22,19 @@ export const GET: RequestHandler = async (event) => {
     filter: 'user_id="' + event.locals.pb_user.id + '" && category_id =' + null
   })).totalPages;
 
-  categories.push({id: null, user_id: event.locals.pb_user.id, name: 'Uncategorized', color: '#000000'});
+  categories = [...[{id: null, user_id: event.locals.pb_user.id, name: 'Uncategorized', color: '#000000'}], ...categories]; ;
   const orderedCategories = categories.sort((a, b) => { return categoryFigureCount[b.id || 'undefined'] - categoryFigureCount[a.id || 'undefined'] });
+
   
 	return new Response(JSON.stringify(structuredClone({categories: orderedCategories, categoryFigureCount: categoryFigureCount})), { status: 200 });
 };
 
 
 export const POST: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	const data = await event.request.json();
 	try {
 		if (data.id) {
@@ -49,6 +58,10 @@ export const POST: RequestHandler = async (event) => {
 };
 
 export const DELETE: RequestHandler = async (event) => {
+  if (event.locals.pb_user?.sub !== 'premium') {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
 	const data = await event.request.json();
 	const category_id = data.id;
 
