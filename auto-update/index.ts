@@ -1,5 +1,6 @@
 import PocketBase from "pocketbase";
 import nodemailer from "nodemailer";
+import { disposeEmitNodes } from "typescript";
 
 const domain: string = "ek.krenn.tech:443";
 const imgdom: string = `https://${domain}/api/files`;
@@ -13,11 +14,6 @@ await userConnection.admins.authWithPassword(
 );
 
 const figures = connection.collection("Figure");
-const warnings = connection.collection("Warning");
-const subSeriesVar = connection.collection("SubSeriesVariation");
-const extras = connection.collection("Extra");
-const articles = connection.collection("Article");
-const country_colors = connection.collection("CountryColors");
 
 let last_exec = new Date(Date.now() - 1000 * 60 * 60 * 24);
 
@@ -49,6 +45,8 @@ await new Promise((resolve, reject) => {
     resolve(null);
   });
 });
+
+if (new_figures.length == 0) throw new Error();
 
 const info = await transporter.sendMail({
   from: `"Euro-Katalog" <${process.env.EMAIL_USER}>`,
