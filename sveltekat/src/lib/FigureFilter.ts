@@ -216,7 +216,7 @@ export class FigurFilterBuilder {
 		this.optional.add(`subSeriesId.name~'${name}'`);
 	}
 
-	public get SubSerie(): string {
+	public get subSeries(): string {
 		return this.getOptionalFilterValue('subSeriesId.name~');
 	}
 
@@ -270,20 +270,27 @@ export class FigurFilterBuilder {
 		this.required.add('FigureVariation_via_figureId.habIch?=true');
 	}
 
-	myFigures() {
+	myFigures(categories?: (string | null)[]) {
 		if (!get(userId)) return;
-		if (this.findRemove('collection_via_figure_id.user_id?=', this.required)) return;
-		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`);
+		if (this.findRemove('(collection_via_figure_id.user_id?=', this.required)) return;
+
+		let search = `(collection_via_figure_id.user_id?='${get(userId)}'`;
+		if (categories) {
+			search = `${search}&&(${categories.map((x) => x ? ("?~" + '\'' + x + '\'') : ('?=null')).map((category) => `collection_via_figure_id.category_id.name${category}`).join("||")})`;
+		}
+		console.log(search)
+		search += ')';
+		this.required.add(search);
 	}
 
 	wishes() {
 		if (!get(userId)) return;
 		if (this.findRemove('wishes_via_figure_id.user_id?=', this.required)) return;
-		this.required.add(`wishes_via_figure_id.user_id?='${"5yand3ub6991lqv"}'`);
+		this.required.add(`wishes_via_figure_id.user_id?='${get(userId)}'`);
 	}
 
 	public get isMyFiguresTriggered() {
-		return this.startIsContainedRequired(`collection_via_figure_id.user_id?=`);
+		return this.startIsContainedRequired(`(collection_via_figure_id.user_id?=`);
 	}
 
 	public get isMineTriggered() {
