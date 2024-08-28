@@ -1,6 +1,8 @@
 import type { ListResult, RecordService } from 'pocketbase';
 import { connection, figureInitLoadCount } from './PocketBase';
 import type { Figure } from './Types';
+import { userId } from './Stores';
+import { get } from 'svelte/store';
 
 export default class FigurFilterBuilder {
 	required: Set<string>;
@@ -13,7 +15,6 @@ export default class FigurFilterBuilder {
 
 	private constructor(user_id: string) {
 		this.figureCollection = connection.collection('Figure');
-		this.user_id = user_id;
 		this.optional = new Set();
 		this.required = new Set();
 		this.sort = new Set();
@@ -280,7 +281,7 @@ export default class FigurFilterBuilder {
 
 	myFigures() {
 		if (this.findRemove('collection_via_figure_id.user_id?=', this.required)) return;
-		this.required.add(`collection_via_figure_id.user_id?='${this.user_id}'`)
+		this.required.add(`collection_via_figure_id.user_id?='${get(userId)}'`)
 	}
 
 	isMineTriggered() {
