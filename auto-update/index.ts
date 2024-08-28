@@ -46,7 +46,7 @@ await new Promise((resolve, reject) => {
   });
 });
 
-if (new_figures.length == 0) throw new Error();
+if (new_figures.length == 0) throw new Error("No Figures");
 
 const info = await transporter.sendMail({
   from: `"Euro-Katalog" <${process.env.EMAIL_USER}>`,
