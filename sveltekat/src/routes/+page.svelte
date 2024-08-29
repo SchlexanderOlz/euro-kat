@@ -124,6 +124,14 @@
 		@apply h1 mb-2;
 	}
 
+  :global(.cl-otpCodeFieldInput) {
+    @apply card;
+  }
+
+  :global(.cl-identityPreviewText) {
+    @apply text-lg;
+  }
+
 	:global(.latest-article > h2) {
 		@apply h2 mb-2;
 	}

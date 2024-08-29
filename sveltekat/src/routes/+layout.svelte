@@ -110,9 +110,10 @@
   }
 
   :global(.cl-footerActionText) {
-    @apply text-surface-800-100-token;
+    @apply text-surface-800-100-token h4 font-token;
   }
   :global(.cl-footerActionText + a) {
-    @apply text-surface-800-100-token underline underline-offset-1;
+    @apply text-surface-800-100-token underline underline-offset-1 h4 font-token font-semibold;
   }
+
 </style> 

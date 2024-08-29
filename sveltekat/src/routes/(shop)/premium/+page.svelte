@@ -69,7 +69,7 @@
 
 		<ClerkLoaded>
 			<SignedOut>
-				<a href="/sign-in">
+				<a href="/sign-up">
 					<button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
 						>Jetzt Premium holen!</button
 					>
