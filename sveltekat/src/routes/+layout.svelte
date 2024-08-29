@@ -45,6 +45,10 @@
     display: none;
   }
 
+  :global(.cl-otpCodeFieldInput) {
+    @apply card;
+  }
+
   :global(.cl-button) {
     @apply btn variant-soft-surface;
   }
