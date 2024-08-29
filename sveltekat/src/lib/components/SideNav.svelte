@@ -10,6 +10,7 @@
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
 	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
 	import { Sparkles } from 'lucide-svelte';
+	import { subscription } from '$lib/Stores';
 
 	const drawerStore = getDrawerStore();
 
@@ -56,6 +57,13 @@
 				</button>
 			</div>
 
+			{#if $subscription !== 'premium'}
+				<a class="w-full flex justify-center mb-2 px-3" href="/premium">
+					<button class="btn variant-ghost-primary w-full">Premium <Sparkles class="ml-2" /></button
+					>
+				</a>
+			{/if}
+
 			<div class="flex flex-col mx-2">
 				{#each NavItems as item}
 					{#if Object.keys(item.references).length > 1}
@@ -80,45 +88,45 @@
 					{/if}
 				{/each}
 
-
-        {#each PremiumItems as item}
-					{#if Object.keys(item.references).length > 1}
-						<div class="mt-1 mb-3 w-full pl-1 pr-2 ">
-							<p class=" w-full">Premium</p>
-							{#each Object.keys(item.references) as key}
-								<NavItem
-									title={key}
-									link={item.references[key]}
-									styles={`my-0.5 w-full ${
-										item.references[key] == path ? '!variant-ghost-primary' : '!variant-soft-primary'
-									}`}
-								/>
-							{/each}
-						</div>
-					{:else}
-						<NavItem
-							title={item.title}
-							link={item.references['']}
-							styles={`my-0.5 ${item.references[''] == path ? '!variant-ghost-primary' : '!variant-soft-primary'}`}
-						/>
-					{/if}
-				{/each}
+				{#if $subscription === 'premium'}
+					{#each PremiumItems as item}
+						{#if Object.keys(item.references).length > 1}
+							<div class="mt-1 mb-3 w-full pl-1 pr-2">
+								<p class=" w-full flex">Premium <Sparkles class="p-0.5 ml-1" /></p>
+								{#each Object.keys(item.references) as key}
+									<NavItem
+										title={key}
+										link={item.references[key]}
+										styles={`my-0.5 w-full ${
+											item.references[key] == path
+												? '!variant-ghost-primary'
+												: '!variant-soft-primary'
+										}`}
+									/>
+								{/each}
+							</div>
+						{:else}
+							<NavItem
+								title={item.title}
+								link={item.references['']}
+								styles={`my-0.5 ${item.references[''] == path ? '!variant-ghost-primary' : '!variant-soft-primary'}`}
+							/>
+						{/if}
+					{/each}
+				{/if}
 			</div>
 		</div>
 		<div class="w-full px-5">
 			<SignedIn>
-				<SignOutButton redirectUrl="/" class="btn variant-ghost-secondary w-full"
+				<SignOutButton redirectUrl="/" class="btn variant-ghost-secondary w-full mb-4"
 					>Ausloggen</SignOutButton
 				>
 			</SignedIn>
 			<SignedOut>
-				<a href="/sign-in">
-					<button class="btn variant-ghost-secondary w-full">Einloggen</button>
+				<a href="/sign-in" class="">
+					<button class="btn variant-ghost-secondary w-full mb-4">Einloggen</button>
 				</a>
 			</SignedOut>
-			<a class="w-full flex justify-center mb-4 mt-2" href="/premium">
-				<button class="btn variant-ghost-primary w-full">Premium <Sparkles class="ml-2" /></button>
-			</a>
 		</div>
 	</div>
 </Drawer>
