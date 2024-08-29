@@ -97,6 +97,10 @@
     @apply text-surface-800-100-token;
   }
 
+  :global(.cl-formFieldAction) {
+    @apply text-surface-800-100-token;
+  }
+
   :global(.cl-formFieldInput) {
     @apply  input text-surface-800-100-token;;
   }
@@ -110,10 +114,18 @@
   }
 
   :global(.cl-footerActionText) {
-    @apply text-surface-800-100-token h4 font-token;
+    @apply text-surface-800-100-token h5 font-token;
   }
   :global(.cl-footerActionText + a) {
-    @apply text-surface-800-100-token underline underline-offset-1 h4 font-token font-semibold;
+    @apply text-surface-800-100-token underline underline-offset-1 h5 font-token font-semibold;
+  }
+
+  :global(.cl-backLink) {
+    @apply text-lg text-surface-800-100-token;
+  }
+
+  :global(.cl-footerActionLink) {
+    @apply text-surface-800-100-token underline underline-offset-1 h5 font-token font-semibold;
   }
 
 </style> 
