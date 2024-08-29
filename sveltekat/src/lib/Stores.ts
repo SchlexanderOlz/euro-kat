@@ -12,3 +12,4 @@ export const subscription = writable<string | null>(null)
 export const userId = writable<string | null>(null)
 
 export const history = persisted<{figures: Figure[]}>('figure_history', {figures: []});
+export const firstVisit = persisted<boolean>('first_visit', true);

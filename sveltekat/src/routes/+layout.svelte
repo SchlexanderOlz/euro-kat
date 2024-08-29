@@ -7,11 +7,12 @@
 	import NavBar from '$lib/components/NavBar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
-  import { dev } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { inject } from '@vercel/analytics';
 	import { onMount } from 'svelte';
-	import { subscription, userId } from '$lib/Stores';
+	import { firstVisit, subscription, userId } from '$lib/Stores';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
   export let data;
 
@@ -21,6 +22,10 @@
     $userId = data.userId;
   }
   
+  $: if ($firstVisit && browser) {
+    goto('/sign-up?firstVisit=true');
+    $firstVisit = false;
+  }
  
   inject({ mode: dev ? 'development' : 'production' });
 
