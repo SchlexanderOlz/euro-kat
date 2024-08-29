@@ -99,6 +99,11 @@ export const POST: RequestHandler = async (event) => {
 			return new Response('Cannot have negative figure count', { status: 400 });
 		}
 
+    if (figureCollected.count + change_by == 0) {
+      await adminConnection.collection('collection').delete(figureCollected.id);
+      return new Response();
+    }
+
 		await adminConnection.collection('collection').update(figureCollected.id, {
 			count: figureCollected.count + change_by
 		});
