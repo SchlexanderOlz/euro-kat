@@ -19,13 +19,16 @@ export const GET: RequestHandler = async (event) => {
     categoryFigureCount[category.id || 'undefined'] = count;
   }
   categoryFigureCount['undefined'] = (await adminConnection.collection('collection').getList<FigureData>(1, 1, {
-    filter: 'user_id="' + event.locals.pb_user.id + '" && category_id =' + null
+    filter: 'user_id="' + event.locals.pb_user.id + '" && category_id=null'
   })).totalPages;
 
   categories = [...[{id: null, user_id: event.locals.pb_user.id, name: 'Uncategorized', color: '#000000'}], ...categories]; ;
   const orderedCategories = categories.sort((a, b) => { return categoryFigureCount[b.id || 'undefined'] - categoryFigureCount[a.id || 'undefined'] });
 
+  console.log(categoryFigureCount);
+  console.log(orderedCategories);
   
+
 	return new Response(JSON.stringify(structuredClone({categories: orderedCategories, categoryFigureCount: categoryFigureCount})), { status: 200 });
 };
 

@@ -95,6 +95,10 @@
     }
     console.log(figureBuilder.isWishesTriggered);
 
+    if (figureBuilder.isMyFiguresTriggered != collectionMode) {
+      figureBuilder.myFigures()
+    }
+
 		await update();
 
 		init_loading = false;
