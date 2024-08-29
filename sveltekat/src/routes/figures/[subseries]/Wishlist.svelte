@@ -8,6 +8,7 @@
 
 	onMount(async () => {
 		wishlisted = await (await fetch('/api/wishlist/' + figure.id)).json();
+    
 	});
 
 	async function toggleWishlist() {
@@ -22,4 +23,4 @@
 	}
 </script>
 
-<input on:click={toggleWishlist} bind:value={wishlisted} type="checkbox" class="input checkbox" />
+<input on:click={toggleWishlist} bind:checked={wishlisted} type="checkbox" class="input checkbox" />
