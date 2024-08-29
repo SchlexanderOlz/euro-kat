@@ -28,8 +28,15 @@ export const handle: Handle = sequence(
         }>('clerk_id="' + userId + '"', {});
       } catch (e) {
         
-        const clerk_user = await clerkClient.users.getUser(userId);
-        const email = clerk_user.emailAddresses[0].emailAddress;
+        let clerk_user = null;
+        let email = null;
+
+        try {
+          clerk_user = await clerkClient.users.getUser(userId);
+          email = clerk_user.emailAddresses[0].emailAddress;
+        } catch (e) {
+          return await resolve(event);
+        }
   
         try {
           // user exists, but clerk_id is not set - payed on stripe before creating account
