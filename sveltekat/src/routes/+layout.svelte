@@ -46,11 +46,15 @@
   }
 
   :global(.cl-otpCodeFieldInput) {
-    @apply card bg-surface-600-300-token;
+    @apply input text-surface-800-100-token;
   }
 
   :global(.cl-button) {
-    @apply input;
+    @apply btn variant-filled-surface text-surface-600-300-token;
+  }
+
+  :global(.cl-identityPreviewEditButton) {
+    @apply btn;
   }
 
   :global(.cl-formButtonPrimary) {
