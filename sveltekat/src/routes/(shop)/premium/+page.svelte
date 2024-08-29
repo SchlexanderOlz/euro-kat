@@ -61,7 +61,7 @@
 
 		<div class="w-full mb-1">
 			<p class="text-4xl mr-4 text-end">
-				<span class="text-sm">3 Tage</span> <span class="font-semibold">0€</span>
+				14 <span class="text-xl">Tage</span> <span class="font-semibold">0€</span>
 				<span class="text-sm">statt</span> <s class="font-thin">4,99€</s>
 				<span class="text-sm">/m</span>
 			</p>
