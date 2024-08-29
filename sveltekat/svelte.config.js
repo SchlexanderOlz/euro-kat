@@ -1,6 +1,6 @@
 import adapaterAuto from '@sveltejs/adapter-auto';
 import adapterVercel from '@sveltejs/adapter-vercel';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 let adapter = null;
 if (process.env.ADAPTER === 'vercel') {
