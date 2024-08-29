@@ -50,7 +50,7 @@
   }
 
   :global(.cl-button) {
-    @apply btn variant-soft-surface;
+    @apply input;
   }
 
   :global(.cl-formButtonPrimary) {
