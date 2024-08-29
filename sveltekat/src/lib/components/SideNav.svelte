@@ -9,6 +9,7 @@
 	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
 	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
+	import { Sparkles } from 'lucide-svelte';
 
 	const drawerStore = getDrawerStore();
 
@@ -82,24 +83,17 @@
 		</div>
 		<div class="w-full px-5">
 			<SignedIn>
-				<SignOutButton
-					signOutCallback={() => {
-						window.location.href = '/';
-					}}
-					class="btn variant-ghost-secondary w-full">Ausloggen</SignOutButton
+				<SignOutButton redirectUrl="/" class="btn variant-ghost-secondary w-full"
+					>Ausloggen</SignOutButton
 				>
 			</SignedIn>
 			<SignedOut>
 				<a href="/sign-in">
-					<button class="btn variant-ghost-primary w-full">Einloggen</button>
+					<button class="btn variant-ghost-secondary w-full">Einloggen</button>
 				</a>
 			</SignedOut>
-			<a
-				class="w-full flex justify-center mb-4 mt-2"
-				href="https://www.paypal.com/"
-				target="_blank"
-			>
-				<button class="btn variant-ghost-primary w-full">Spenden</button>
+			<a class="w-full flex justify-center mb-4 mt-2" href="/premium">
+				<button class="btn variant-ghost-primary w-full">Premium <Sparkles class="ml-2" /></button>
 			</a>
 		</div>
 	</div>
