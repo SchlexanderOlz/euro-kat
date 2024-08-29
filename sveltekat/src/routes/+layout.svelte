@@ -46,7 +46,7 @@
   }
 
   :global(.cl-otpCodeFieldInput) {
-    @apply card;
+    @apply card bg-surface-600-300-token;
   }
 
   :global(.cl-button) {
