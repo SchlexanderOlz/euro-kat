@@ -15,9 +15,12 @@
 </svelte:head>
 
 <div class="w-full flex flex-col items-center mb-8">
-  <div class="text-xl w-full card p-1.5 variant-glass-primary text-center">
-		<p>JETZT NEU: <a class="underline underline-offset-2" href="/premium">PREMIUM!</a></p>
-	</div>
+	{#if $subscription !== 'premium'}
+		<div class="text-xl w-full card p-1.5 variant-glass-primary text-center">
+			<p>JETZT NEU: <a class="underline underline-offset-2" href="/premium">PREMIUM!</a></p>
+		</div>
+	{/if}
+
 	<div class="text-xl mt-3 opacity-60 text-center">
 		<p>Willkommen! Welcome! Accueillir! Bienvenido! приветствие!</p>
 	</div>
@@ -124,13 +127,13 @@
 		@apply h1 mb-2;
 	}
 
-  :global(.cl-otpCodeFieldInput) {
-    @apply card;
-  }
+	:global(.cl-otpCodeFieldInput) {
+		@apply card;
+	}
 
-  :global(.cl-identityPreviewText) {
-    @apply text-lg;
-  }
+	:global(.cl-identityPreviewText) {
+		@apply text-lg;
+	}
 
 	:global(.latest-article > h2) {
 		@apply h2 mb-2;
