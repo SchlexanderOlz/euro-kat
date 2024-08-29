@@ -3,7 +3,7 @@
 	import MenuIcon from '$lib/icons/MenuIcon.svelte';
 	import { Drawer, type DrawerSettings, LightSwitch, getDrawerStore } from '@skeletonlabs/skeleton';
 	import NavItem from './NavItem.svelte';
-	import { NavItems } from '$lib/NavItems';
+	import { NavItems, PremiumItems } from '$lib/NavItems';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
@@ -60,7 +60,7 @@
 				{#each NavItems as item}
 					{#if Object.keys(item.references).length > 1}
 						<div class="mt-1 mb-3 w-full pl-1 pr-2">
-							<p class=" w-full">Spezial</p>
+							<p class=" w-full">{item.title}</p>
 							{#each Object.keys(item.references) as key}
 								<NavItem
 									title={key}
@@ -76,6 +76,30 @@
 							title={item.title}
 							link={item.references['']}
 							styles={`my-0.5 ${item.references[''] == path ? 'variant-ghost-surface' : ''}`}
+						/>
+					{/if}
+				{/each}
+
+
+        {#each PremiumItems as item}
+					{#if Object.keys(item.references).length > 1}
+						<div class="mt-1 mb-3 w-full pl-1 pr-2 ">
+							<p class=" w-full">Premium</p>
+							{#each Object.keys(item.references) as key}
+								<NavItem
+									title={key}
+									link={item.references[key]}
+									styles={`my-0.5 w-full ${
+										item.references[key] == path ? '!variant-ghost-primary' : '!variant-soft-primary'
+									}`}
+								/>
+							{/each}
+						</div>
+					{:else}
+						<NavItem
+							title={item.title}
+							link={item.references['']}
+							styles={`my-0.5 ${item.references[''] == path ? '!variant-ghost-primary' : '!variant-soft-primary'}`}
 						/>
 					{/if}
 				{/each}
