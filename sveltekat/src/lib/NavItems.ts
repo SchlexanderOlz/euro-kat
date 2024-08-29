@@ -11,6 +11,10 @@ export const NavItems: Item[] = [
 		references: { '': '/figures' }
 	},
 	{
+		title: 'Aktuelle Saison',
+		references: { '': '/current-series' }
+	},
+	{
 		title: 'Berichte',
 		references: { '': '/reports' }
 	},
@@ -21,7 +25,6 @@ export const NavItems: Item[] = [
 	{
 		title: 'Weiteres',
 		references: {
-			'Aktuelle Saison': '/current-series',
 			Hilfe: '/help',
 			Info: '/info',
 			Legacy: '/legacy'
@@ -36,7 +39,7 @@ export const PremiumItems: Item[] = [
 			'Meine Figuren': '/my-figures',
 			'Meine Kategorien': '/my-categories',
 			'Meine Wunschliste': '/my-wishlist',
-      Verlauf: '/history',
+			Verlauf: '/history',
 			Verwalten: '/manage-sub'
 		}
 	}
