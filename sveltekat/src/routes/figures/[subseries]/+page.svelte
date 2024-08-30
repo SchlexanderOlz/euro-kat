@@ -15,7 +15,8 @@
   onMount(() => {
     let figure = data.pageData.subSeriesFigures.find(fig => fig.id === data.figureId)
     if (figure) {
-      figure.expand.subSeriesId = data.pageData.subser;
+      figure.expand.subSeriesId = {}
+      figure.expand.subSeriesId.name = data.pageData.subser?.name;
       if ($history.figures.find(fig => fig.id === figure.id) === undefined) {
         $history.figures.push(structuredClone(figure))
           if ($history.figures.length > 16) {

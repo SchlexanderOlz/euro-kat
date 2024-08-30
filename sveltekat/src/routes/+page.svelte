@@ -65,16 +65,17 @@
 		</div>
 
 		<p class=" text-center h2 mt-5 mb-3">Weiterstöbern...</p>
-		{#if $subscription === 'premium'}
+    <div>
+      {#if $subscription === 'premium'}
 			{#each $history?.figures.reverse().slice(0, 3) || [] as figure}
 				<FigureListItem {figure} />
 			{:else}
 				<p>Du hast keine Figuren in letzter Zeit angesehen.</p>
 			{/each}
 			{#if $history?.figures.length > 3}
-				<a href="/history" class="w-full md:max-w-[40.5rem] max-w-[19.5rem]">
+				<a href="/history" class="w-full ">
 					<button
-						class="btn w-full md:max-w-[40.5rem] max-w-[19.5rem] variant-ghost-surface mt-1 h-8"
+						class="btn w-full variant-ghost-surface mt-1 h-8"
 						>Mehr laden</button
 					>
 				</a>
@@ -86,6 +87,8 @@
 				</button>
 			</a>
 		{/if}
+    </div>
+		
 
 		<p class="text-5xl text-center h1 mt-8">News</p>
 		<div class="card p-2 pt-1 mx-4 mt-8 max-w-[1166px] w-full">
