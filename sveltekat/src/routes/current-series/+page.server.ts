@@ -2,11 +2,11 @@ import figureBuilder from '$lib/FigureFilter';
 import type { Figure } from '$lib/PocketBase';
 import type { PageServerLoad } from './$types';
 
-export const config = {
-	isr: {
-		expiration: 86400
-	}
-};
+// export const config = {
+// 	isr: {
+// 		expiration: 86400
+// 	}
+// };
 
 export const load = (async () => {
 	let figures: Figure[] = structuredClone(
