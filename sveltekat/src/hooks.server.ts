@@ -27,17 +27,10 @@ export const handle: Handle = sequence(
           clerk_id: string;
         }>('clerk_id="' + userId + '"', {});
       } catch (e) {
-        
-        let clerk_user = null;
-        let email = null;
 
-        try {
-          clerk_user = await clerkClient.users.getUser(userId);
-          email = clerk_user.emailAddresses[0].emailAddress;
-        } catch (e) {
-          return await resolve(event);
-        }
-  
+         const clerk_user = await clerkClient.users.getUser(userId);
+         const email = clerk_user.emailAddresses[0].emailAddress;
+        
         try {
           // user exists, but clerk_id is not set - payed on stripe before creating account
           pb_user = await pbdata.collection('user').getFirstListItem<{
