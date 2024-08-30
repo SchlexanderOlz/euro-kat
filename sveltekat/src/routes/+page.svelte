@@ -66,7 +66,7 @@
 
 		<p class=" text-center h2 mt-5 mb-3">Weiterstöbern...</p>
 		{#if $subscription === 'premium'}
-			{#each $history?.figures.slice(0, 3) || [] as figure}
+			{#each $history?.figures.reverse().slice(0, 3) || [] as figure}
 				<FigureListItem {figure} />
 			{:else}
 				<p>Du hast keine Figuren in letzter Zeit angesehen.</p>
