@@ -36,6 +36,7 @@ export const PremiumItems: Item[] = [
 	{
 		title: 'Premium',
 		references: {
+			Serien: '/series',
 			'Meine Figuren': '/my-figures',
 			'Meine Kategorien': '/my-categories',
 			'Meine Wunschliste': '/my-wishlist',

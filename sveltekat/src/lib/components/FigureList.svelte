@@ -12,8 +12,9 @@
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
 	import { onMount } from 'svelte';
-	import { categories, filterBool, categoryFigureCount } from '$lib/Stores';
+	import { categories, filterBool, categoryFigureCount, subscription } from '$lib/Stores';
 	import { getColors } from '$lib/PocketBase';
+	import { page } from '$app/stores';
 
 	export let wishlistMode = false;
 	export let collectionMode = false;
@@ -111,6 +112,15 @@
 	let colors: CountryColor[] = [];
 
 	onMount(async () => {
+		if ($subscription === 'premium') {
+			let series = $page.url.searchParams.get('series');
+			if (series !== null) {
+				inputValue = '#' + series;
+				updateSearch();
+				history.pushState({}, '', '/figures');
+			}
+		}
+
 		if (figureBuilder.isWishesTriggered != wishlistMode) {
 			figureBuilder.wishes();
 		}

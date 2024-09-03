@@ -7,6 +7,7 @@
 	import DownIcon from '../icons/DownIcon.svelte';
 	import type { Item } from '$lib/NavItems';
 	import { subscription } from '$lib/Stores';
+	import { ChevronDown } from 'lucide-svelte';
 
 	export let item: Item;
 	$: path = $page.url.pathname || '';
@@ -21,15 +22,17 @@
 </script>
 
 {#if $subscription === 'premium' && item.title === 'Premium'}
-	<button class="btn mx-1 select-none variant-ghost-primary" use:popup={popupCombobox}>
-		{item.title} <DownIcon />
+	<button class="btn mx-1 pr-3 select-none variant-ghost-primary" use:popup={popupCombobox}>
+		{item.title}
+		<ChevronDown class="ml-1" />
 	</button>
 {:else}
 	<button
-		class="btn mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}"
+		class="btn pr-3 mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}"
 		use:popup={popupCombobox}
 	>
-		{item.title}<DownIcon />
+		{item.title}
+		<ChevronDown class="ml-1" />
 	</button>
 {/if}
 
