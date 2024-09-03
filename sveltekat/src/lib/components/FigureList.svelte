@@ -331,7 +331,7 @@
 	</div>
 
 	{#if figures && figures.length != 0}
-		{#each figures as figure (figure.id)}
+		{#each figures || [] as figure (figure.id)}
 			<FigureListItem {figure} />
 		{/each}
 		{#if figureBuilder.currentPage < pages}
