@@ -1,6 +1,16 @@
 import adapterVercel from '@sveltejs/adapter-vercel';
+import adapterNode from '@sveltejs/adapter-node';
+import adapaterAuto from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+let adapter = null;
+if (process.env.ADAPTER === 'node') {
+	adapter = adapterNode;
+} else if (process.env.ADAPTER === 'vercel') {
+	adapter = adapterVercel;
+} else {
+	adapter = adapaterAuto;
+}
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
@@ -14,7 +24,7 @@ const config = {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-		adapter: adapterVercel(),
+		adapter: adapter()
 	}
 };
 export default config;
