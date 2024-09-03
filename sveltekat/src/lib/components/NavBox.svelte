@@ -4,7 +4,6 @@
 
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import DownIcon from '../icons/DownIcon.svelte';
 	import type { Item } from '$lib/NavItems';
 	import { subscription } from '$lib/Stores';
 	import { ChevronDown } from 'lucide-svelte';

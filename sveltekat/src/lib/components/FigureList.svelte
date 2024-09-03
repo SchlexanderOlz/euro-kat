@@ -111,6 +111,10 @@
 
 	let colors: CountryColor[] = [];
 
+	$: if ($page.url.href) {
+		inputValue = '';
+	}
+
 	onMount(async () => {
 		if ($subscription === 'premium') {
 			let series = $page.url.searchParams.get('series');
