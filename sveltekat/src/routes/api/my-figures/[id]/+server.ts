@@ -3,9 +3,9 @@ import { Category, FigureData } from '$lib/Types';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
-  if (event.locals.pb_user?.sub !== 'premium') {
-    return new Response('Unauthorized', { status: 401 });
-  }
+	if (event.locals.pb_user?.sub !== 'premium') {
+		return new Response('Unauthorized', { status: 401 });
+	}
 	const figureCollected = await adminConnection.collection('collection').getFullList<FigureData>({
 		filter: 'user_id="' + event.locals.pb_user.id + '" && figure_id="' + event.params.id + '"',
 		expand: 'category_id',
@@ -31,7 +31,7 @@ export const GET: RequestHandler = async (event) => {
 			sortedCategories.push({
 				id: null,
 				user_id: event.locals.pb_user.id,
-				name: 'Uncategorized',
+				name: 'Unkategorisiert',
 				color: '#000000'
 			});
 		}
@@ -57,7 +57,7 @@ export const GET: RequestHandler = async (event) => {
 			: {
 					id: null,
 					user_id: event.locals.pb_user.id,
-					name: 'Uncategorized',
+					name: 'Unkategorisiert',
 					color: '#000000',
 					count: map['undefined'] ? map['undefined'].count : 0
 				}
@@ -72,9 +72,9 @@ export const GET: RequestHandler = async (event) => {
 };
 
 export const POST: RequestHandler = async (event) => {
-  if (event.locals.pb_user?.sub !== 'premium') {
-    return new Response('Unauthorized', { status: 401 });
-  }
+	if (event.locals.pb_user?.sub !== 'premium') {
+		return new Response('Unauthorized', { status: 401 });
+	}
 
 	const data = await event.request.json();
 	const figure_id = event.params.id;
@@ -99,10 +99,10 @@ export const POST: RequestHandler = async (event) => {
 			return new Response('Cannot have negative figure count', { status: 400 });
 		}
 
-    if (figureCollected.count + change_by == 0) {
-      await adminConnection.collection('collection').delete(figureCollected.id);
-      return new Response();
-    }
+		if (figureCollected.count + change_by == 0) {
+			await adminConnection.collection('collection').delete(figureCollected.id);
+			return new Response();
+		}
 
 		await adminConnection.collection('collection').update(figureCollected.id, {
 			count: figureCollected.count + change_by

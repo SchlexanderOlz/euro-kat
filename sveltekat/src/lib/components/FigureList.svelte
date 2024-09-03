@@ -12,11 +12,11 @@
 	import ADownIcon from '$lib/icons/ADownIcon.svelte';
 	import AupIcon from '$lib/icons/AUPIcon.svelte';
 	import { onMount } from 'svelte';
-	import { filterBool } from '$lib/Stores';
+	import { categories, filterBool, categoryFigureCount } from '$lib/Stores';
 	import { getColors } from '$lib/PocketBase';
 
-  export let wishlistMode = false;
-  export let collectionMode = false;
+	export let wishlistMode = false;
+	export let collectionMode = false;
 
 	let figures: Figure[];
 	let pages: number;
@@ -33,6 +33,18 @@
 	let questionable = figureBuilder.isQuestionableTriggered;
 	let changed = figureBuilder.isChangedTriggered;
 	let mine = figureBuilder.isMineTriggered;
+
+	let categoriesSelected: (string | null)[] = [];
+	function toggleCategory(name: string | null) {
+		if (name === 'Unkategorisiert') {
+			name = null;
+		}
+		if (categoriesSelected.includes(name)) {
+			categoriesSelected = categoriesSelected.filter((cat) => cat !== name);
+		} else {
+			categoriesSelected = [...categoriesSelected, name];
+		}
+	}
 
 	let debounceTimer: NodeJS.Timeout;
 	async function updateSearch() {
@@ -54,6 +66,15 @@
 
 	async function update() {
 		let res: ListResult<Figure>;
+		if (collectionMode) {
+			if (figureBuilder.isMyFiguresTriggered) {
+				// disable to then enable
+				figureBuilder.myFigures(categoriesSelected);
+			}
+			console.log(categoriesSelected);
+
+			figureBuilder.myFigures(categoriesSelected);
+		}
 		try {
 			res = structuredClone(await figureBuilder.run());
 		} catch (error: any) {
@@ -87,25 +108,26 @@
 		}, 500);
 	}
 
-  let colors: CountryColor[] = []
+	let colors: CountryColor[] = [];
 
 	onMount(async () => {
-    if (figureBuilder.isWishesTriggered != wishlistMode) {
-      figureBuilder.wishes()
-    }
-    console.log(figureBuilder.isWishesTriggered);
+		if (figureBuilder.isWishesTriggered != wishlistMode) {
+			figureBuilder.wishes();
+		}
+		console.log(figureBuilder.isWishesTriggered);
 
-    if (figureBuilder.isMyFiguresTriggered != collectionMode) {
-      figureBuilder.myFigures()
-    }
+		if (figureBuilder.isMyFiguresTriggered != collectionMode) {
+			figureBuilder.myFigures();
+			const response = await fetch('/api/my-categories').then((res) => res.json());
+			$categories = response.categories;
+			$categoryFigureCount = response.categoryFigureCount;
+		}
 
 		await update();
 
 		init_loading = false;
-    colors = await getColors();
+		colors = await getColors();
 	});
-
-
 </script>
 
 <div>
@@ -215,7 +237,9 @@
 				</div>
 			</div>
 
-			<div class="nav:w-[40%] nav:min-w-[20rem] flex-grow w-full nav:ml-10 flex-shrink-0 mt-4 nav:mt-0">
+			<div
+				class="nav:w-[40%] nav:min-w-[20rem] flex-grow w-full nav:ml-10 flex-shrink-0 mt-4 nav:mt-0"
+			>
 				<p class="ml-2 w-full text-center">Jahre: {yearrange.join('-')}</p>
 				<RangeSlider
 					on:change={updateYear}
@@ -228,32 +252,53 @@
 					springValues={{ stiffness: 1, damping: 1 }}
 				/>
 			</div>
-      <div class="nav:ml-4 nav:w-max w-full flex flex-col space-y-1.5">
-        {#each colors as color}
-           <p style={`background-color: ${color.color}35;`} class="w-full rounded pl-1 pr-4">{color.country}</p>
-        {/each}
-      </div>
+			{#if !collectionMode}
+				<div class="nav:ml-4 nav:w-max w-full flex flex-col space-y-1.5">
+					{#each colors as color}
+						<p style={`background-color: ${color.color}35;`} class="w-full rounded pl-1 pr-4">
+							{color.country}
+						</p>
+					{/each}
+				</div>
+			{:else}
+				<div class="nav:ml-4 nav:w-max w-full flex flex-col space-y-1.5">
+					{#each $categories as category}
+						<div class="flex flex-row items-center mt-2 ml-0">
+							<SlideToggle
+								on:change={() => {
+									toggleCategory(category.name);
+									update();
+								}}
+								name={category.name}
+								checked={false}
+								active="bg-primary-500"
+								size="sm"
+								rounded="rounded"
+							/>
+							<p class="ml-2 flex">{category.name}</p>
+						</div>
+					{/each}
+				</div>
+			{/if}
 		</div>
-    
-    
 	{/if}
 
 	<div class="w-full h-8 flex items-center relative mt-2">
 		<button
-				on:click={() => {
-					figureBuilder.sortByName();
-					update();
-				}}
-				class="text-start mx-2 md:flex hidden w-80"
-			>
-				<span class="mr-1">Name</span>
+			on:click={() => {
+				figureBuilder.sortByName();
+				update();
+			}}
+			class="text-start mx-2 md:flex hidden w-80"
+		>
+			<span class="mr-1">Name</span>
 
-				{#if figureBuilder.sort.has('+name')}
-					<AupIcon />
-				{:else if figureBuilder.sort.has('-name')}
-					<ADownIcon />
-				{/if}
-			</button>
+			{#if figureBuilder.sort.has('+name')}
+				<AupIcon />
+			{:else if figureBuilder.sort.has('-name')}
+				<ADownIcon />
+			{/if}
+		</button>
 
 		<button
 			on:click={() => {
@@ -262,7 +307,7 @@
 			}}
 			class="flex ml-2"
 		>
-      <span class="mr-1">Serie</span>
+			<span class="mr-1">Serie</span>
 			{#if figureBuilder.sort.has('+note')}
 				<AupIcon />
 			{:else if figureBuilder.sort.has('-note')}
@@ -276,7 +321,7 @@
 			}}
 			class="absolute right-2 flex"
 		>
-      <span class="mr-1">Mpg Nr.</span>
+			<span class="mr-1">Mpg Nr.</span>
 			{#if figureBuilder.sort.has('+mpgNr')}
 				<AupIcon />
 			{:else if figureBuilder.sort.has('-mpgNr')}
