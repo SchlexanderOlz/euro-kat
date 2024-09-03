@@ -13,7 +13,7 @@
 	async function fetchCollectionData() {
 		let response = await (await fetch('/api/my-figures/' + figure.id)).json();
 		mappedData = response.mappedData;
-    sortedCategories = response.sortedCategories;
+		sortedCategories = response.sortedCategories;
 	}
 
 	onMount(async () => {
@@ -102,7 +102,7 @@
 	{/each}
 {/if}
 
-{#if sortedCategories.length > 2}
+{#if sortedCategories.length > 3}
 	<button on:click={() => (expand = !expand)} class="btn variant-filled-surface p-0.5 h-6 w-full">
 		{#if !expand}
 			<ChevronDown />
