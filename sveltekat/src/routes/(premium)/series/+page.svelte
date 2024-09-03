@@ -9,7 +9,7 @@
 <div class="w-full h-full flex flex-col items-center sm:px-[10%] px-[5%] sm:mt-12 mt-6 mb-16">
 	<h1 class="h1 mb-10">Alle Serien</h1>
 
-	<div class="w-full grid-cols-5 grid gap-4 max-w-96">
+	<div class="w-full sm:grid-cols-5 xxs:grid-cols-3 grid-cols-2 grid gap-4 max-w-96">
 		{#each data.series as series}
 			{#if !blacklist.includes(series.seriesLetter)}
 				<a href="/figures?series={series.seriesLetter}">
