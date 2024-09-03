@@ -26,6 +26,9 @@ dependencies:
   clerk-sveltekit:
     specifier: https://pkg.pr.new/wobsoriano/clerk-sveltekit@60262e8
     version: '@pkg.pr.new/wobsoriano/clerk-sveltekit@60262e8(react@18.3.1)(svelte@4.2.19)'
+  dotenv:
+    specifier: ^16.4.5
+    version: 16.4.5
   lucide-svelte:
     specifier: ^0.436.0
     version: 0.436.0(svelte@4.2.19)
@@ -1419,6 +1422,11 @@ packages:
     dependencies:
       no-case: 3.0.4
       tslib: 2.7.0
+    dev: false
+
+  /dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+    engines: {node: '>=12'}
     dev: false
 
   /eastasianwidth@0.2.0:

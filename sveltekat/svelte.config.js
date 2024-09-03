@@ -1,6 +1,7 @@
 import adapterVercel from '@sveltejs/adapter-vercel';
 import adapterNode from '@sveltejs/adapter-node';
 import adapaterAuto from '@sveltejs/adapter-auto';
+import 'dotenv/config';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 let adapter = null;
