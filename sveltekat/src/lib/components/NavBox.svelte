@@ -19,28 +19,28 @@
 		closeQuery: '.listbox-item',
 		placement: 'bottom'
 	};
+
+	let premium = $subscription === 'premium' && item.title === 'Premium';
 </script>
 
-{#if $subscription === 'premium' && item.title === 'Premium'}
-	<button class="btn mx-1 pr-3 select-none variant-ghost-primary" use:popup={popupCombobox}>
-		{item.title}
-		<ChevronDown class="ml-1" />
-	</button>
-{:else}
-	<button
-		class="btn pr-3 mx-1 select-none {selected ? 'variant-ghost' : 'variant-ringed'}"
-		use:popup={popupCombobox}
-	>
-		{item.title}
-		<ChevronDown class="ml-1" />
-	</button>
-{/if}
+<button
+	class="btn mx-1 pr-3 select-none {premium
+		? 'variant-ghost-primary'
+		: !selected
+			? 'variant-ringed'
+			: 'variant-ghost'}"
+	use:popup={popupCombobox}
+>
+	{item.title}
+	<ChevronDown class="ml-1" />
+</button>
 
 <div class="card shadow-xl select-none" data-popup="{item.title}navbar">
 	<ListBox rounded="rounded-sm">
 		{#each Object.keys(item.references) as reference}
 			<ListBoxItem
-				active="variant-ringed-surface rounded-sm"
+				active="variant-ringed-surface rounded-sm {premium ? 'variant-soft-primary' : ''}"
+				hover="hover:bg-primary-500/10"
 				bind:group={path}
 				name="medium"
 				value={item.references[reference]}
