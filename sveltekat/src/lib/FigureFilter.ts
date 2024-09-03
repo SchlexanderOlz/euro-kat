@@ -276,10 +276,14 @@ export class FigurFilterBuilder {
 
 		let search = `(collection_via_figure_id.user_id?='${get(userId)}'`;
 		if (categories) {
-			search = `${search}&&(${categories.map((x) => x ? ("?~" + '\'' + x + '\'') : ('?=null')).map((category) => `collection_via_figure_id.category_id.name${category}`).join("||")})`;
+			search = `${search}&&(${categories
+				.map((x) => (x ? '?~' + "'" + x + "'" : '?=null'))
+				.map((category) => `collection_via_figure_id.category_id.name${category}`)
+				.join('&&')})`;
 		}
-		console.log(search)
 		search += ')';
+		search = search.replace('&&()', '');
+		console.log(search);
 		this.required.add(search);
 	}
 
