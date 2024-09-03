@@ -13,11 +13,14 @@ import type {
 	ExtraDetail,
 	Article,
 	Variation,
-  CountryColor
+	CountryColor
 } from './Types.js';
+import { env } from '$env/dynamic/public';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging, Article };
-export const domain: string = 'ek.krenn.tech:443';
+
+export const domain: string = env.PUBLIC_DATA_URL || 'ek.krenn.tech:443';
+console.log(domain);
 export const imgdom: string = `https://${domain}/api/files`;
 export const connection: PocketBase = new PocketBase(`https://${domain}`);
 
@@ -55,19 +58,15 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 			'subSeriesId.SubSeriesVariation(subSeriesId).FigureVariation(subSeriesVariationId).figureId,variations,countryColor'
 	});
 
-  if (figure.subSeriesId == "") {
-    //return figure
-  }
+	if (figure.subSeriesId == '') {
+		//return figure
+	}
 
 	const seriesFigures = await figures.getFullList<Figure>({
 		filter: `subSeriesId="${figure.subSeriesId}"`
 	});
 
-  
-
 	let subSeries = figure.expand.subSeriesId;
-
-  
 
 	let subSeriesVariations = subSeries?.expand['SubSeriesVariation(subSeriesId)'];
 
@@ -99,8 +98,7 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		});
 	}
 
-  let color = "";
-
+	let color = '';
 
 	const vals: FigurePageCleaned = {
 		subSeriesFigures: seriesFigures,
@@ -109,15 +107,15 @@ export async function getAllPageData(fid: string): Promise<FigurePageCleaned> {
 		variations: variations
 	};
 
-  if (figure.subSeriesId == "") {
-    vals.subSeriesFigures = [figure]
-  }
+	if (figure.subSeriesId == '') {
+		vals.subSeriesFigures = [figure];
+	}
 
 	return vals;
 }
 
 export async function getColors(): Promise<CountryColor[]> {
-    return (await country_colors.getFullList())
+	return await country_colors.getFullList();
 }
 
 export async function getCountrys(): Promise<Set<string>> {
