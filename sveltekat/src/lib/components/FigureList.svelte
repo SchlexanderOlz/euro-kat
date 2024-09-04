@@ -27,8 +27,6 @@
 	let inputValue = figureBuilder.name || '#' + figureBuilder.mpgNr;
 	if (inputValue === '#') inputValue = '';
 
-	figureBuilder.sortByMpgNr();
-
 	let curser = figureBuilder.isCurrentTriggered;
 	let maxi = figureBuilder.isMaxiTriggered;
 	let questionable = figureBuilder.isQuestionableTriggered;
