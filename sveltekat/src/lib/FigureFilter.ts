@@ -17,7 +17,6 @@ export class FigurFilterBuilder {
 		this.optional = new Set();
 		this.required = new Set();
 		this.sort = new Set();
-		this.sortByMpgNr();
 	}
 
 	private startIsContainedRequired(start: string) {
@@ -124,6 +123,7 @@ export class FigurFilterBuilder {
 
 	byYearBegin(year: number | undefined) {
 		this.findRemove('year>=', this.required);
+		year = year! - 1;
 		this.required.add(`year>=${year}`);
 	}
 
