@@ -51,16 +51,6 @@
 	async function updateSearch() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
-			if (inputValue[0] == '#') {
-				figureBuilder.byMpgNr(inputValue.substring(1));
-			} else {
-				figureBuilder.byMpgNr(inputValue.substring(0));
-			}
-
-			figureBuilder.byNote(inputValue);
-			figureBuilder.byName(inputValue);
-			figureBuilder.bySubSeries(inputValue);
-
 			await update();
 		}, 500);
 	}
@@ -76,6 +66,15 @@
 
 			figureBuilder.myFigures(categoriesSelected);
 		}
+		if (inputValue[0] == '#') {
+			figureBuilder.byMpgNr(inputValue.substring(1));
+		} else {
+			figureBuilder.byMpgNr(inputValue.substring(0));
+		}
+
+		figureBuilder.byNote(inputValue);
+		figureBuilder.byName(inputValue);
+		figureBuilder.bySubSeries(inputValue);
 		try {
 			res = structuredClone(await figureBuilder.run());
 		} catch (error: any) {
@@ -111,16 +110,12 @@
 
 	let colors: CountryColor[] = [];
 
-	$: if ($page.url.href) {
-		inputValue = '';
-	}
-
 	onMount(async () => {
 		if ($subscription === 'premium') {
 			let series = $page.url.searchParams.get('series');
 			if (series !== null) {
 				inputValue = '#' + series;
-				updateSearch();
+				update();
 				history.pushState({}, '', '/figures');
 			}
 		}
