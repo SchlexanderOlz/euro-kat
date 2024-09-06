@@ -10,23 +10,22 @@
 
 	export let data: PageData;
 
-  $categories = data.categories
+	$categories = data.categories;
 
-  onMount(() => {
-    let figure = data.pageData.subSeriesFigures.find(fig => fig.id === data.figureId)
-    if (figure) {
-      figure.expand.subSeriesId = {}
-      figure.expand.subSeriesId.name = data.pageData.subser?.name;
-      if ($history.figures.find(fig => fig.id === figure.id) === undefined) {
-        $history.figures.push(structuredClone(figure))
-          if ($history.figures.length > 16) {
-            $history.figures.shift()
-          }
-      }
-      history.set($history)  
-    }
-  })
-  
+	onMount(() => {
+		let figure = data.pageData.subSeriesFigures.find((fig) => fig.id === data.figureId);
+		if (figure) {
+			figure.expand.subSeriesId = {};
+			figure.expand.subSeriesId.name = data.pageData.subser?.name;
+			if ($history.figures.find((fig) => fig.id === figure.id) === undefined) {
+				$history.figures.push(structuredClone(figure));
+				if ($history.figures.length > 16) {
+					$history.figures.shift();
+				}
+			}
+			history.set($history);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -45,7 +44,7 @@
 		{#if data.pageData.subservars != undefined && data.pageData.subservars[0].images.length != 0}
 			{#each data.pageData.subservars[0].images as imag}
 				<img
-					class="w-max mt-4 px-4 "
+					class="w-max mt-4 px-4"
 					src="{imgdom}/{data.pageData.subservars[0].collectionId}/{data.pageData.subservars[0]
 						.id}/{imag}"
 					alt="{data.pageData.subser.name} Beipackzettel"
@@ -59,9 +58,9 @@
 	<h2 class="h2 mb-4 mt-6 text-center">Figuren</h2>
 	<div class="w-[90%] sm:w-[75%] md:w-[50%]">
 		{#each data.pageData.subSeriesFigures as fig}
-			<p class="mt-3 ml-1 text-xl font-bold "> {fig.header}</p>
+			<p class="mt-3 ml-1 text-xl font-bold">{fig.header}</p>
 			<div class="flex flex-col xl:flex-row card my-2 p-2">
-				<div class="xl:w-72 w-auto pr-2 shrink-0 flex flex-col ">
+				<div class="xl:w-72 w-auto pr-2 shrink-0 flex flex-col">
 					<p class="font-normal my-0.5 break-all">
 						<span class="font-bold">MPG-Nr:</span>
 						{fig.mpgNr}
@@ -82,32 +81,34 @@
 						<span class="font-bold break-keep">Bemerkung:</span>
 						{fig.note}
 					</p>
-          <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
-          <div class=" w-full flex grow  justify-between items-center">
-            <p class="font-bold">Wunschliste?</p>
-              {#if $subscription === 'premium'}
-               <Wishlist figure={fig}/>
-              {:else}
-              <a href="/premium">
-                <button class="btn variant-ghost-primary  p-0.5 flex justify-center items-center h-8 w-8 mr-1">
-                  <Sparkles class=""/>
-                </button>
-              </a>
-              {/if}
-        </div>
-        <div class="h-0.5 rounded-full my-2 w-full  bg-surface-300-600-token"/>
-          <div class=" w-full h-full grow space-y-1 mb-1">
-              <p class="font-bold">Gesammelt:</p>
-              {#if $subscription === 'premium'}
-              <CollectedSnippet figure={fig} />
-              {:else}
-              <a href="/premium">
-                <button class="btn variant-ghost-primary  w-full h-10 mt-2">
-                  Premium <Sparkles class="ml-2"/>
-                </button>
-              </a>
-              {/if}
-          </div>
+					<div class="h-0.5 rounded-full my-2 w-full bg-surface-300-600-token" />
+					<div class=" w-full flex grow justify-between items-center">
+						<p class="font-bold">Wunschliste?</p>
+						{#if $subscription === 'premium'}
+							<Wishlist figure={fig} />
+						{:else}
+							<a href="/premium">
+								<button
+									class="btn variant-ghost-primary p-0.5 flex justify-center items-center h-8 w-8 mr-1"
+								>
+									<Sparkles class="" />
+								</button>
+							</a>
+						{/if}
+					</div>
+					<div class="h-0.5 rounded-full my-2 w-full bg-surface-300-600-token" />
+					<div class=" w-full h-full grow space-y-1 mb-1">
+						<p class="font-bold">Gesammelt:</p>
+						{#if $subscription === 'premium'}
+							<CollectedSnippet figure={fig} />
+						{:else}
+							<a href="/premium">
+								<button class="btn variant-ghost-primary w-full h-10 mt-2">
+									Premium <Sparkles class="ml-2" />
+								</button>
+							</a>
+						{/if}
+					</div>
 				</div>
 
 				<div class="flex flex-wrap xl:justify-start justify-center xl:mt-0 mt-1">
@@ -120,7 +121,7 @@
 							/>
 						{/each}
 					{:else}
-						<img src="/images/want_fig.jpg" alt="Kein Figuren-Foto verfügbar" />
+						<img src="/images/want_fig.jpg" class="h-40 w-auto" alt="Kein Figuren-Foto verfügbar" />
 					{/if}
 				</div>
 			</div>
@@ -184,7 +185,11 @@
 																<span class="font-bold">
 																	{#if figvar.expand.figureId?.mpgNr}
 																		{#if figvar.habIch}
-																			<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Red_x.svg" class="w-6 h-6 inline-block" alt="Red X">
+																			<img
+																				src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Red_x.svg"
+																				class="w-6 h-6 inline-block"
+																				alt="Red X"
+																			/>
 																		{/if}
 																		{figvar.expand.figureId.mpgNr} - {figvar.expand.figureId.name}
 																	{:else}
