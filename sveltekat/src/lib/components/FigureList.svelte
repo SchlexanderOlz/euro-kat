@@ -2,7 +2,7 @@
 	import FigureListItem from './FigureListItem.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	import figureBuilder from '$lib/FigureFilter';
+	import figureBuilder, { FigureFilterBuilder } from '$lib/FigureFilter';
 	import CDownIcon from '$lib/icons/CDownIcon.svelte';
 	import CUpIcon from '$lib/icons/CUpIcon.svelte';
 
@@ -64,15 +64,29 @@
 
 			figureBuilder.myFigures(categoriesSelected);
 		}
+
+		let input: string | undefined = inputValue
 		if (inputValue[0] == '#') {
-			figureBuilder.byMpgNr(inputValue.substring(1));
+			let split = inputValue.split(" ")
+
+			if (FigureFilterBuilder.isMpgNr(inputValue)) {
+				figureBuilder.bySeriesLetter();
+				figureBuilder.byMpgNr(split[0].substring(1));
+
+				input = undefined
+			} else {
+				figureBuilder.byMpgNr()
+				figureBuilder.bySeriesLetter(split[0].substring(1))
+
+				input = split.slice(1).join(" ") ?? undefined
+			}
 		} else {
 			figureBuilder.byMpgNr(inputValue.substring(0));
 		}
 
-		figureBuilder.byNote(inputValue);
-		figureBuilder.byName(inputValue);
-		figureBuilder.bySubSeries(inputValue);
+		figureBuilder.byNote(input);
+		figureBuilder.byName(input);
+		figureBuilder.bySubSeries(input);
 		try {
 			res = structuredClone(await figureBuilder.run());
 		} catch (error: any) {
