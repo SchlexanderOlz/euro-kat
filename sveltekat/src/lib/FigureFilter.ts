@@ -4,7 +4,7 @@ import type { Figure } from './Types';
 import { userId } from './Stores';
 import { get } from 'svelte/store';
 
-export class FigurFilterBuilder {
+export class FigureFilterBuilder {
 	required: Set<string>;
 	figureCollection: RecordService<Figure>;
 	optional: Set<string>;
@@ -150,9 +150,9 @@ export class FigurFilterBuilder {
 		this.required.add(`year='${year}'`);
 	}
 
-	byName(name: string) {
+	byName(name?: string) {
 		this.findRemove('name~', this.optional);
-		this.optional.add(`name~'${name}'`);
+		if (name) this.optional.add(`name~'${name}'`);
 	}
 
 	public get name(): string {
@@ -168,9 +168,9 @@ export class FigurFilterBuilder {
 		return this.getOptionalFilterValue('identifier~');
 	}
 
-	byNote(note: string) {
+	byNote(note?: string) {
 		this.findRemove('note~', this.optional);
-		this.optional.add(`note~'${note}'`);
+		if (note) this.optional.add(`note~'${note}'`);
 	}
 
 	public get note(): string {
@@ -186,13 +186,19 @@ export class FigurFilterBuilder {
 		return this.getRequiredFilterValue('id=');
 	}
 
-	byMpgNr(mpgNr: string) {
-		this.findRemove('mpgNr=', this.optional) ||
-			this.findRemove('subSeriesId.seriesId.seriesLetter', this.optional);
-
+	public static isMpgNr(mpgNr: string) {
 		let match = /^(?!^[0-9][A-Za-z]$).*((\d|[0-9][A-Z]))$/;
-		if (match.test(mpgNr)) this.optional.add(`mpgNr='${mpgNr}'`);
-		else this.optional.add(`subSeriesId.seriesId.seriesLetter='${mpgNr}'`);
+		return match.test(mpgNr)
+	}
+
+	byMpgNr(mpgNr?: string) {
+		this.findRemove('mpgNr=', this.optional);
+		if (mpgNr && FigureFilterBuilder.isMpgNr(mpgNr)) this.optional.add(`mpgNr='${mpgNr}'`);
+	}
+
+	bySeriesLetter(letter?: string) {
+		this.findRemove('subSeriesId.seriesId.seriesLetter', this.required)
+		if (letter && !FigureFilterBuilder.isMpgNr(letter)) this.required.add(`subSeriesId.seriesId.seriesLetter='${letter}'`)
 	}
 
 	public get mpgNr(): string {
@@ -211,9 +217,9 @@ export class FigurFilterBuilder {
 		return this.getRequiredFilterValue('country~');
 	}
 
-	bySubSeries(name: string) {
+	bySubSeries(name?: string) {
 		this.findRemove('subSeriesId.name~', this.optional);
-		this.optional.add(`subSeriesId.name~'${name}'`);
+		if (name) this.optional.add(`subSeriesId.name~'${name}'`);
 	}
 
 	public get subSeries(): string {
@@ -364,5 +370,5 @@ export class FigurFilterBuilder {
 		);
 	}
 }
-const figureBuilder = new FigurFilterBuilder();
+const figureBuilder = new FigureFilterBuilder();
 export default figureBuilder;
