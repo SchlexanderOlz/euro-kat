@@ -69,15 +69,24 @@
 
 		<ClerkLoaded>
 			<SignedOut>
-				<a href="/sign-up">
+				<a
+					on:click={() => {
+						fetch('/premium/redirect');
+					}}
+					href={PUBLIC_STRIPE_PREMIUM_LINK}
+					target="_blank"
+				>
 					<button class="btn variant-ghost-primary w-full mt-4 sm:text-base text-sm"
-						>Account erstellen!</button
+						>Jetzt Premium holen!</button
 					>
 				</a>
 			</SignedOut>
 
 			<SignedIn let:user>
 				<a
+					on:click={() => {
+						fetch('/premium/redirect');
+					}}
 					href="{PUBLIC_STRIPE_PREMIUM_LINK}?prefilled_email={user?.emailAddresses[0]}"
 					target="_blank"
 				>
