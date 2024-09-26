@@ -68,7 +68,6 @@ export const POST: RequestHandler = async (ev) => {
 			case 'customer.subscription.deleted':
 				const subscription = await stripe.subscriptions.retrieve(data.object.id);
 				const stripeCustomerId = subscription?.customer;
-				const rcustomer = await stripe.customers.retrieve(stripeCustomerId);
 
 				try {
 					// get user
@@ -76,7 +75,7 @@ export const POST: RequestHandler = async (ev) => {
 
 					const user = await pbdata
 						.collection('user')
-						.getFirstListItem("email='" + rcustomer.email || '' + "'");
+						.getFirstListItem("stripe_id='" + stripeCustomerId + "'");
 					await pbdata.collection('user').update(user.id, {
 						sub: null
 					});
