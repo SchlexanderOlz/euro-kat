@@ -11,14 +11,14 @@ import type {
 } from "../sveltekat/src/lib/Types.js";
 import fs from "fs";
 import { connection } from "../sveltekat/src/lib/PocketBase.js";
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-const email: string = process.env.EMAIL ?? '';
-const password: string = process.env.PASSWORD ?? '';
+const email: string = process.env.EMAIL ?? "";
+const password: string = process.env.PASSWORD ?? "";
 
-const pb = new PocketBase("https://ek.krenn.tech/");
+const pb = new PocketBase("https://ek.liamk.dev/");
 pb.autoCancellation(false);
 
 function getTypeHeader(path: string): string {
@@ -44,9 +44,7 @@ function getTypeHeader(path: string): string {
 }
 
 async function add() {
-  console.log(
-    await pb.admins.authWithPassword(email, password)
-  );
+  console.log(await pb.admins.authWithPassword(email, password));
 
   const figures = pb.collection("Figure");
   const series = pb.collection("Series");
@@ -59,8 +57,7 @@ async function add() {
   const data = fs.readFileSync("../html-parser/data.json", "utf8");
   let json = JSON.parse(data);
 
-
-  let dbFigures: { [key: string]: string } = {}
+  let dbFigures: { [key: string]: string } = {};
   for (let object of json) {
     let seriesData = new FormData();
     seriesData.append("seriesLetter", object.seriesLetter);
@@ -116,13 +113,13 @@ async function add() {
         if (figure.identifier)
           formData.append("identifier", figure?.identifier);
         if (figure.aufkleber) formData.append("sticker", figure?.sticker);
-        if (figure.maxi) formData.append("maxi", figure?.maxi)
+        if (figure.maxi) formData.append("maxi", figure?.maxi);
         if (figure.note) formData.append("note", figure?.note);
         if (figure.fake) formData.append("fake", figure?.fake);
         if (figure.questionable)
           formData.append("questionable", figure?.questionable);
         if (figure.year) formData.append("year", figure.year);
-        if (figure.header) formData.append("header", figure.header)
+        if (figure.header) formData.append("header", figure.header);
 
         formData.append("subSeriesId", subSeriesRecord.id);
 
@@ -130,10 +127,12 @@ async function add() {
 
         try {
           const insertedFig = await figures.create(formData);
-          dbFigures[figure.mpgNr] = insertedFig.id
+          dbFigures[figure.mpgNr] = insertedFig.id;
         } catch (Error) {
-            console.log(`Figure ${figure.mpgNr} does not exist and could also not be inserted`)
-          }
+          console.log(
+            `Figure ${figure.mpgNr} does not exist and could also not be inserted`
+          );
+        }
       }
     }
   }
@@ -175,10 +174,10 @@ async function add() {
               }
             }
 
-            let figureId = dbFigures[pckgi.mpgNr]
+            let figureId = dbFigures[pckgi.mpgNr];
             if (figureId == undefined) {
               console.log("Ressource not found: " + pckgi.mpgNr);
-              continue
+              continue;
             }
 
             formData.append("figureId", figureId);
@@ -196,7 +195,7 @@ async function add() {
 
       if (sub.figureVariations == null) continue;
       for (const variation of sub?.figureVariations) {
-        let figureId = dbFigures[variation.mpgNr]
+        let figureId = dbFigures[variation.mpgNr];
         if (figureId == undefined) {
           console.log("Ressource not found: " + variation.mpgNr);
           continue;
@@ -222,9 +221,7 @@ async function add() {
 }
 
 async function addExtras() {
-  console.log(
-    await pb.admins.authWithPassword(email, password)
-  );
+  console.log(await pb.admins.authWithPassword(email, password));
   const data = fs.readFileSync("../html-parser/extras.json", "utf8");
   const json = JSON.parse(data);
   const extras = pb.collection("Extra");

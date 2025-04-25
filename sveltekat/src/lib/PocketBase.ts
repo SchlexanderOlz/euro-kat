@@ -19,7 +19,7 @@ import { env } from '$env/dynamic/public';
 
 export type { Series, SubSeries, SubSeriesVariation, Figure, FigureVariation, Packaging, Article };
 
-export const domain: string = env.PUBLIC_DATA_URL || 'ek.krenn.tech:443';
+export const domain: string = env.PUBLIC_DATA_URL || 'ek.liamk.dev:443';
 console.log(domain);
 export const imgdom: string = `https://${domain}/api/files`;
 export const connection: PocketBase = new PocketBase(`https://${domain}`);

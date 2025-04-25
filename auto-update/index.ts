@@ -2,7 +2,7 @@ import PocketBase from "pocketbase";
 import nodemailer from "nodemailer";
 import { disposeEmitNodes } from "typescript";
 
-const domain: string = "ek.krenn.tech:443";
+const domain: string = "ek.liamk.dev:443";
 const imgdom: string = `https://${domain}/api/files`;
 const connection: PocketBase = new PocketBase(`https://${domain}`);
 const userConnection: PocketBase = new PocketBase(process.env.USER_DATA_URL);
@@ -68,7 +68,7 @@ const info = await transporter.sendMail({
         return `
         <b>Figur Name: ${figure.name}</b><br>
         <b>Serienname: ${figure.expand!.subSeriesId.name}</b>
-        `
+        `;
       })
       .join("<br>"),
 });
